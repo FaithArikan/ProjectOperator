@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 namespace NeuralWaveBureau.AI
 {
@@ -18,15 +20,29 @@ namespace NeuralWaveBureau.AI
 
         [Header("Keyboard Control")]
         [SerializeField]
-        private KeyCode _increaseKey = KeyCode.UpArrow;
+        private Key _increaseKey = Key.UpArrow;
 
         [SerializeField]
-        private KeyCode _decreaseKey = KeyCode.DownArrow;
+        private Key _decreaseKey = Key.DownArrow;
 
         [SerializeField]
         private int _selectedBand = 0;
 
         private AIManager _aiManager;
+
+        private void Awake()
+        {
+            // Validate and reset invalid key values (can happen when upgrading from old Input System)
+            if (!System.Enum.IsDefined(typeof(Key), _increaseKey) || _increaseKey == Key.None)
+            {
+                _increaseKey = Key.UpArrow;
+            }
+
+            if (!System.Enum.IsDefined(typeof(Key), _decreaseKey) || _decreaseKey == Key.None)
+            {
+                _decreaseKey = Key.DownArrow;
+            }
+        }
 
         private void Start()
         {
@@ -60,29 +76,33 @@ namespace NeuralWaveBureau.AI
 
         private void HandleInput()
         {
+            var keyboard = Keyboard.current;
+            if (keyboard == null)
+                return;
+
             // Select band with number keys
-            if (Input.GetKeyDown(KeyCode.Alpha1)) _selectedBand = 0;
-            if (Input.GetKeyDown(KeyCode.Alpha2)) _selectedBand = 1;
-            if (Input.GetKeyDown(KeyCode.Alpha3)) _selectedBand = 2;
-            if (Input.GetKeyDown(KeyCode.Alpha4)) _selectedBand = 3;
-            if (Input.GetKeyDown(KeyCode.Alpha5)) _selectedBand = 4;
+            if (keyboard[Key.Digit1].wasPressedThisFrame) _selectedBand = 0;
+            if (keyboard[Key.Digit2].wasPressedThisFrame) _selectedBand = 1;
+            if (keyboard[Key.Digit3].wasPressedThisFrame) _selectedBand = 2;
+            if (keyboard[Key.Digit4].wasPressedThisFrame) _selectedBand = 3;
+            if (keyboard[Key.Digit5].wasPressedThisFrame) _selectedBand = 4;
 
             // Adjust selected band
-            if (Input.GetKey(_increaseKey))
+            if (keyboard[_increaseKey].isPressed)
             {
                 _currentBands[_selectedBand] = Mathf.Clamp01(_currentBands[_selectedBand] + Time.deltaTime * 0.5f);
             }
 
-            if (Input.GetKey(_decreaseKey))
+            if (keyboard[_decreaseKey].isPressed)
             {
                 _currentBands[_selectedBand] = Mathf.Clamp01(_currentBands[_selectedBand] - Time.deltaTime * 0.5f);
             }
 
             // Quick presets
-            if (Input.GetKeyDown(KeyCode.Q)) SetPreset("Ordinary");
-            if (Input.GetKeyDown(KeyCode.W)) SetPreset("Artist");
-            if (Input.GetKeyDown(KeyCode.E)) SetPreset("Rebel");
-            if (Input.GetKeyDown(KeyCode.R)) SetPreset("Random");
+            if (keyboard[Key.Q].wasPressedThisFrame) SetPreset("Ordinary");
+            if (keyboard[Key.W].wasPressedThisFrame) SetPreset("Artist");
+            if (keyboard[Key.E].wasPressedThisFrame) SetPreset("Rebel");
+            if (keyboard[Key.R].wasPressedThisFrame) SetPreset("Random");
         }
 
         /// <summary>
@@ -121,7 +141,7 @@ namespace NeuralWaveBureau.AI
 
             float y = Screen.height - 120;
             GUI.Label(new Rect(10, y, 300, 20), "Wave Input Simulator", style);
-            GUI.Label(new Rect(10, y + 20, 300, 20), $"Selected Band: {_selectedBand} ({NeuralProfile.BandNames[_selectedBand]})", style);
+            //GUI.Label(new Rect(10, y + 20, 300, 20), $"Selected Band: {_selectedBand} ({NeuralProfile.BandNames[_selectedBand]})", style);
             GUI.Label(new Rect(10, y + 40, 300, 20), "1-5: Select Band | ↑↓: Adjust", style);
             GUI.Label(new Rect(10, y + 60, 400, 20), "Q: Ordinary | W: Artist | E: Rebel | R: Random", style);
         }
