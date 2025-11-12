@@ -19,11 +19,9 @@ namespace NeuralWaveBureau.AI
         private float _noiseLevel = 0.1f;
 
         [Header("Keyboard Control")]
-        [SerializeField]
-        private Key _increaseKey = Key.UpArrow;
+        private Key _increaseKey = Key.W;
 
-        [SerializeField]
-        private Key _decreaseKey = Key.DownArrow;
+        private Key _decreaseKey = Key.S;
 
         [SerializeField]
         private int _selectedBand = 0;
