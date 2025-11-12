@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"Assets\\Scripts\" /B /A:D)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

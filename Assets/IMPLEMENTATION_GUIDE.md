@@ -256,6 +256,379 @@ Set `enableVerboseLogging = true` in AISettings to see detailed logs.
 - Increase overloadThreshold in AISettings
 - Increase bandTolerance in NeuralProfile
 
+## Brain Activity Monitor UI
+
+The Brain Activity Monitor is a retro CRT-style computer interface that displays real-time brain wave activity and allows control over citizen obedience parameters.
+
+### Features
+
+- **Real-time Waveform Display**: 5 animated line graphs showing Delta, Theta, Alpha, Beta, and Gamma brain waves
+- **Obedience Slider**: Single control that adjusts multiple parameters to make citizens more compliant
+- **Advanced Parameter Panel**: Fine-tune individual settings with real-time preview
+- **CRT Effects**: Authentic retro monitor with scanlines, screen curvature, chromatic aberration, and flicker
+- **DOTween Animations**: Smooth transitions, button feedback, alerts, and power on/off sequences
+- **World Space Canvas**: Place the monitor on 3D objects in your scene
+
+### Setup Instructions
+
+#### 1. Create the Monitor UI Hierarchy
+
+```
+BrainMonitorComputer (Empty GameObject)
+├── Canvas (Canvas - World Space)
+│   ├── CRTScreen (RawImage with CRTScreenEffect)
+│   │   ├── MainPanel (Panel)
+│   │   │   ├── HeaderPanel
+│   │   │   │   ├── CitizenNameText (TextMeshProUGUI)
+│   │   │   │   └── StatusIndicator (Image)
+│   │   │   ├── WaveformPanel
+│   │   │   │   ├── DeltaWaveform (WaveformDisplay)
+│   │   │   │   ├── ThetaWaveform (WaveformDisplay)
+│   │   │   │   ├── AlphaWaveform (WaveformDisplay)
+│   │   │   │   ├── BetaWaveform (WaveformDisplay)
+│   │   │   │   └── GammaWaveform (WaveformDisplay)
+│   │   │   ├── StatusPanel
+│   │   │   │   ├── StateText (TextMeshProUGUI)
+│   │   │   │   ├── EvaluationScoreText (TextMeshProUGUI)
+│   │   │   │   ├── InstabilityText (TextMeshProUGUI)
+│   │   │   │   └── InstabilityBar (Slider)
+│   │   │   ├── ObediencePanel (ObedienceController)
+│   │   │   │   ├── ObedienceLabel (TextMeshProUGUI)
+│   │   │   │   ├── ObedienceSlider (Slider)
+│   │   │   │   └── PercentageText (TextMeshProUGUI)
+│   │   │   ├── ParameterPanel (ParameterPanel)
+│   │   │   │   ├── ToggleButton (Button)
+│   │   │   │   ├── PanelContainer
+│   │   │   │   │   ├── SliderContainer (Vertical Layout Group)
+│   │   │   │   │   ├── SaveButton (Button)
+│   │   │   │   │   ├── LoadButton (Button)
+│   │   │   │   │   └── ResetButton (Button)
+│   │   │   └── ControlPanel
+│   │   │       ├── PowerButton (Button)
+│   │   │       ├── StartButton (Button)
+│   │   │       ├── StopButton (Button)
+│   │   │       └── ResetButton (Button)
+└── BrainActivityMonitor (Script)
+```
+
+#### 2. Configure Canvas
+
+1. Set **Render Mode** to "World Space"
+2. Set **Canvas Scaler** to "Scale With Screen Size" or fixed pixel size (e.g., 1024x768)
+3. Position canvas on 3D computer screen model
+4. Adjust **Scale** to fit screen (e.g., 0.001 for realistic size)
+
+#### 3. Setup CRT Effect
+
+1. Create a **RawImage** that covers the entire canvas
+2. Add **CRTScreenEffect** component
+3. Create a material using the **UI/CRTMonitor** shader:
+   - Assets → Create → Material
+   - Name it "CRTScreen"
+   - Set shader to "UI/CRTMonitor"
+4. Assign material to RawImage
+5. Configure effect parameters:
+   - Scanline Intensity: 0.3
+   - Chromatic Aberration: 0.01
+   - Vignette: 0.3
+   - Screen Curvature: 0.02
+
+#### 4. Setup Waveform Displays
+
+For each brain wave band (Delta, Theta, Alpha, Beta, Gamma):
+
+1. Create a **GameObject** with **RawImage** component
+2. Add **WaveformDisplay** script
+3. Set **Band Index** (0=Delta, 1=Theta, 2=Alpha, 3=Beta, 4=Gamma)
+4. Set **Wave Color**:
+   - Delta: Red (1, 0.2, 0.2)
+   - Theta: Orange (1, 0.6, 0.2)
+   - Alpha: Green (0.2, 1, 0.2)
+   - Beta: Blue (0.2, 0.6, 1)
+   - Gamma: Purple (0.8, 0.2, 1)
+5. Enable **Show Target Line** and **Show Tolerance Zone**
+
+#### 5. Setup Obedience Controller
+
+1. Create a panel with:
+   - **Slider** (Obedience slider)
+   - **TextMeshProUGUI** labels
+   - **Image** for slider fill
+2. Add **ObedienceController** script
+3. Assign UI references
+4. Configure parameter ranges:
+   - Tolerance Multiplier: 0.5 to 2.5
+   - Instability Rate Multiplier: 2.0 to 0.3
+   - Success Threshold Adjust: 0.1 to -0.2
+
+#### 6. Setup Parameter Panel
+
+1. Create collapsible panel structure
+2. Create a **Slider Prefab** with:
+   - Slider component
+   - TextMeshProUGUI label
+3. Add **ParameterPanel** script
+4. Assign references:
+   - Panel Container
+   - Toggle/Save/Load/Reset buttons
+   - Slider Container (Vertical Layout Group)
+   - Slider Prefab
+
+#### 7. Setup Brain Activity Monitor
+
+1. Add **BrainActivityMonitor** script to root GameObject
+2. Assign all component references:
+   - CRT Effect
+   - Obedience Controller
+   - Parameter Panel
+   - All 5 Waveform Displays
+   - Status text fields
+   - Control buttons
+3. Configure settings:
+   - History Buffer Size: 120 (2 seconds at 60 FPS)
+   - Update Rate: 30 Hz
+   - Enable Auto Start: true
+
+### Usage
+
+#### Connecting to a Citizen
+
+```csharp
+// Get the monitor
+BrainActivityMonitor monitor = FindObjectOfType<BrainActivityMonitor>();
+
+// Get a citizen
+CitizenController citizen = AIManager.Instance.GetCitizen("citizen_01");
+
+// Connect monitor to citizen
+monitor.SetActiveCitizen(citizen);
+```
+
+#### Power Control
+
+```csharp
+// Power on the monitor
+monitor.PowerOn();
+
+// Power off
+monitor.PowerOff();
+
+// Toggle
+monitor.TogglePower();
+```
+
+#### Monitoring Control
+
+```csharp
+// Start monitoring (begins stimulation)
+monitor.StartMonitoring();
+
+// Stop monitoring
+monitor.StopMonitoring();
+
+// Reset (clears data, resets citizen)
+monitor.ResetMonitor();
+```
+
+#### Obedience Control
+
+```csharp
+// Set obedience level (0-100%)
+obedienceController.SetObedience(75f, animate: true);
+
+// Get current obedience
+float obedience = obedienceController.CurrentObedience;
+
+// Reset to default (50%)
+obedienceController.ResetToDefault();
+
+// Restore original parameters
+obedienceController.RestoreOriginalParameters();
+```
+
+#### Parameter Tweaking
+
+```csharp
+// Set active profile for tweaking
+parameterPanel.SetActiveProfile(neuralProfile);
+
+// Expand/collapse panel
+parameterPanel.TogglePanel();
+parameterPanel.ExpandPanel();
+parameterPanel.CollapsePanel();
+```
+
+### Obedience System
+
+The obedience slider affects three key parameters simultaneously:
+
+#### At 0% Obedience (Rebellious)
+- Band Tolerance: ×0.5 (50% of base)
+- Instability Rate: ×2.0 (builds twice as fast)
+- Success Threshold: +0.1 (harder to succeed)
+
+#### At 50% Obedience (Neutral)
+- Band Tolerance: ×1.25 (125% of base)
+- Instability Rate: ×1.15 (slightly faster)
+- Success Threshold: -0.05 (slightly easier)
+
+#### At 100% Obedience (Compliant)
+- Band Tolerance: ×2.5 (250% of base, very forgiving)
+- Instability Rate: ×0.3 (30% of base, very slow buildup)
+- Success Threshold: -0.2 (much easier to succeed)
+
+**Obedience Labels:**
+- 90-100%: COMPLIANT
+- 75-89%: COOPERATIVE
+- 60-74%: STABLE
+- 40-59%: NEUTRAL
+- 25-39%: RESISTANT
+- 10-24%: DEFIANT
+- 0-9%: REBELLIOUS
+
+### DOTween Animations
+
+The UI uses DOTween for smooth animations:
+
+#### Panel Animations
+```csharp
+// Slide in from direction
+UITweenAnimations.SlideIn(rectTransform, SlideDirection.Left, duration: 0.5f);
+
+// Slide out
+UITweenAnimations.SlideOut(rectTransform, SlideDirection.Right);
+
+// Fade in/out
+UITweenAnimations.FadeIn(canvasGroup);
+UITweenAnimations.FadeOut(canvasGroup);
+```
+
+#### Button Feedback
+```csharp
+// Button press
+UITweenAnimations.ButtonPress(button.transform);
+
+// Pulse effect
+UITweenAnimations.Pulse(transform, strength: 0.1f);
+
+// Shake for errors
+UITweenAnimations.Shake(transform, strength: 20f);
+```
+
+#### CRT Effects
+```csharp
+// Power on sequence
+crtEffect.PowerOn(duration: 1.5f);
+
+// Power off
+crtEffect.PowerOff(duration: 0.8f);
+
+// Glitch effect
+crtEffect.TriggerGlitch(duration: 0.1f, intensity: 1f);
+
+// Static (for errors)
+crtEffect.ShowStatic(duration: 0.5f, intensity: 1f);
+```
+
+### Customization
+
+#### Waveform Colors
+Edit the `BandColors` array in BrainActivityMonitor.cs:
+```csharp
+private static readonly Color[] BandColors = new Color[]
+{
+    new Color(1f, 0.2f, 0.2f),  // Delta - Red
+    new Color(1f, 0.6f, 0.2f),  // Theta - Orange
+    new Color(0.2f, 1f, 0.2f),  // Alpha - Green
+    new Color(0.2f, 0.6f, 1f),  // Beta - Blue
+    new Color(0.8f, 0.2f, 1f)   // Gamma - Purple
+};
+```
+
+#### CRT Shader Parameters
+Adjust in Material Inspector or at runtime:
+```csharp
+crtEffect.SetScanlineIntensity(0.5f, animate: true);
+crtEffect.SetFlickerIntensity(0.1f, animate: true);
+```
+
+#### Buffer Size
+Change history window size:
+```csharp
+// In BrainActivityMonitor Inspector
+History Buffer Size: 120  // 2 seconds at 60 FPS
+                    : 240  // 4 seconds at 60 FPS
+                    : 60   // 1 second at 60 FPS
+```
+
+### Troubleshooting
+
+**Problem**: Waveforms not displaying
+- Check DataBufferManager is receiving data
+- Verify WaveformDisplay components are initialized
+- Ensure textures are being created (check for errors in console)
+
+**Problem**: CRT effects not working
+- Verify CRTMonitor shader is compiled without errors
+- Check material is using the correct shader
+- Ensure RawImage has the material assigned
+
+**Problem**: Obedience slider not affecting parameters
+- Verify active profile is set: `obedienceController.SetActiveProfile(profile)`
+- Check AISettings reference is not null
+- Ensure original values are stored before modification
+
+**Problem**: DOTween animations not playing
+- Verify DOTween is imported and initialized
+- Check for animation conflicts (multiple tweens on same property)
+- Ensure gameObject is active when starting animations
+
+**Problem**: UI not visible in world space
+- Check Canvas Render Mode is "World Space"
+- Verify Canvas scale (should be very small, e.g., 0.001)
+- Check camera culling layers
+- Ensure Event Camera is assigned if using UI interactions
+
+### Performance Tips
+
+1. **Update Rate**: Lower the update rate (20-30 Hz) for better performance
+2. **Buffer Size**: Smaller buffers use less memory and are faster to render
+3. **Texture Size**: Reduce waveform texture size if needed (default: 512x256)
+4. **CRT Effects**: Disable effects on low-end hardware
+5. **Object Pooling**: Pool parameter slider instances for large parameter sets
+
+### Integration Example
+
+Complete setup from scratch:
+
+```csharp
+using NeuralWaveBureau.UI;
+using NeuralWaveBureau.AI;
+
+public class MonitorSetup : MonoBehaviour
+{
+    void Start()
+    {
+        // Get components
+        var monitor = GetComponent<BrainActivityMonitor>();
+        var citizen = AIManager.Instance.GetCitizen("citizen_01");
+
+        // Setup monitor
+        monitor.SetActiveCitizen(citizen);
+        monitor.PowerOn();
+
+        // Wait a moment, then start monitoring
+        StartCoroutine(DelayedStart(monitor));
+    }
+
+    IEnumerator DelayedStart(BrainActivityMonitor monitor)
+    {
+        yield return new WaitForSeconds(2f);
+        monitor.StartMonitoring();
+    }
+}
+```
+
 ## Next Steps
 
 1. Create actual wave input system (replace WaveInputSimulator)
@@ -283,9 +656,25 @@ Assets/
       NeuralProfile.cs      - Citizen profile data
       AISettings.cs         - Global settings
       CreateSampleProfiles.cs - Profile generator
+    UI/
+      BrainActivityMonitor.cs - Main UI controller
+      WaveformDisplay.cs     - Animated waveform renderer
+      ObedienceController.cs - Obedience slider logic
+      ParameterPanel.cs      - Advanced parameter tweaking
+      CRTScreenEffect.cs     - CRT visual effects
+      UITweenAnimations.cs   - DOTween animation utilities
+      DataBufferManager.cs   - Wave history buffer
+  Shaders/
+    CRTMonitor.shader       - Retro CRT screen shader
+  Materials/
+    CRTScreen.mat           - Material for CRT effect
   Data/
     Profiles/              - Neural profile assets
     DefaultAISettings.asset - Global settings
+  Prefabs/
+    UI/
+      BrainMonitorComputer.prefab - Complete monitor UI
+      ParameterSlider.prefab      - Parameter slider template
 ```
 
 ## Credits
