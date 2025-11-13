@@ -2437,7 +2437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bdfccc249ea8d049b1a4c0cb4d620cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.UI.WaveformDisplay
-  _bandIndex: 0
+  _bandIndex: 3
   _waveColor: {r: 0, g: 0.18676782, b: 1, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _lineThickness: 2
@@ -5813,7 +5813,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 928593222}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.049999967}
+  m_LocalPosition: {x: 0, y: 0, z: -0.05}
   m_LocalScale: {x: 0.9708737, y: 0.9708737, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5821,7 +5821,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 53.16316, y: -50.4153}
+  m_AnchoredPosition: {x: 51.92, y: -50.4153}
   m_SizeDelta: {x: 2.01, y: 0.93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &928593224
@@ -5871,8 +5871,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.46
-  m_fontSizeBase: 0.46
+  m_fontSize: 0.3
+  m_fontSizeBase: 0.3
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6481,7 +6481,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bdfccc249ea8d049b1a4c0cb4d620cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.UI.WaveformDisplay
-  _bandIndex: 0
+  _bandIndex: 2
   _waveColor: {r: 0, g: 1, b: 0, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _lineThickness: 2
@@ -6847,7 +6847,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bdfccc249ea8d049b1a4c0cb4d620cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.UI.WaveformDisplay
-  _bandIndex: 0
+  _bandIndex: 1
   _waveColor: {r: 1, g: 0.40969288, b: 0, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _lineThickness: 2
@@ -8825,7 +8825,7 @@ GameObject:
   - component: {fileID: 1601202158}
   - component: {fileID: 1601202157}
   m_Layer: 0
-  m_Name: MainComputerBG (5)
+  m_Name: Gamma
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8862,7 +8862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bdfccc249ea8d049b1a4c0cb4d620cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.UI.WaveformDisplay
-  _bandIndex: 0
+  _bandIndex: 4
   _waveColor: {r: 1, g: 0, b: 0.9477787, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _lineThickness: 2
@@ -11192,7 +11192,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1992336143}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.05}
+  m_LocalPosition: {x: 0, y: 0, z: -0.04999997}
   m_LocalScale: {x: 0.9708737, y: 0.9708737, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11200,7 +11200,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 55.22, y: -50.4153}
+  m_AnchoredPosition: {x: 53.97684, y: -50.4153}
   m_SizeDelta: {x: 2.01, y: 0.93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1992336145
@@ -11250,8 +11250,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.46
-  m_fontSizeBase: 0.46
+  m_fontSize: 0.3
+  m_fontSizeBase: 0.3
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
