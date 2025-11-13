@@ -54,21 +54,7 @@ namespace NeuralWaveBureau.AI
         public event CitizenEventDelegate OnCriticalFailure;
         public event CitizenEventDelegate OnRecovered;
 
-        private void Awake()
-        {
-            // Get or add components
-            if (_animator == null)
-            {
-                _animator = GetComponent<Animator>();
-            }
-
-            if (_audioSource == null)
-            {
-                _audioSource = GetComponent<AudioSource>();
-            }
-        }
-
-        /// <summary>
+                /// <summary>
         /// Initializes the citizen with settings and profile
         /// </summary>
         public void Initialize(AISettings settings, NeuralProfile profile = null)
@@ -172,7 +158,7 @@ namespace NeuralWaveBureau.AI
                 _stateMachine.Update(score, sampleInterval);
 
                 // Update animator
-                UpdateAnimator();
+                //UpdateAnimator();
 
                 // Wait for next sample
                 yield return new WaitForSeconds(sampleInterval);

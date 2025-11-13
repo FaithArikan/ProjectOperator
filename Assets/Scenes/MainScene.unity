@@ -2414,16 +2414,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 409355389}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.01}
-  m_LocalScale: {x: 0.39805827, y: 0.39805824, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.009999963}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 653190198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.59, y: 1.47}
-  m_SizeDelta: {x: -6.1256, y: -1.5037}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -2.6, y: 0.522}
+  m_SizeDelta: {x: 4, y: 0.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &409355391
 MonoBehaviour:
@@ -2440,7 +2440,7 @@ MonoBehaviour:
   _bandIndex: 3
   _waveColor: {r: 0, g: 0.18676782, b: 1, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 2
+  _lineThickness: 1
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -2789,7 +2789,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 421639287}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.05}
+  m_LocalPosition: {x: 0, y: 0, z: -0.04999998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2798,8 +2798,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.46, y: 0.62}
-  m_SizeDelta: {x: 2.03, y: 0.4623}
+  m_AnchoredPosition: {x: 1.9155002, y: 1.0639501}
+  m_SizeDelta: {x: 1.1796, y: 0.4623}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &421639289
 MonoBehaviour:
@@ -4087,7 +4087,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 627410045}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.05}
+  m_LocalPosition: {x: 0, y: 0, z: -0.04999998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4096,8 +4096,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.46, y: -0.04155}
-  m_SizeDelta: {x: 2.03, y: 0.4623}
+  m_AnchoredPosition: {x: 1.9155002, y: 0.4024002}
+  m_SizeDelta: {x: 1.1796, y: 0.4623}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &627410047
 MonoBehaviour:
@@ -4686,16 +4686,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 747905223}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.010000113}
-  m_LocalScale: {x: 0.39805827, y: 0.39805824, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.01}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 653190198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3.922329, y: 1.47}
-  m_SizeDelta: {x: -6.1256, y: -1.5037}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -2.6, y: 1.923}
+  m_SizeDelta: {x: 4, y: 0.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &747905226
 CanvasRenderer:
@@ -4720,7 +4720,7 @@ MonoBehaviour:
   _bandIndex: 0
   _waveColor: {r: 1, g: 0.05405381, b: 0, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 2
+  _lineThickness: 1
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -4976,6 +4976,7 @@ MonoBehaviour:
   _increaseKey: 63
   _decreaseKey: 64
   _selectedBand: 0
+  _adjustmentSpeed: 1
 --- !u!114 &782642111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5708,7 +5709,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 927080037}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.05}
+  m_LocalPosition: {x: 0, y: 0, z: -0.04999998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5717,8 +5718,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3.64, y: -0.02}
-  m_SizeDelta: {x: 2.03, y: 0.4623}
+  m_AnchoredPosition: {x: 0.64870024, y: 0.42395025}
+  m_SizeDelta: {x: 1.1796, y: 0.4623}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &927080039
 MonoBehaviour:
@@ -6473,16 +6474,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 989712441}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.01}
-  m_LocalScale: {x: 0.39805827, y: 0.39805824, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.009999963}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 653190198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.19, y: 1.47}
-  m_SizeDelta: {x: -6.1256, y: -1.5037}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -2.6, y: 0.98}
+  m_SizeDelta: {x: 4, y: 0.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &989712443
 MonoBehaviour:
@@ -6499,7 +6500,7 @@ MonoBehaviour:
   _bandIndex: 2
   _waveColor: {r: 0, g: 1, b: 0, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 2
+  _lineThickness: 1
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -6839,16 +6840,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1089099317}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.01}
-  m_LocalScale: {x: 0.39805827, y: 0.39805824, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.009999963}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 653190198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.1, y: 1.47}
-  m_SizeDelta: {x: -6.1256, y: -1.5037}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -2.6, y: 1.468}
+  m_SizeDelta: {x: 4, y: 0.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1089099319
 MonoBehaviour:
@@ -6865,7 +6866,7 @@ MonoBehaviour:
   _bandIndex: 1
   _waveColor: {r: 1, g: 0.40969288, b: 0, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 2
+  _lineThickness: 1
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -8854,16 +8855,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601202155}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.01}
-  m_LocalScale: {x: 0.39805827, y: 0.39805824, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.009999963}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 653190198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.6, y: 1.47}
-  m_SizeDelta: {x: -6.1256, y: -1.5037}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -2.6, y: 0.010999978}
+  m_SizeDelta: {x: 4, y: 0.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1601202157
 MonoBehaviour:
@@ -8880,7 +8881,7 @@ MonoBehaviour:
   _bandIndex: 4
   _waveColor: {r: 1, g: 0, b: 0.9477787, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 2
+  _lineThickness: 1
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -11353,8 +11354,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3.6378002, y: 0.61605006}
-  m_SizeDelta: {x: 2.03, y: 0.4623}
+  m_AnchoredPosition: {x: 0.65, y: 1.06}
+  m_SizeDelta: {x: 1.1796, y: 0.4623}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2025304881
 MonoBehaviour:
