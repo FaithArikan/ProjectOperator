@@ -25,6 +25,9 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         private ParameterPanel _parameterPanel;
 
+        [SerializeField]
+        private CameraManager _cameraManager;
+
         [Header("Waveform Displays")]
         [SerializeField]
         private List<WaveformDisplay> _waveformDisplays = new List<WaveformDisplay>();
@@ -144,6 +147,12 @@ namespace NeuralWaveBureau.UI
         private void Start()
         {
             _aiManager = AIManager.Instance;
+
+            // Auto-find camera manager if not assigned
+            if (_cameraManager == null)
+            {
+                _cameraManager = CameraManager.Instance;
+            }
 
             // Start powered off
             if (_crtEffect != null)
@@ -394,6 +403,12 @@ namespace NeuralWaveBureau.UI
 
             _isPoweredOn = true;
 
+            // Move camera to monitor view
+            if (_cameraManager != null)
+            {
+                _cameraManager.MoveToMonitorView();
+            }
+
             // CRT power on effect
             if (_crtEffect != null)
             {
@@ -436,6 +451,12 @@ namespace NeuralWaveBureau.UI
             StopMonitoring();
 
             _isPoweredOn = false;
+
+            // Move camera back to room view
+            if (_cameraManager != null)
+            {
+                _cameraManager.MoveToRoomView();
+            }
 
             // CRT power off effect
             if (_crtEffect != null)
