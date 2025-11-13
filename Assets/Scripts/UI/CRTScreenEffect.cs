@@ -65,28 +65,6 @@ namespace NeuralWaveBureau.UI
         private void Awake()
         {
             _rawImage = GetComponent<RawImage>();
-
-            // Create material instance
-            CreateEffectMaterial();
-        }
-
-        /// <summary>
-        /// Creates the CRT effect material
-        /// </summary>
-        private void CreateEffectMaterial()
-        {
-            // For now, we'll use a simple approach with a custom shader
-            // In production, you'd create a proper shader asset
-            Shader crtShader = Shader.Find("UI/Default");
-
-            if (crtShader == null)
-            {
-                Debug.LogWarning("[CRTScreenEffect] CRT shader not found. Using default UI shader.");
-                crtShader = Shader.Find("UI/Default");
-            }
-
-            _effectMaterial = new Material(crtShader);
-            _rawImage.material = _effectMaterial;
         }
 
         private void Update()
