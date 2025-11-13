@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir \"Assets\\Scripts\" /B /A:D)"
+      "Bash(dir \"Assets\\Scripts\" /B /A:D)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

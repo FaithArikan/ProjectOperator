@@ -83,6 +83,7 @@ namespace NeuralWaveBureau.UI
             _bufferManager = bufferManager;
             _bandIndex = bandIndex;
             _isDirty = true;
+            Debug.Log($"[WaveformDisplay] Initialized - Band {_bandIndex}, Color: {_waveColor}");
         }
 
         /// <summary>
@@ -131,7 +132,14 @@ namespace NeuralWaveBureau.UI
         private void Update()
         {
             if (_bufferManager == null)
+            {
+                // Log once per second that buffer is missing
+                if (Time.frameCount % 60 == 0)
+                {
+                    Debug.LogWarning($"[WaveformDisplay] Band {_bandIndex}: No buffer manager assigned! Call Initialize() first.");
+                }
                 return;
+            }
 
             // Redraw waveform
             DrawWaveform();
@@ -209,7 +217,17 @@ namespace NeuralWaveBureau.UI
         {
             float[] data = _bufferManager.GetBandData(_bandIndex);
             if (data.Length < 2)
+            {
+                Debug.LogWarning($"[WaveformDisplay] Band {_bandIndex}: Buffer has insufficient data (length: {data.Length})");
                 return;
+            }
+
+            // Debug: Log first few values occasionally
+            if (Time.frameCount % 120 == 0) // Every 2 seconds at 60fps
+            {
+                string preview = $"[WaveformDisplay] Band {_bandIndex} data: [{data[0]:F2}, {data[1]:F2}, {data[2]:F2}...{data[data.Length - 1]:F2}] (length: {data.Length})";
+                Debug.Log(preview);
+            }
 
             // Calculate x step
             float xStep = (float)_textureWidth / data.Length;

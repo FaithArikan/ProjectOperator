@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
+using NeuralWaveBureau.UI;
 
 namespace NeuralWaveBureau.AI
 {
@@ -19,9 +19,13 @@ namespace NeuralWaveBureau.AI
         private float _noiseLevel = 0.1f;
 
         [Header("Keyboard Control")]
-        private Key _increaseKey = Key.W;
+        [Tooltip("Key to increase selected band value")]
+        [SerializeField]
+        private Key _increaseKey = Key.UpArrow;
 
-        private Key _decreaseKey = Key.S;
+        [Tooltip("Key to decrease selected band value")]
+        [SerializeField]
+        private Key _decreaseKey = Key.DownArrow;
 
         [SerializeField]
         private int _selectedBand = 0;
@@ -127,7 +131,8 @@ namespace NeuralWaveBureau.AI
                     break;
             }
 
-            Debug.Log($"[WaveInputSimulator] Preset loaded: {presetName}");
+            string bandsStr = $"[{_currentBands[0]:F2}, {_currentBands[1]:F2}, {_currentBands[2]:F2}, {_currentBands[3]:F2}, {_currentBands[4]:F2}]";
+            Debug.Log($"[WaveInputSimulator] Preset loaded: {presetName} - Bands: {bandsStr}");
         }
 
         private void OnGUI()
@@ -137,11 +142,39 @@ namespace NeuralWaveBureau.AI
             style.normal.textColor = Color.white;
             style.fontSize = 14;
 
-            float y = Screen.height - 120;
-            GUI.Label(new Rect(10, y, 300, 20), "Wave Input Simulator", style);
-            //GUI.Label(new Rect(10, y + 20, 300, 20), $"Selected Band: {_selectedBand} ({NeuralProfile.BandNames[_selectedBand]})", style);
-            GUI.Label(new Rect(10, y + 40, 300, 20), "1-5: Select Band | ↑↓: Adjust", style);
-            GUI.Label(new Rect(10, y + 60, 400, 20), "Q: Ordinary | W: Artist | E: Rebel | R: Random", style);
+            GUIStyle headerStyle = new GUIStyle(style);
+            headerStyle.fontSize = 16;
+            headerStyle.fontStyle = FontStyle.Bold;
+
+            float y = Screen.height - 160;
+
+            // Header
+            GUI.Label(new Rect(10, y, 400, 20), "=== Wave Input Simulator ===", headerStyle);
+            y += 25;
+
+            // Monitor status
+            var monitor = FindFirstObjectByType<BrainActivityMonitor>();
+            if (monitor != null)
+            {
+                GUIStyle statusStyle = new GUIStyle(style);
+                statusStyle.normal.textColor = Color.yellow;
+                statusStyle.fontSize = 12;
+                // Note: We can't access private fields, but we can guide the user
+                GUI.Label(new Rect(10, y, 500, 20), "Monitor found! Press F1 on BrainMonitorTestSetup to activate", statusStyle);
+                y += 20;
+            }
+
+            // Controls
+            GUI.Label(new Rect(10, y, 400, 20), $"Selected Band: {_selectedBand} (1-5: Select | ↑↓: Adjust)", style);
+            y += 20;
+            GUI.Label(new Rect(10, y, 500, 20), "Presets: Q=Ordinary | W=Artist | E=Rebel | R=Random", style);
+            y += 20;
+
+            // Current values
+            string currentValues = $"Values: [{_currentBands[0]:F2}, {_currentBands[1]:F2}, {_currentBands[2]:F2}, {_currentBands[3]:F2}, {_currentBands[4]:F2}]";
+            GUIStyle valueStyle = new GUIStyle(style);
+            valueStyle.normal.textColor = Color.cyan;
+            GUI.Label(new Rect(10, y, 600, 20), currentValues, valueStyle);
         }
     }
 }
