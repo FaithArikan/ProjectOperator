@@ -2440,7 +2440,7 @@ MonoBehaviour:
   _bandIndex: 3
   _waveColor: {r: 0, g: 0.18676782, b: 1, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 1
+  _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -4720,7 +4720,7 @@ MonoBehaviour:
   _bandIndex: 0
   _waveColor: {r: 1, g: 0.05405381, b: 0, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 1
+  _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -5065,7 +5065,7 @@ MonoBehaviour:
   _crtEffect: {fileID: 2060113242}
   _obedienceController: {fileID: 782642111}
   _parameterPanel: {fileID: 782642112}
-  _cameraManager: {fileID: 0}
+  _cameraManager: {fileID: 782642115}
   _waveformDisplays:
   - {fileID: 747905227}
   - {fileID: 1089099319}
@@ -6518,7 +6518,7 @@ MonoBehaviour:
   _bandIndex: 2
   _waveColor: {r: 0, g: 1, b: 0, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 1
+  _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -6884,7 +6884,7 @@ MonoBehaviour:
   _bandIndex: 1
   _waveColor: {r: 1, g: 0.40969288, b: 0, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 1
+  _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
@@ -8899,7 +8899,7 @@ MonoBehaviour:
   _bandIndex: 4
   _waveColor: {r: 1, g: 0, b: 0.9477787, a: 1}
   _targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _lineThickness: 1
+  _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}

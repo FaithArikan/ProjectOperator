@@ -13,6 +13,7 @@ namespace NeuralWaveBureau.UI
     /// </summary>
     public class ObedienceController : MonoBehaviour
     {
+        public static ObedienceController Instance;
         [Header("UI Components")]
         [SerializeField]
         private Slider _obedienceSlider;
@@ -68,6 +69,8 @@ namespace NeuralWaveBureau.UI
 
         private void Awake()
         {
+            Instance = this;
+
             // Setup slider
             if (_obedienceSlider != null)
             {

@@ -56,7 +56,6 @@ namespace NeuralWaveBureau.UI
         private int _textureWidth = 512;
         private int _textureHeight = 256;
         private bool _isDirty = true;
-        private bool _textureInitialized = false;
 
         public int BandIndex { get => _bandIndex; set => _bandIndex = value; }
         public Color WaveColor { get => _waveColor; set => _waveColor = value; }
@@ -142,39 +141,8 @@ namespace NeuralWaveBureau.UI
                 return;
             }
 
-            // Check if texture needs to be resized to match RectTransform
-            UpdateTextureSize();
-
             // Redraw waveform
             DrawWaveform();
-        }
-
-        /// <summary>
-        /// Updates texture size to match RectTransform dimensions
-        /// </summary>
-        private void UpdateTextureSize()
-        {
-            int newWidth = Mathf.Max(64, (int)_rectTransform.rect.width);
-            int newHeight = Mathf.Max(64, (int)_rectTransform.rect.height);
-
-            // Only recreate texture if size changed significantly
-            if (!_textureInitialized ||
-                Mathf.Abs(newWidth - _textureWidth) > 10 ||
-                Mathf.Abs(newHeight - _textureHeight) > 10)
-            {
-                _textureWidth = newWidth;
-                _textureHeight = newHeight;
-                _textureInitialized = true;
-
-                // Recreate texture with new dimensions
-                if (_waveTexture != null)
-                {
-                    Destroy(_waveTexture);
-                }
-                CreateWaveTexture();
-
-                Debug.Log($"[WaveformDisplay] Band {_bandIndex}: Resized texture to {_textureWidth}x{_textureHeight} to match RectTransform");
-            }
         }
 
         /// <summary>
@@ -209,13 +177,8 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void DrawToleranceZone()
         {
-            // Center the tolerance zone in the middle of the display
-            float centerY = _textureHeight * 0.5f;
-            float targetOffset = (_targetValue - 0.5f) * _textureHeight;
-            float tolerancePixels = _toleranceValue * _textureHeight;
-
-            int minY = Mathf.Clamp((int)(centerY + targetOffset - tolerancePixels), 0, _textureHeight - 1);
-            int maxY = Mathf.Clamp((int)(centerY + targetOffset + tolerancePixels), 0, _textureHeight - 1);
+            int minY = Mathf.Clamp((int)((_targetValue - _toleranceValue) * _textureHeight), 0, _textureHeight - 1);
+            int maxY = Mathf.Clamp((int)((_targetValue + _toleranceValue) * _textureHeight), 0, _textureHeight - 1);
 
             for (int x = 0; x < _textureWidth; x++)
             {
@@ -231,10 +194,7 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void DrawTargetLine()
         {
-            // Center the target line in the middle of the display
-            float centerY = _textureHeight * 0.5f;
-            float targetOffset = (_targetValue - 0.5f) * _textureHeight;
-            int targetY = Mathf.Clamp((int)(centerY + targetOffset), 0, _textureHeight - 1);
+            int targetY = Mathf.Clamp((int)(_targetValue * _textureHeight), 0, _textureHeight - 1);
 
             for (int x = 0; x < _textureWidth; x++)
             {
@@ -271,19 +231,14 @@ namespace NeuralWaveBureau.UI
 
             // Calculate x step
             float xStep = (float)_textureWidth / data.Length;
-            float centerY = _textureHeight * 0.5f;
 
             // Draw lines between points
             for (int i = 0; i < data.Length - 1; i++)
             {
                 int x1 = (int)(i * xStep);
-                // Center the waveform: convert 0-1 range to be centered at 0.5
-                float y1Offset = (data[i] - 0.5f) * _textureHeight;
-                int y1 = Mathf.Clamp((int)(centerY + y1Offset), 0, _textureHeight - 1);
-
+                int y1 = Mathf.Clamp((int)(data[i] * _textureHeight), 0, _textureHeight - 1);
                 int x2 = (int)((i + 1) * xStep);
-                float y2Offset = (data[i + 1] - 0.5f) * _textureHeight;
-                int y2 = Mathf.Clamp((int)(centerY + y2Offset), 0, _textureHeight - 1);
+                int y2 = Mathf.Clamp((int)(data[i + 1] * _textureHeight), 0, _textureHeight - 1);
 
                 DrawLine(x1, y1, x2, y2, _waveColor);
             }

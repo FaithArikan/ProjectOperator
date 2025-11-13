@@ -14,6 +14,7 @@ namespace NeuralWaveBureau.UI
     /// </summary>
     public class ParameterPanel : MonoBehaviour
     {
+        public static ParameterPanel Instance;
         [Header("UI References")]
         [SerializeField]
         private GameObject _panelContainer;
@@ -60,6 +61,8 @@ namespace NeuralWaveBureau.UI
 
         private void Awake()
         {
+            Instance = this;
+
             // Setup buttons
             if (_toggleButton != null)
             {

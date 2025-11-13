@@ -19,15 +19,6 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         private CRTScreenEffect _crtEffect;
 
-        [SerializeField]
-        private ObedienceController _obedienceController;
-
-        [SerializeField]
-        private ParameterPanel _parameterPanel;
-
-        [SerializeField]
-        private CameraManager _cameraManager;
-
         [Header("Waveform Displays")]
         [SerializeField]
         private List<WaveformDisplay> _waveformDisplays = new List<WaveformDisplay>();
@@ -148,12 +139,6 @@ namespace NeuralWaveBureau.UI
         {
             _aiManager = AIManager.Instance;
 
-            // Auto-find camera manager if not assigned
-            if (_cameraManager == null)
-            {
-                _cameraManager = CameraManager.Instance;
-            }
-
             // Start powered off
             if (_crtEffect != null)
             {
@@ -226,15 +211,9 @@ namespace NeuralWaveBureau.UI
                 }
 
                 // Set profile in controllers
-                if (_obedienceController != null)
-                {
-                    _obedienceController.SetActiveProfile(_activeCitizen.Profile);
-                }
+                ObedienceController.Instance.SetActiveProfile(_activeCitizen.Profile);
 
-                if (_parameterPanel != null)
-                {
-                    _parameterPanel.SetActiveProfile(_activeCitizen.Profile);
-                }
+                ParameterPanel.Instance.SetActiveProfile(_activeCitizen.Profile);
 
                 // Update waveform targets
                 UpdateWaveformTargets();
@@ -404,10 +383,7 @@ namespace NeuralWaveBureau.UI
             _isPoweredOn = true;
 
             // Move camera to monitor view
-            if (_cameraManager != null)
-            {
-                _cameraManager.MoveToMonitorView();
-            }
+            CameraManager.Instance.MoveToMonitorView();
 
             // CRT power on effect
             if (_crtEffect != null)
@@ -425,10 +401,7 @@ namespace NeuralWaveBureau.UI
             }
 
             // Animate obedience controller
-            if (_obedienceController != null)
-            {
-                _obedienceController.AnimateIn(1f);
-            }
+            ObedienceController.Instance.AnimateIn(1f);
 
             UpdateButtonStates();
 
@@ -453,10 +426,7 @@ namespace NeuralWaveBureau.UI
             _isPoweredOn = false;
 
             // Move camera back to room view
-            if (_cameraManager != null)
-            {
-                _cameraManager.MoveToRoomView();
-            }
+            CameraManager.Instance.MoveToRoomView();
 
             // CRT power off effect
             if (_crtEffect != null)
@@ -549,10 +519,7 @@ namespace NeuralWaveBureau.UI
             }
 
             // Reset obedience
-            if (_obedienceController != null)
-            {
-                _obedienceController.ResetToDefault();
-            }
+            ObedienceController.Instance.ResetToDefault();
 
             // Button feedback
             if (_resetButton != null)
