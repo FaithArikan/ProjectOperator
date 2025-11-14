@@ -20,6 +20,11 @@ namespace NeuralWaveBureau.UI
         private float[] _maxValues;
         private float[] _avgValues;
 
+        // Cached arrays to avoid per-frame allocations
+        private float[][] _cachedBandData;
+        private float[] _lastValues;
+        private bool[] _dataDirty;
+
         public int BufferSize => _bufferSize;
         public int BandCount => _bandBuffers.Length;
 
@@ -31,10 +36,18 @@ namespace NeuralWaveBureau.UI
             _maxValues = new float[bandCount];
             _avgValues = new float[bandCount];
 
+            // Initialize cached arrays
+            _cachedBandData = new float[bandCount][];
+            _lastValues = new float[bandCount];
+            _dataDirty = new bool[bandCount];
+
             // Initialize buffers
             for (int i = 0; i < bandCount; i++)
             {
                 _bandBuffers[i] = new Queue<float>(_bufferSize);
+                _cachedBandData[i] = new float[_bufferSize];
+                _lastValues[i] = 0f;
+                _dataDirty[i] = true;
                 _minValues[i] = 0f;
                 _maxValues[i] = 1f;
                 _avgValues[i] = 0.5f;
@@ -54,11 +67,17 @@ namespace NeuralWaveBureau.UI
                 // Add to buffer
                 _bandBuffers[i].Enqueue(bandValues[i]);
 
+                // Update last value cache
+                _lastValues[i] = bandValues[i];
+
                 // Remove oldest if buffer is full
                 if (_bandBuffers[i].Count > _bufferSize)
                 {
                     _bandBuffers[i].Dequeue();
                 }
+
+                // Mark data as dirty so it will be refreshed on next access
+                _dataDirty[i] = true;
 
                 // Update statistics
                 UpdateStatistics(i);
@@ -71,9 +90,32 @@ namespace NeuralWaveBureau.UI
         public float[] GetBandData(int bandIndex)
         {
             if (bandIndex < 0 || bandIndex >= _bandBuffers.Length)
-                return new float[0];
+                return System.Array.Empty<float>(); // Use cached empty array instead of new allocation
 
-            return _bandBuffers[bandIndex].ToArray();
+            // Only refresh cached data if it's dirty (data has changed)
+            if (_dataDirty[bandIndex])
+            {
+                // Copy Queue data to cached array - this still allocates via ToArray()
+                // but we can optimize further by manually copying
+                int count = _bandBuffers[bandIndex].Count;
+
+                // Manually copy to avoid ToArray allocation
+                int index = 0;
+                foreach (float value in _bandBuffers[bandIndex])
+                {
+                    _cachedBandData[bandIndex][index++] = value;
+                }
+
+                // If buffer isn't full, pad with zeros
+                for (int i = count; i < _bufferSize; i++)
+                {
+                    _cachedBandData[bandIndex][i] = 0f;
+                }
+
+                _dataDirty[bandIndex] = false;
+            }
+
+            return _cachedBandData[bandIndex];
         }
 
         /// <summary>
@@ -84,12 +126,8 @@ namespace NeuralWaveBureau.UI
             if (bandIndex < 0 || bandIndex >= _bandBuffers.Length)
                 return 0f;
 
-            if (_bandBuffers[bandIndex].Count == 0)
-                return 0f;
-
-            // Peek at the last value
-            float[] array = _bandBuffers[bandIndex].ToArray();
-            return array[array.Length - 1];
+            // Return cached last value - no allocation needed
+            return _lastValues[bandIndex];
         }
 
         /// <summary>
@@ -148,21 +186,23 @@ namespace NeuralWaveBureau.UI
             if (_bandBuffers[bandIndex].Count == 0)
                 return;
 
-            float[] data = _bandBuffers[bandIndex].ToArray();
+            // Iterate Queue directly instead of converting to array - eliminates allocation
             float min = float.MaxValue;
             float max = float.MinValue;
             float sum = 0f;
+            int count = 0;
 
-            foreach (float value in data)
+            foreach (float value in _bandBuffers[bandIndex])
             {
                 min = Mathf.Min(min, value);
                 max = Mathf.Max(max, value);
                 sum += value;
+                count++;
             }
 
             _minValues[bandIndex] = min;
             _maxValues[bandIndex] = max;
-            _avgValues[bandIndex] = sum / data.Length;
+            _avgValues[bandIndex] = sum / count;
         }
 
         /// <summary>
@@ -173,10 +213,12 @@ namespace NeuralWaveBureau.UI
             _bufferSize = newSize;
             Clear();
 
-            // Recreate buffers
+            // Recreate buffers and cached arrays
             for (int i = 0; i < _bandBuffers.Length; i++)
             {
                 _bandBuffers[i] = new Queue<float>(_bufferSize);
+                _cachedBandData[i] = new float[_bufferSize];
+                _dataDirty[i] = true;
             }
         }
 

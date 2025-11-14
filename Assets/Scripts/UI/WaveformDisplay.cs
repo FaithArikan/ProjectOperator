@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using NeuralWaveBureau.Data;
 
 namespace NeuralWaveBureau.UI
 {
@@ -62,6 +61,10 @@ namespace NeuralWaveBureau.UI
         private int _textureHeight = 256;
         private bool _isDirty = true;
 
+        // Performance optimization - cached arrays to avoid per-frame allocations
+        private Color32[] _clearColorCache;
+        private Color32[] _pixelBuffer;
+
         public int BandIndex { get => _bandIndex; set => _bandIndex = value; }
         public Color WaveColor { get => _waveColor; set => _waveColor = value; }
 
@@ -110,6 +113,18 @@ namespace NeuralWaveBureau.UI
             _waveTexture.filterMode = FilterMode.Bilinear;
             _waveTexture.wrapMode = TextureWrapMode.Clamp;
 
+            // Initialize cached arrays for performance (avoid per-frame allocations)
+            int pixelCount = _textureWidth * _textureHeight;
+            _clearColorCache = new Color32[pixelCount];
+            _pixelBuffer = new Color32[pixelCount];
+
+            // Pre-fill clear cache with transparent black
+            Color32 transparent = new Color32(0, 0, 0, 0);
+            for (int i = 0; i < pixelCount; i++)
+            {
+                _clearColorCache[i] = transparent;
+            }
+
             // Clear texture
             ClearTexture();
 
@@ -122,12 +137,9 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void ClearTexture()
         {
-            Color[] clearColors = new Color[_textureWidth * _textureHeight];
-            for (int i = 0; i < clearColors.Length; i++)
-            {
-                clearColors[i] = new Color(0, 0, 0, 0);
-            }
-            _waveTexture.SetPixels(clearColors);
+            // Use cached clear array instead of allocating new array every frame
+            // This eliminates ~2MB allocation per frame
+            _waveTexture.SetPixels32(_clearColorCache);
             _waveTexture.Apply();
         }
 
@@ -144,8 +156,8 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void DrawWaveform()
         {
-            // Clear texture
-            ClearTexture();
+            // Copy clear cache to pixel buffer (fast array copy)
+            System.Array.Copy(_clearColorCache, _pixelBuffer, _pixelBuffer.Length);
 
             // Draw tolerance zone if enabled
             if (_showToleranceZone)
@@ -162,7 +174,8 @@ namespace NeuralWaveBureau.UI
             // Draw waveform data
             DrawWaveData();
 
-            // Apply changes
+            // Apply all changes at once using batched SetPixels32 (faster than SetPixels)
+            _waveTexture.SetPixels32(_pixelBuffer);
             _waveTexture.Apply();
         }
 
@@ -178,11 +191,14 @@ namespace NeuralWaveBureau.UI
             int maxY = Mathf.Clamp((int)(_textureHeight - 1 - (normalizedTarget - normalizedTolerance) * _textureHeight), 0, _textureHeight - 1);
             int minY = Mathf.Clamp((int)(_textureHeight - 1 - (normalizedTarget + normalizedTolerance) * _textureHeight), 0, _textureHeight - 1);
 
+            Color32 toleranceColor32 = _toleranceColor;
+
             for (int x = 0; x < _textureWidth; x++)
             {
                 for (int y = minY; y <= maxY; y++)
                 {
-                    _waveTexture.SetPixel(x, y, _toleranceColor);
+                    int index = y * _textureWidth + x;
+                    _pixelBuffer[index] = toleranceColor32;
                 }
             }
         }
@@ -196,6 +212,8 @@ namespace NeuralWaveBureau.UI
             float normalizedTarget = _targetValue * _amplitudeMultiplier;
             int targetY = Mathf.Clamp((int)(_textureHeight - 1 - normalizedTarget * _textureHeight), 0, _textureHeight - 1);
 
+            Color32 targetColor32 = _targetColor;
+
             for (int x = 0; x < _textureWidth; x++)
             {
                 // Draw line with thickness
@@ -204,7 +222,8 @@ namespace NeuralWaveBureau.UI
                     int y = targetY + t;
                     if (y >= 0 && y < _textureHeight)
                     {
-                        _waveTexture.SetPixel(x, y, _targetColor);
+                        int index = y * _textureWidth + x;
+                        _pixelBuffer[index] = targetColor32;
                     }
                 }
             }
@@ -221,6 +240,9 @@ namespace NeuralWaveBureau.UI
                 return;
             }
 
+            // Convert to Color32 once instead of implicit conversion each call
+            Color32 waveColor32 = _waveColor;
+
             // Calculate x step
             float xStep = (float)_textureWidth / data.Length;
 
@@ -236,14 +258,14 @@ namespace NeuralWaveBureau.UI
                 float normalizedY2 = data[i + 1] * _amplitudeMultiplier;
                 int y2 = Mathf.Clamp((int)(_textureHeight - 1 - normalizedY2 * _textureHeight), 0, _textureHeight - 1);
 
-                DrawLine(x1, y1, x2, y2, _waveColor);
+                DrawLine(x1, y1, x2, y2, waveColor32);
             }
         }
 
         /// <summary>
         /// Draws a line between two points using Bresenham's algorithm
         /// </summary>
-        private void DrawLine(int x0, int y0, int x1, int y1, Color color)
+        private void DrawLine(int x0, int y0, int x1, int y1, Color32 color)
         {
             int dx = Mathf.Abs(x1 - x0);
             int dy = Mathf.Abs(y1 - y0);
@@ -253,7 +275,7 @@ namespace NeuralWaveBureau.UI
 
             while (true)
             {
-                // Draw pixel with thickness
+                // Draw pixel with thickness using pixel buffer
                 for (int tx = -(int)_lineThickness / 2; tx <= (int)_lineThickness / 2; tx++)
                 {
                     for (int ty = -(int)_lineThickness / 2; ty <= (int)_lineThickness / 2; ty++)
@@ -262,7 +284,8 @@ namespace NeuralWaveBureau.UI
                         int py = y0 + ty;
                         if (px >= 0 && px < _textureWidth && py >= 0 && py < _textureHeight)
                         {
-                            _waveTexture.SetPixel(px, py, color);
+                            int index = py * _textureWidth + px;
+                            _pixelBuffer[index] = color;
                         }
                     }
                 }
