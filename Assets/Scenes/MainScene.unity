@@ -4896,6 +4896,7 @@ GameObject:
   - component: {fileID: 782642112}
   - component: {fileID: 782642114}
   - component: {fileID: 782642115}
+  - component: {fileID: 782642116}
   m_Layer: 0
   m_Name: MANAGERS
   m_TagString: Untagged
@@ -5118,6 +5119,27 @@ MonoBehaviour:
   _monitorViewCamera: {fileID: 1760217674}
   _basePriority: 10
   _blendDuration: 1.5
+--- !u!114 &782642116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782642105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 231c75b96775d2446a9e8e5a068326a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PerformanceMonitor
+  showInBuild: 1
+  showInEditor: 1
+  toggleKey: 105
+  updateInterval: 0.5
+  fontSize: 14
+  goodColor: {r: 0, g: 1, b: 0, a: 1}
+  warningColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  badColor: {r: 1, g: 0, b: 0, a: 1}
+  position: {x: 10, y: 10}
 --- !u!1001 &799900272
 PrefabInstance:
   m_ObjectHideFlags: 0
