@@ -2443,9 +2443,10 @@ MonoBehaviour:
   _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
-  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
+  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
+  _amplitudeMultiplier: 3
 --- !u!114 &409355392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2459,7 +2460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 0.039215688}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4723,9 +4724,10 @@ MonoBehaviour:
   _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
-  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
+  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
+  _amplitudeMultiplier: 3
 --- !u!114 &747905228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4739,7 +4741,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 0.039215688}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5063,9 +5065,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.UI.BrainActivityMonitor
   _crtEffect: {fileID: 2060113242}
-  _obedienceController: {fileID: 782642111}
-  _parameterPanel: {fileID: 782642112}
-  _cameraManager: {fileID: 782642115}
   _waveformDisplays:
   - {fileID: 747905227}
   - {fileID: 1089099319}
@@ -6521,9 +6520,10 @@ MonoBehaviour:
   _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
-  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
+  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
+  _amplitudeMultiplier: 3
 --- !u!114 &989712444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6537,7 +6537,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 0.039215688}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6887,9 +6887,10 @@ MonoBehaviour:
   _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
-  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
+  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
+  _amplitudeMultiplier: 3
 --- !u!114 &1089099320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6903,7 +6904,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 0.039215688}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8902,9 +8903,10 @@ MonoBehaviour:
   _lineThickness: 2
   _showTargetLine: 1
   _showToleranceZone: 1
-  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.2}
+  _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
+  _amplitudeMultiplier: 3
 --- !u!114 &1601202158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8918,7 +8920,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 0.039215688}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

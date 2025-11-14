@@ -42,6 +42,11 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         private bool _smoothTransitions = true;
 
+        [Header("Wave Settings")]
+        [SerializeField]
+        [Range(0.5f, 4f)]
+        private float _amplitudeMultiplier = 1f; // Makes waves have more dramatic ups and downs
+
         // Components
         private RectTransform _rectTransform;
         private Texture2D _waveTexture;
@@ -131,17 +136,6 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void Update()
         {
-            if (_bufferManager == null)
-            {
-                // Log once per second that buffer is missing
-                if (Time.frameCount % 60 == 0)
-                {
-                    Debug.LogWarning($"[WaveformDisplay] Band {_bandIndex}: No buffer manager assigned! Call Initialize() first.");
-                }
-                return;
-            }
-
-            // Redraw waveform
             DrawWaveform();
         }
 
@@ -177,8 +171,12 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void DrawToleranceZone()
         {
-            int minY = Mathf.Clamp((int)((_targetValue - _toleranceValue) * _textureHeight), 0, _textureHeight - 1);
-            int maxY = Mathf.Clamp((int)((_targetValue + _toleranceValue) * _textureHeight), 0, _textureHeight - 1);
+            // Anchor tolerance zone from the top of the texture
+            float normalizedTarget = _targetValue * _amplitudeMultiplier;
+            float normalizedTolerance = _toleranceValue * _amplitudeMultiplier;
+
+            int maxY = Mathf.Clamp((int)(_textureHeight - 1 - (normalizedTarget - normalizedTolerance) * _textureHeight), 0, _textureHeight - 1);
+            int minY = Mathf.Clamp((int)(_textureHeight - 1 - (normalizedTarget + normalizedTolerance) * _textureHeight), 0, _textureHeight - 1);
 
             for (int x = 0; x < _textureWidth; x++)
             {
@@ -194,7 +192,9 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void DrawTargetLine()
         {
-            int targetY = Mathf.Clamp((int)(_targetValue * _textureHeight), 0, _textureHeight - 1);
+            // Anchor target line from the top of the texture
+            float normalizedTarget = _targetValue * _amplitudeMultiplier;
+            int targetY = Mathf.Clamp((int)(_textureHeight - 1 - normalizedTarget * _textureHeight), 0, _textureHeight - 1);
 
             for (int x = 0; x < _textureWidth; x++)
             {
@@ -218,15 +218,7 @@ namespace NeuralWaveBureau.UI
             float[] data = _bufferManager.GetBandData(_bandIndex);
             if (data.Length < 2)
             {
-                Debug.LogWarning($"[WaveformDisplay] Band {_bandIndex}: Buffer has insufficient data (length: {data.Length})");
                 return;
-            }
-
-            // Debug: Log first few values occasionally
-            if (Time.frameCount % 120 == 0) // Every 2 seconds at 60fps
-            {
-                string preview = $"[WaveformDisplay] Band {_bandIndex} data: [{data[0]:F2}, {data[1]:F2}, {data[2]:F2}...{data[data.Length - 1]:F2}] (length: {data.Length})";
-                Debug.Log(preview);
             }
 
             // Calculate x step
@@ -236,9 +228,13 @@ namespace NeuralWaveBureau.UI
             for (int i = 0; i < data.Length - 1; i++)
             {
                 int x1 = (int)(i * xStep);
-                int y1 = Mathf.Clamp((int)(data[i] * _textureHeight), 0, _textureHeight - 1);
+                // Anchor from top and apply amplitude multiplier for more dramatic ups and downs
+                float normalizedY1 = data[i] * _amplitudeMultiplier;
+                int y1 = Mathf.Clamp((int)(_textureHeight - 1 - normalizedY1 * _textureHeight), 0, _textureHeight - 1);
+
                 int x2 = (int)((i + 1) * xStep);
-                int y2 = Mathf.Clamp((int)(data[i + 1] * _textureHeight), 0, _textureHeight - 1);
+                float normalizedY2 = data[i + 1] * _amplitudeMultiplier;
+                int y2 = Mathf.Clamp((int)(_textureHeight - 1 - normalizedY2 * _textureHeight), 0, _textureHeight - 1);
 
                 DrawLine(x1, y1, x2, y2, _waveColor);
             }
