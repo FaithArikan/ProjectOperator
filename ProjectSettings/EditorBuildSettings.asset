@@ -8,6 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/VolFx/Samples/VolFx Transitions/Scene A.unity
+    guid: 07a238c9793de6b4f905e6538aad6120
+  - enabled: 1
+    path: Assets/VolFx/Samples/VolFx Transitions/Scene B.unity
+    guid: dbb0931807bec9c4883286d681443fd3
+  - enabled: 1
+    path: Assets/VolFx/Samples/VolFx Transitions/Scene C.unity
+    guid: 48c8fa4f83027064f84517dbfce1fc3d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
