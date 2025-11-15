@@ -11,7 +11,7 @@ namespace NeuralWaveBureau.UI
     {
         [Header("Auto Setup")]
         [SerializeField]
-        private bool _autoSetup = true;
+        private bool _autoSetup = false; // Set to true to auto-power on at start
 
         [SerializeField]
         private float _setupDelay = 0.5f;

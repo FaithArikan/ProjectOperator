@@ -9,8 +9,15 @@ namespace NeuralWaveBureau.UI
     /// </summary>
     public class QuickMonitorFix : MonoBehaviour
     {
+        [Header("Auto Setup")]
+        [SerializeField]
+        private bool _autoSetup = false; // Set to true to auto-power on at start
+
         private void Start()
         {
+            if (!_autoSetup)
+                return;
+
             Debug.Log("=== QUICK MONITOR FIX: Starting ===");
 
             // Get monitor

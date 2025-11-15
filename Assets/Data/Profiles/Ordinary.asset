@@ -27,11 +27,11 @@ MonoBehaviour:
   - 0.35
   - 0.35
   _bandWeights:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
   baselineInstability: 0.1
   instabilityRate: 0.5
   minStimulationTime: 5

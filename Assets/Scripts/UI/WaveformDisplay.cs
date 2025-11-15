@@ -60,6 +60,7 @@ namespace NeuralWaveBureau.UI
         private int _textureWidth = 512;
         private int _textureHeight = 256;
         private bool _isDirty = true;
+        private bool _hasStarted = false; // Controls when waveform starts rendering
 
         // Performance optimization - cached arrays to avoid per-frame allocations
         private Color32[] _clearColorCache;
@@ -81,6 +82,14 @@ namespace NeuralWaveBureau.UI
 
             // Create texture for waveform
             CreateWaveTexture();
+
+            // Start with alpha 0 - will fade in when AnimateIn is called
+            if (_displayImage != null)
+            {
+                var color = _displayImage.color;
+                color.a = 0f;
+                _displayImage.color = color;
+            }
         }
 
         /// <summary>
@@ -148,7 +157,11 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void Update()
         {
-            DrawWaveform();
+            // Only draw waveform if monitoring has started
+            if (_hasStarted)
+            {
+                DrawWaveform();
+            }
         }
 
         /// <summary>
@@ -312,15 +325,20 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         public void AnimateIn(float duration = 0.5f)
         {
+            _hasStarted = true; // Start rendering waveform
             _displayImage.DOFade(1f, duration).SetEase(Ease.OutCubic);
         }
 
         /// <summary>
         /// Animates the waveform disappearance
         /// </summary>
-        public void AnimateOut(float duration = 0.3f)
+        public void AnimateOut(float duration = 0.3f, System.Action onComplete = null)
         {
-            _displayImage.DOFade(0f, duration).SetEase(Ease.InCubic);
+            _hasStarted = false; // Stop rendering waveform
+            _displayImage.DOFade(0f, duration).SetEase(Ease.InCubic).OnComplete(() =>
+            {
+                onComplete?.Invoke();
+            });
         }
 
         /// <summary>

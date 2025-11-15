@@ -17,6 +17,9 @@ namespace NeuralWaveBureau.UI
     {
         [Header("Core Components")]
         [SerializeField]
+        private GameObject _mainScreenPanel; // The main panel that contains everything
+
+        [SerializeField]
         private CRTScreenEffect _crtEffect;
 
         [Header("Waveform Displays")]
@@ -46,24 +49,12 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         private Button _powerButton;
 
-        [SerializeField]
-        private Button _startStimulationButton;
-
-        [SerializeField]
-        private Button _stopStimulationButton;
-
-        [SerializeField]
-        private Button _resetButton;
-
         [Header("Settings")]
         [SerializeField]
         private int _historyBufferSize = 120;
 
         [SerializeField]
         private float _updateRate = 30f; // Hz
-
-        [SerializeField]
-        private bool _autoStartOnCitizenActive = true;
 
         [SerializeField]
         private bool _showDebugInfo = true;
@@ -116,21 +107,6 @@ namespace NeuralWaveBureau.UI
                 _powerButton.onClick.AddListener(TogglePower);
             }
 
-            if (_startStimulationButton != null)
-            {
-                _startStimulationButton.onClick.AddListener(StartMonitoring);
-            }
-
-            if (_stopStimulationButton != null)
-            {
-                _stopStimulationButton.onClick.AddListener(StopMonitoring);
-            }
-
-            if (_resetButton != null)
-            {
-                _resetButton.onClick.AddListener(ResetMonitor);
-            }
-
             // Initialize waveform displays
             InitializeWaveformDisplays();
         }
@@ -139,14 +115,41 @@ namespace NeuralWaveBureau.UI
         {
             _aiManager = AIManager.Instance;
 
-            // Start powered off
-            if (_crtEffect != null)
+            // Start powered off - initialize screen to off state
+            _isPoweredOn = false;
+
+            // Deactivate the main screen panel - it's like the computer is off
+            if (_mainScreenPanel != null)
             {
-                gameObject.SetActive(true);
-                _isPoweredOn = false;
+                _mainScreenPanel.SetActive(false);
+                Debug.Log("[BrainActivityMonitor] Main screen panel deactivated - Computer OFF");
             }
 
-            UpdateButtonStates();
+            if (_crtEffect != null)
+            {
+                // Initialize CRT screen to powered-off state
+                var rawImage = _crtEffect.GetComponent<RawImage>();
+                if (rawImage != null)
+                {
+                    rawImage.color = new Color(1f, 1f, 1f, 0f); // Transparent
+                }
+                _crtEffect.transform.localScale = new Vector3(1f, 0.05f, 1f); // Thin line like old CRT off
+            }
+
+            // Deactivate all waveforms at start
+            foreach (var waveform in _waveformDisplays)
+            {
+                if (waveform != null)
+                {
+                    waveform.gameObject.SetActive(false);
+                }
+            }
+
+            // Make sure camera starts in room view (CameraManager already does this, but ensure it)
+            if (CameraManager.Instance != null)
+            {
+                CameraManager.Instance.MoveToRoomView();
+            }
         }
 
         private void Update()
@@ -215,12 +218,6 @@ namespace NeuralWaveBureau.UI
 
                 // Update waveform targets
                 UpdateWaveformTargets();
-
-                // Auto-start if enabled
-                if (_autoStartOnCitizenActive && _isPoweredOn)
-                {
-                    StartMonitoring();
-                }
             }
         }
 
@@ -371,7 +368,7 @@ namespace NeuralWaveBureau.UI
         }
 
         /// <summary>
-        /// Powers on the monitor
+        /// Powers on the monitor - like turning on a computer
         /// </summary>
         public void PowerOn()
         {
@@ -379,6 +376,28 @@ namespace NeuralWaveBureau.UI
                 return;
 
             _isPoweredOn = true;
+
+            // Activate the main screen panel - Computer powers on!
+            if (_mainScreenPanel != null)
+            {
+                _mainScreenPanel.SetActive(true);
+                Debug.Log("[BrainActivityMonitor] Main screen panel activated - Computer ON");
+            }
+
+            // Auto-find and set citizen if not already set
+            if (_activeCitizen == null)
+            {
+                var citizen = FindFirstObjectByType<CitizenController>();
+                if (citizen != null)
+                {
+                    SetActiveCitizen(citizen);
+                    Debug.Log($"[BrainActivityMonitor] Auto-assigned citizen: {citizen.CitizenId}");
+                }
+                else
+                {
+                    Debug.LogWarning("[BrainActivityMonitor] No citizen found in scene. Create a GameObject with CitizenController.");
+                }
+            }
 
             // Move camera to monitor view
             CameraManager.Instance.MoveToMonitorView();
@@ -389,29 +408,20 @@ namespace NeuralWaveBureau.UI
                 _crtEffect.PowerOn(1.5f);
             }
 
-            // Animate waveforms in
-            foreach (var waveform in _waveformDisplays)
-            {
-                if (waveform != null)
-                {
-                    waveform.AnimateIn(0.8f);
-                }
-            }
-
-            // Animate obedience controller
-            ObedienceController.Instance.AnimateIn(1f);
-
-            UpdateButtonStates();
-
             // Button feedback
             if (_powerButton != null)
             {
                 UITweenAnimations.ButtonPress(_powerButton.transform);
             }
+
+            // Automatically start monitoring when powered on
+            StartMonitoring();
+
+            Debug.Log("[BrainActivityMonitor] Monitor powered ON - Auto-started monitoring with waveforms");
         }
 
         /// <summary>
-        /// Powers off the monitor
+        /// Powers off the monitor - like shutting down a computer
         /// </summary>
         public void PowerOff()
         {
@@ -423,16 +433,24 @@ namespace NeuralWaveBureau.UI
 
             _isPoweredOn = false;
 
-            // Move camera back to room view
-            CameraManager.Instance.MoveToRoomView();
-
-            // CRT power off effect
+            // CRT power off effect first (visual feedback before hiding everything)
             if (_crtEffect != null)
             {
                 _crtEffect.PowerOff(0.8f);
             }
 
-            UpdateButtonStates();
+            // Deactivate the main screen panel after a short delay - Computer shuts down!
+            DOVirtual.DelayedCall(0.8f, () =>
+            {
+                if (_mainScreenPanel != null)
+                {
+                    _mainScreenPanel.SetActive(false);
+                    Debug.Log("[BrainActivityMonitor] Main screen panel deactivated - Computer OFF");
+                }
+            });
+
+            // Move camera back to room view
+            CameraManager.Instance.MoveToRoomView();
 
             // Button feedback
             if (_powerButton != null)
@@ -442,27 +460,49 @@ namespace NeuralWaveBureau.UI
         }
 
         /// <summary>
-        /// Starts monitoring the active citizen
+        /// Starts monitoring the active citizen - Shows waveforms and starts evaluation
         /// </summary>
         public void StartMonitoring()
         {
-            if (!_isPoweredOn || _activeCitizen == null || _isMonitoring)
+            if (_isMonitoring)
                 return;
+
+            // Must be powered on to start monitoring
+            if (!_isPoweredOn)
+            {
+                Debug.LogWarning("[BrainActivityMonitor] Cannot start monitoring - Computer is not powered on!");
+                return;
+            }
+
+            // Check if we have a citizen to monitor
+            if (_activeCitizen == null)
+            {
+                Debug.LogWarning("[BrainActivityMonitor] Cannot start monitoring - No citizen assigned!");
+                return;
+            }
 
             _isMonitoring = true;
 
-            // Start stimulation on citizen
+            // Activate and animate waveforms in - Waveforms appear on screen!
+            foreach (var waveform in _waveformDisplays)
+            {
+                if (waveform != null)
+                {
+                    waveform.gameObject.SetActive(true);
+                    waveform.AnimateIn(0.8f);
+                }
+            }
+
+            // Animate obedience controller
+            if (ObedienceController.Instance != null)
+            {
+                ObedienceController.Instance.AnimateIn(1f);
+            }
+
+            // Start stimulation on citizen - Evaluation starts!
             if (_aiManager != null)
             {
                 _aiManager.StartStimulation(_activeCitizen);
-            }
-
-            UpdateButtonStates();
-
-            // Button feedback
-            if (_startStimulationButton != null)
-            {
-                UITweenAnimations.ButtonPress(_startStimulationButton.transform);
             }
 
             // Glitch effect on start
@@ -470,6 +510,8 @@ namespace NeuralWaveBureau.UI
             {
                 _crtEffect.TriggerGlitch(0.2f, 1.5f);
             }
+
+            Debug.Log("[BrainActivityMonitor] Monitoring STARTED - Waveforms visible, evaluation running");
         }
 
         /// <summary>
@@ -482,6 +524,18 @@ namespace NeuralWaveBureau.UI
 
             _isMonitoring = false;
 
+            // Animate waveforms out and deactivate them
+            foreach (var waveform in _waveformDisplays)
+            {
+                if (waveform != null)
+                {
+                    waveform.AnimateOut(0.3f, () =>
+                    {
+                        waveform.gameObject.SetActive(false);
+                    });
+                }
+            }
+
             // Stop stimulation
             if (_aiManager != null)
             {
@@ -490,14 +544,6 @@ namespace NeuralWaveBureau.UI
 
             // Stop alert animation if running
             _alertAnimation?.Kill();
-
-            UpdateButtonStates();
-
-            // Button feedback
-            if (_stopStimulationButton != null)
-            {
-                UITweenAnimations.ButtonPress(_stopStimulationButton.transform);
-            }
         }
 
         /// <summary>
@@ -519,38 +565,10 @@ namespace NeuralWaveBureau.UI
             // Reset obedience
             ObedienceController.Instance.ResetToDefault();
 
-            // Button feedback
-            if (_resetButton != null)
-            {
-                UITweenAnimations.ButtonPress(_resetButton.transform);
-                _resetButton.transform.DOPunchRotation(new Vector3(0, 0, 360f), 0.5f);
-            }
-
             // Glitch effect
             if (_crtEffect != null)
             {
                 _crtEffect.TriggerGlitch(0.3f, 2f);
-            }
-        }
-
-        /// <summary>
-        /// Updates button interactable states
-        /// </summary>
-        private void UpdateButtonStates()
-        {
-            if (_startStimulationButton != null)
-            {
-                _startStimulationButton.interactable = _isPoweredOn && !_isMonitoring && _activeCitizen != null;
-            }
-
-            if (_stopStimulationButton != null)
-            {
-                _stopStimulationButton.interactable = _isMonitoring;
-            }
-
-            if (_resetButton != null)
-            {
-                _resetButton.interactable = _isPoweredOn;
             }
         }
 
@@ -606,21 +624,6 @@ namespace NeuralWaveBureau.UI
             if (_powerButton != null)
             {
                 _powerButton.onClick.RemoveListener(TogglePower);
-            }
-
-            if (_startStimulationButton != null)
-            {
-                _startStimulationButton.onClick.RemoveListener(StartMonitoring);
-            }
-
-            if (_stopStimulationButton != null)
-            {
-                _stopStimulationButton.onClick.RemoveListener(StopMonitoring);
-            }
-
-            if (_resetButton != null)
-            {
-                _resetButton.onClick.RemoveListener(ResetMonitor);
             }
 
             // Unsubscribe from citizen events
