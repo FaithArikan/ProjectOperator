@@ -124,9 +124,12 @@ namespace NeuralWaveBureau.AI
             for (int i = 0; i < NeuralProfile.BandCount; i++)
             {
                 // Compute normalized difference for this band
-                // d[i] = 1 - abs(sample[i] - target[i]) / tolerance[i], clamped to 0..1
+                // Made more forgiving: using squared curve to favor close matches
                 float difference = Mathf.Abs(sample.bandValues[i] - targets[i]);
-                float normalizedDiff = 1f - Mathf.Clamp01(difference / tolerances[i]);
+                float rawDiff = 1f - Mathf.Clamp01(difference / tolerances[i]);
+
+                // Apply power curve to make scoring more generous (square it to boost scores)
+                float normalizedDiff = rawDiff * rawDiff * (3f - 2f * rawDiff); // Smoothstep function
 
                 // Apply weight for this band
                 weightedSum += weights[i] * normalizedDiff;

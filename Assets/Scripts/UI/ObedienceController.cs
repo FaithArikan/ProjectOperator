@@ -126,6 +126,12 @@ namespace NeuralWaveBureau.UI
             {
                 _originalSuccessThreshold = _aiSettings.successThreshold;
             }
+
+            // Also update StimulationTimeController if it exists
+            if (StimulationTimeController.Instance != null)
+            {
+                StimulationTimeController.Instance.SetActiveProfile(profile);
+            }
         }
 
         /// <summary>

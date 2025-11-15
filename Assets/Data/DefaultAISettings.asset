@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f826f34b098440e4b9887fa4b12fc993, type: 3}
   m_Name: DefaultAISettings
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.Data.AISettings
-  successThreshold: 0.75
-  overloadThreshold: 0.25
+  successThreshold: 0.8
+  overloadThreshold: 0.15
   instabilityFailThreshold: 0.8
   sampleRate: 30
-  smoothingTau: 0.3
+  smoothingTau: 0.05
   instabilityRecoveryRate: 0.2
   enableVerboseLogging: 1
   showWaveVisualizer: 1

@@ -21,11 +21,11 @@ MonoBehaviour:
   - 0.8
   - 0.9
   _bandTolerance:
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
+  - 0.3
+  - 0.3
+  - 0.3
+  - 0.3
+  - 0.3
   _bandWeights:
   - 1
   - 1
@@ -34,6 +34,6 @@ MonoBehaviour:
   - 1
   baselineInstability: 0.2
   instabilityRate: 0.7
-  minStimulationTime: 3
+  minStimulationTime: 5
   recoveryTime: 7
   reactionClips: []

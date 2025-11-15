@@ -113,16 +113,22 @@ namespace NeuralWaveBureau.AI
                     {
                         TransitionTo(CitizenState.Stabilized);
                     }
-                    // Check for agitation (bad score)
-                    else if (score <= _settings.overloadThreshold)
+                    // Reset timer if score drops below threshold (restart the 5-second countdown)
+                    else if (score < _settings.successThreshold && _stateTime > 0.1f)
+                    {
+                        _stateTime = 0f; // Reset timer - player must maintain score for full duration
+                    }
+                    // Check for agitation (bad score) - only if significantly below threshold
+                    else if (score <= _settings.overloadThreshold && _stateTime > 1f)
                     {
                         TransitionTo(CitizenState.Agitated);
                     }
                     break;
 
                 case CitizenState.Stabilized:
-                    // Can return to stimulated if score drops
-                    if (score < _settings.successThreshold)
+                    // Can return to stimulated if score drops significantly (with hysteresis)
+                    // Only transition back if score is really bad (below 0.3)
+                    if (score < 0.3f)
                     {
                         TransitionTo(CitizenState.BeingStimulated);
                     }
