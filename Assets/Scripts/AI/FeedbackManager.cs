@@ -4,28 +4,21 @@ using System.Collections.Generic;
 namespace NeuralWaveBureau.AI
 {
     /// <summary>
+    /// Lighting mode options for the feedback system
+    /// </summary>
+    public enum LightingMode
+    {
+        Dynamic,    // Color and intensity change based on performance
+        Static,     // Fixed color and intensity
+        Off         // Lighting disabled
+    }
+
+    /// <summary>
     /// Manages audio and visual feedback for wave manipulation.
     /// Controls lights, VFX, audio tones, and alarm systems.
     /// </summary>
     public class FeedbackManager : MonoBehaviour
     {
-        [Header("Lighting")]
-        [SerializeField]
-        private Light _ambientLight;
-
-        [SerializeField]
-        private Color _goodColor = Color.green;
-
-        [SerializeField]
-        private Color _neutralColor = Color.white;
-
-        [SerializeField]
-        private Color _badColor = Color.red;
-
-        [SerializeField]
-        [Range(0f, 8f)]
-        private float _maxIntensity = 2f;
-
         [Header("Audio")]
         [SerializeField]
         private AudioSource _toneSource;
@@ -68,7 +61,6 @@ namespace NeuralWaveBureau.AI
         public void SetAmbientPulse(float intensity)
         {
             _currentPulseIntensity = Mathf.Clamp01(intensity);
-            UpdateLighting();
             UpdateParticles();
         }
 
@@ -78,7 +70,6 @@ namespace NeuralWaveBureau.AI
         public void SetAlarmLevel(float level)
         {
             _alarmLevel = Mathf.Clamp01(level);
-            UpdateLighting();
         }
 
         /// <summary>
@@ -119,10 +110,7 @@ namespace NeuralWaveBureau.AI
                 _ambientSource.PlayOneShot(_alarmClip);
             }
 
-            // Flash red
-            StartCoroutine(FlashEffect(_badColor));
-
-            // Burst of particles
+                        // Burst of particles
             TriggerParticleBurst(1f);
         }
 
@@ -135,39 +123,6 @@ namespace NeuralWaveBureau.AI
             {
                 _toneSource.PlayOneShot(clip);
             }
-        }
-
-        /// <summary>
-        /// Updates lighting based on pulse intensity and alarm level
-        /// </summary>
-        private void UpdateLighting()
-        {
-            if (_ambientLight == null)
-                return;
-
-            // Blend color based on intensity (red -> white -> green)
-            Color targetColor;
-            if (_alarmLevel > 0.5f)
-            {
-                // Alarm override
-                targetColor = Color.Lerp(_badColor, _neutralColor, 1f - _alarmLevel);
-            }
-            else if (_currentPulseIntensity >= 0.5f)
-            {
-                // Good zone (green)
-                targetColor = Color.Lerp(_neutralColor, _goodColor, (_currentPulseIntensity - 0.5f) * 2f);
-            }
-            else
-            {
-                // Bad zone (red)
-                targetColor = Color.Lerp(_badColor, _neutralColor, _currentPulseIntensity * 2f);
-            }
-
-            _ambientLight.color = targetColor;
-
-            // Intensity maps to evaluation score
-            float targetIntensity = Mathf.Lerp(0.5f, _maxIntensity, _currentPulseIntensity);
-            _ambientLight.intensity = targetIntensity;
         }
 
         /// <summary>
@@ -196,38 +151,6 @@ namespace NeuralWaveBureau.AI
                 {
                     ps.Emit((int)(intensity * 20f));
                 }
-            }
-        }
-
-        /// <summary>
-        /// Flash effect coroutine
-        /// </summary>
-        private System.Collections.IEnumerator FlashEffect(Color flashColor)
-        {
-            if (_ambientLight == null)
-                yield break;
-
-            Color originalColor = _ambientLight.color;
-            float originalIntensity = _ambientLight.intensity;
-
-            // Flash
-            _ambientLight.color = flashColor;
-            _ambientLight.intensity = _maxIntensity;
-
-            yield return new WaitForSeconds(0.1f);
-
-            // Restore
-            _ambientLight.color = originalColor;
-            _ambientLight.intensity = originalIntensity;
-        }
-
-        private void Update()
-        {
-            // Add subtle pulsing to ambient light
-            if (_ambientLight != null && _currentPulseIntensity > 0.1f)
-            {
-                float pulse = Mathf.Sin(Time.time * 2f) * 0.1f * _currentPulseIntensity;
-                _ambientLight.intensity += pulse;
             }
         }
     }

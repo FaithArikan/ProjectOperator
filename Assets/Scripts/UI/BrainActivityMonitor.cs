@@ -213,8 +213,6 @@ namespace NeuralWaveBureau.UI
                 // Set profile in controllers
                 ObedienceController.Instance.SetActiveProfile(_activeCitizen.Profile);
 
-                ParameterPanel.Instance.SetActiveProfile(_activeCitizen.Profile);
-
                 // Update waveform targets
                 UpdateWaveformTargets();
 

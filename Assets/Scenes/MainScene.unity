@@ -2446,7 +2446,7 @@ MonoBehaviour:
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
-  _amplitudeMultiplier: 3
+  _amplitudeMultiplier: 1
 --- !u!114 &409355392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4727,7 +4727,7 @@ MonoBehaviour:
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
-  _amplitudeMultiplier: 3
+  _amplitudeMultiplier: 1
 --- !u!114 &747905228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4893,7 +4893,6 @@ GameObject:
   - component: {fileID: 782642109}
   - component: {fileID: 782642111}
   - component: {fileID: 782642113}
-  - component: {fileID: 782642112}
   - component: {fileID: 782642114}
   - component: {fileID: 782642115}
   - component: {fileID: 782642116}
@@ -4916,11 +4915,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d6b6f167f79ee34ca17cde4dccb6a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.AI.FeedbackManager
-  _ambientLight: {fileID: 0}
-  _goodColor: {r: 0, g: 1, b: 0, a: 1}
-  _neutralColor: {r: 1, g: 1, b: 1, a: 1}
-  _badColor: {r: 1, g: 0, b: 0, a: 1}
-  _maxIntensity: 2
   _toneSource: {fileID: 0}
   _ambientSource: {fileID: 0}
   _successClip: {fileID: 0}
@@ -5032,27 +5026,6 @@ MonoBehaviour:
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
   _animateChanges: 1
---- !u!114 &782642112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 782642105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51db6330203ce824b883cd4c470cf795, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.UI.ParameterPanel
-  _panelContainer: {fileID: 0}
-  _toggleButton: {fileID: 0}
-  _saveButton: {fileID: 0}
-  _loadButton: {fileID: 0}
-  _resetButton: {fileID: 0}
-  _sliderContainer: {fileID: 0}
-  _sliderPrefab: {fileID: 0}
-  _startCollapsed: 1
-  _animationDuration: 0.5
 --- !u!114 &782642113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6545,7 +6518,7 @@ MonoBehaviour:
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
-  _amplitudeMultiplier: 3
+  _amplitudeMultiplier: 1
 --- !u!114 &989712444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6912,7 +6885,7 @@ MonoBehaviour:
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
-  _amplitudeMultiplier: 3
+  _amplitudeMultiplier: 1
 --- !u!114 &1089099320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8928,7 +8901,7 @@ MonoBehaviour:
   _toleranceColor: {r: 1, g: 1, b: 0, a: 0.039215688}
   _scrollSpeed: 1
   _smoothTransitions: 1
-  _amplitudeMultiplier: 3
+  _amplitudeMultiplier: 1
 --- !u!114 &1601202158
 MonoBehaviour:
   m_ObjectHideFlags: 0

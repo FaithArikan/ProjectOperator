@@ -15,17 +15,17 @@ MonoBehaviour:
   profileId: ordinary
   displayName: Ordinary Citizen
   _bandTargets:
+  - 0.1
   - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
+  - 0.6
+  - 0.6
   - 0.2
   _bandTolerance:
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
+  - 0.22500001
+  - 0.22500001
+  - 0.22500001
+  - 0.22500001
+  - 0.22500001
   _bandWeights:
   - 1
   - 1
