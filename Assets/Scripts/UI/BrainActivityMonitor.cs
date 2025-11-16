@@ -59,6 +59,10 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         private bool _showDebugInfo = true;
 
+        [SerializeField]
+        [Tooltip("If true, monitoring will automatically start when the monitor powers on")]
+        private bool _autoStartMonitoring = false;
+
         [Header("Colors")]
         [SerializeField]
         private Color _idleColor = Color.gray;
@@ -414,10 +418,16 @@ namespace NeuralWaveBureau.UI
                 UITweenAnimations.ButtonPress(_powerButton.transform);
             }
 
-            // Automatically start monitoring when powered on
-            StartMonitoring();
-
-            Debug.Log("[BrainActivityMonitor] Monitor powered ON - Auto-started monitoring with waveforms");
+            // Optionally auto-start monitoring when powered on
+            if (_autoStartMonitoring)
+            {
+                StartMonitoring();
+                Debug.Log("[BrainActivityMonitor] Monitor powered ON - Auto-started monitoring with waveforms");
+            }
+            else
+            {
+                Debug.Log("[BrainActivityMonitor] Monitor powered ON - Ready for manual monitoring start");
+            }
         }
 
         /// <summary>
