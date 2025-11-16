@@ -93,12 +93,6 @@ Click CONTINUE to proceed to your station.";
             _rulesScreenPanel.SetActive(true);
         }
 
-        // Move camera to rules view
-        if (CameraManager.Instance != null)
-        {
-            CameraManager.Instance.MoveToRulesView();
-        }
-
         // Play CRT power-on effect
         if (_crtEffect != null)
         {
@@ -125,22 +119,10 @@ Click CONTINUE to proceed to your station.";
             _typewriterCoroutine = null;
         }
 
-        // Hide continue button
-        if (_continueButton != null)
-        {
-            _continueButton.SetActive(false);
-        }
-
         // Play CRT power-off effect
         if (_crtEffect != null)
         {
             _crtEffect.PowerOff();
-        }
-
-        // Return camera to room view
-        if (CameraManager.Instance != null)
-        {
-            CameraManager.Instance.MoveToRoomView();
         }
 
         // Deactivate panel after a delay

@@ -459,8 +459,12 @@ namespace NeuralWaveBureau.UI
                 }
             });
 
-            // Move camera back to room view
-            CameraManager.Instance.MoveToRoomView();
+            if (CameraManager.Instance.CurrentView == CameraView.Monitor)
+            {
+                // Move camera back to room view
+                CameraManager.Instance.MoveToRoomView();
+            }
+            
 
             // Button feedback
             if (_powerButton != null)

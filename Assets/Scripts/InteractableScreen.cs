@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using Unity.Cinemachine;
 using NeuralWaveBureau;
 
@@ -9,6 +9,7 @@ using NeuralWaveBureau;
 /// Attach this to any screen object that should be clickable.
 /// Uses the new Unity Input System for mouse detection.
 /// Automatically switches to the assigned Cinemachine camera when interacted with.
+/// Ignores interactions when pointer is over UI elements.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class InteractableScreen : MonoBehaviour
@@ -51,78 +52,33 @@ public class InteractableScreen : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (!_isInteractable) return;
-
-        // Check if mouse is available (new Input System)
-        var mouse = Mouse.current;
-        if (mouse == null) return;
-
-        // Check for mouse hover
-        CheckHover(mouse);
-
-        // Check for left mouse button click (new Input System)
-        if (mouse.leftButton.wasPressedThisFrame)
-        {
-            TryInteract(mouse);
-        }
-    }
-
     /// <summary>
-    /// Checks if the mouse is hovering over this screen for visual feedback.
+    /// Checks if the pointer is currently over a UI element.
     /// </summary>
-    private void CheckHover(Mouse mouse)
+    private bool IsPointerOverUI()
     {
-        Vector2 mousePosition = mouse.position.ReadValue();
-        Ray ray = _mainCamera.ScreenPointToRay(mousePosition);
-        RaycastHit hit;
+        // Check if EventSystem exists
+        if (EventSystem.current == null)
+            return false;
 
-        if (Physics.Raycast(ray, out hit, _interactionDistance))
-        {
-            if (hit.collider.gameObject == gameObject)
-            {
-                if (!_isHighlighted)
-                {
-                    Highlight(true);
-                }
-                return;
-            }
-        }
-
-        // Not hovering anymore
-        if (_isHighlighted)
-        {
-            Highlight(false);
-        }
-    }
-
-    /// <summary>
-    /// Attempts to interact with the screen via raycast.
-    /// </summary>
-    private void TryInteract(Mouse mouse)
-    {
-        Vector2 mousePosition = mouse.position.ReadValue();
-        Ray ray = _mainCamera.ScreenPointToRay(mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, _interactionDistance))
-        {
-            if (hit.collider.gameObject == gameObject)
-            {
-                Interact();
-            }
-        }
+        // Check if pointer is over a UI GameObject
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
     /// <summary>
     /// Called when the player interacts with this screen.
+    /// Toggles between this screen's camera and room view.
     /// </summary>
-    private void Interact()
+    public void Interact()
     {
-        // Switch to the assigned camera if one is set
-        if (_screenCamera != null && CameraManager.Instance != null)
+        // If this camera is already active, return to room view
+        if (CameraManager.Instance.IsCameraActive(_screenCamera))
         {
+            CameraManager.Instance.MoveToRoomView();
+        }
+        else
+        {
+            // Switch to this screen's camera
             CameraManager.Instance.MoveToCamera(_screenCamera);
         }
 

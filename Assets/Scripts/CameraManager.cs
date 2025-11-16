@@ -209,6 +209,20 @@ namespace NeuralWaveBureau
         /// </summary>
         public float BlendDuration => _blendDuration;
 
+        /// <summary>
+        /// Checks if the specified camera is currently active.
+        /// </summary>
+        /// <param name="camera">The camera to check</param>
+        /// <returns>True if the camera is active (has elevated priority)</returns>
+        public bool IsCameraActive(CinemachineCamera camera)
+        {
+            if (camera == null)
+                return false;
+
+            // A camera is active if its priority is above base priority
+            return camera.Priority.Value > _basePriority;
+        }
+
         #if UNITY_EDITOR
         /// <summary>
         /// Forces switch to room view (Editor helper)
