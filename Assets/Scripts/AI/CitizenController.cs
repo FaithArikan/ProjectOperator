@@ -53,8 +53,8 @@ namespace NeuralWaveBureau.AI
         public event CitizenEventDelegate OnStabilized;
         public event CitizenEventDelegate OnCriticalFailure;
         public event CitizenEventDelegate OnRecovered;
-
-                /// <summary>
+        
+        /// <summary>
         /// Initializes the citizen with settings and profile
         /// </summary>
         public void Initialize(AISettings settings, NeuralProfile profile = null)
@@ -262,15 +262,6 @@ namespace NeuralWaveBureau.AI
             if (_stateMachine != null)
             {
                 _stateMachine.OnStateChanged -= HandleStateChanged;
-            }
-        }
-
-        private void OnValidate()
-        {
-            // Auto-assign animator
-            if (_animator == null)
-            {
-                _animator = GetComponent<Animator>();
             }
         }
     }
