@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Handles opening and closing the settings panel in the menu scene
@@ -8,7 +9,6 @@ public class SettingsMenu : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private GameObject settingsPanel;
-    [SerializeField] private Button openSettingsButton;
     [SerializeField] private Button closeSettingsButton;
 
     [Header("Audio Controls")]
@@ -18,12 +18,6 @@ public class SettingsMenu : MonoBehaviour
 
     private void Start()
     {
-        // Subscribe to buttons
-        if (openSettingsButton != null)
-        {
-            openSettingsButton.onClick.AddListener(OpenSettings);
-        }
-
         if (closeSettingsButton != null)
         {
             closeSettingsButton.onClick.AddListener(CloseSettings);
@@ -65,7 +59,7 @@ public class SettingsMenu : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             ToggleSettings();
         }

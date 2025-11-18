@@ -22,7 +22,7 @@ public class SceneController : MonoBehaviour
     {
         Instance = this;
     }
-
+    
     /// <summary>
     /// Loads the game scene additively
     /// </summary>
