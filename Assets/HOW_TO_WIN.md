@@ -44,7 +44,6 @@ You are a **Neural Wave Bureau Operator**. Your job is to **stabilize citizens**
 ### Step 1: Start Monitoring
 1. Press **F1** (if you have QuickMonitorFix script)
 2. Or manually: Power On → Start Monitoring
-3. Watch the monitor turn on with CRT effects
 
 ### Step 2: Read the Target
 Look at the **yellow target lines** on each waveform:

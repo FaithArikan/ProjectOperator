@@ -89,7 +89,7 @@ Material:
     - _BlendModePreserveSpecular: 1
     - _Brightness: 1
     - _BumpScale: 1
-    - _ChromaticAberration: 0.01
+    - _ChromaticAberration: 0.009999998
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _ColorMask: 15
@@ -112,9 +112,9 @@ Material:
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ScanlineCount: 665
+    - _ScanlineCount: 500
     - _ScanlineIntensity: 0.3
-    - _ScanlineOffset: 0
+    - _ScanlineOffset: 0.9917298
     - _ScanlineSpeed: 0.1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0

@@ -161,7 +161,7 @@ Waveforms visible on screen! ✓
 **Checklist:**
 1. Check Console for `[WaveInputSimulator]` messages - are presets loading?
 2. Check Console for `[BrainMonitorTestSetup]` messages - did setup complete?
-3. Is the monitor powered on? (Look for CRT power-on effect)
+3. Is the monitor powered on?
 4. Is monitoring active? (Check status text on monitor)
 5. Are waveform GameObjects active in hierarchy?
 

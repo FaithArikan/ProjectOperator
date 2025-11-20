@@ -138,7 +138,6 @@ Run through this checklist:
   - [ ] All 5 WaveformDisplay components assigned
   - [ ] ObedienceController assigned
   - [ ] ParameterPanel assigned
-  - [ ] CRTScreenEffect assigned
 
 - [ ] **Scene has WaveInputSimulator**
   - [ ] Attached to AIManager GameObject
@@ -221,14 +220,13 @@ If waveforms still don't show after following all steps:
    ```
    BrainMonitorComputer
    └── Canvas
-       └── CRTScreen (RawImage)
-           └── MainPanel
-               └── WaveformPanel
-                   ├── DeltaWaveform (RawImage + WaveformDisplay)
-                   ├── ThetaWaveform (RawImage + WaveformDisplay)
-                   ├── AlphaWaveform (RawImage + WaveformDisplay)
-                   ├── BetaWaveform (RawImage + WaveformDisplay)
-                   └── GammaWaveform (RawImage + WaveformDisplay)
+       └── MainPanel
+           └── WaveformPanel
+               ├── DeltaWaveform (RawImage + WaveformDisplay)
+               ├── ThetaWaveform (RawImage + WaveformDisplay)
+               ├── AlphaWaveform (RawImage + WaveformDisplay)
+               ├── BetaWaveform (RawImage + WaveformDisplay)
+               └── GammaWaveform (RawImage + WaveformDisplay)
    ```
 
 2. **Check each WaveformDisplay**:

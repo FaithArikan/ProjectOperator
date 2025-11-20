@@ -10,7 +10,7 @@ namespace NeuralWaveBureau.UI
 {
     /// <summary>
     /// Main controller for the Brain Activity Monitor UI system.
-    /// Manages waveform displays, obedience control, and CRT effects.
+    /// Manages waveform displays, obedience control.
     /// Coordinates all UI components and handles data flow from AIManager.
     /// </summary>
     public class BrainActivityMonitor : MonoBehaviour
@@ -18,9 +18,6 @@ namespace NeuralWaveBureau.UI
         [Header("Core Components")]
         [SerializeField]
         private GameObject _mainScreenPanel; // The main panel that contains everything
-
-        [SerializeField]
-        private CRTScreenEffect _crtEffect;
 
         [Header("Waveform Displays")]
         [SerializeField]
@@ -121,17 +118,6 @@ namespace NeuralWaveBureau.UI
             {
                 _mainScreenPanel.SetActive(false);
                 Debug.Log("[BrainActivityMonitor] Main screen panel deactivated - Computer OFF");
-            }
-
-            if (_crtEffect != null)
-            {
-                // Initialize CRT screen to powered-off state
-                var rawImage = _crtEffect.GetComponent<RawImage>();
-                if (rawImage != null)
-                {
-                    rawImage.color = new Color(1f, 1f, 1f, 0f); // Transparent
-                }
-                _crtEffect.transform.localScale = new Vector3(1f, 0.05f, 1f); // Thin line like old CRT off
             }
 
             // Deactivate all waveforms at start
@@ -400,12 +386,6 @@ namespace NeuralWaveBureau.UI
             // Move camera to monitor view
             CameraManager.Instance.MoveToMonitorView();
 
-            // CRT power on effect
-            if (_crtEffect != null)
-            {
-                _crtEffect.PowerOn(1.5f);
-            }
-
             // Button feedback
             if (_powerButton != null)
             {
@@ -436,12 +416,6 @@ namespace NeuralWaveBureau.UI
             StopMonitoring();
 
             _isPoweredOn = false;
-
-            // CRT power off effect first (visual feedback before hiding everything)
-            if (_crtEffect != null)
-            {
-                _crtEffect.PowerOff(0.8f);
-            }
 
             // Deactivate the main screen panel after a short delay - Computer shuts down!
             DOVirtual.DelayedCall(0.8f, () =>
@@ -513,12 +487,6 @@ namespace NeuralWaveBureau.UI
                 _aiManager.StartStimulation(_activeCitizen);
             }
 
-            // Glitch effect on start
-            if (_crtEffect != null)
-            {
-                _crtEffect.TriggerGlitch(0.2f, 1.5f);
-            }
-
             Debug.Log("[BrainActivityMonitor] Monitoring STARTED - Waveforms visible, evaluation running");
         }
 
@@ -572,12 +540,6 @@ namespace NeuralWaveBureau.UI
 
             // Reset obedience
             ObedienceController.Instance.ResetToDefault();
-
-            // Glitch effect
-            if (_crtEffect != null)
-            {
-                _crtEffect.TriggerGlitch(0.3f, 2f);
-            }
         }
 
         /// <summary>
@@ -585,12 +547,6 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void OnCitizenStabilized(CitizenController citizen)
         {
-            // Success feedback
-            if (_crtEffect != null)
-            {
-                UITweenAnimations.ColorFlash(_statusIndicator, _stabilizedColor, 0.5f);
-            }
-
             // Pulse waveforms
             foreach (var waveform in _waveformDisplays)
             {
@@ -606,12 +562,6 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void OnCitizenCriticalFailure(CitizenController citizen)
         {
-            // Critical alert feedback
-            if (_crtEffect != null)
-            {
-                _crtEffect.ShowStatic(1f, 0.8f);
-            }
-
             // Start continuous alert animation
             if (_statusIndicator != null)
             {

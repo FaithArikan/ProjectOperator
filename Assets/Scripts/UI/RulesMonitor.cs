@@ -18,9 +18,6 @@ public class RulesMonitor : MonoBehaviour
     [SerializeField] private GameObject _continueButton;
     [SerializeField] private CanvasGroup _panelCanvasGroup;
 
-    [Header("Screen Effects")]
-    [SerializeField] private CRTScreenEffect _crtEffect;
-
     [Header("Rules Content")]
     [TextArea(10, 20)]
     [SerializeField] private string _rulesText = @"OPERATION PROTOCOL
@@ -93,12 +90,6 @@ Click CONTINUE to proceed to your station.";
             _rulesScreenPanel.SetActive(true);
         }
 
-        // Play CRT power-on effect
-        if (_crtEffect != null)
-        {
-            _crtEffect.PowerOn();
-        }
-
         // Start displaying rules with typewriter effect
         StartCoroutine(PowerOnSequence());
     }
@@ -119,12 +110,6 @@ Click CONTINUE to proceed to your station.";
             _typewriterCoroutine = null;
         }
 
-        // Play CRT power-off effect
-        if (_crtEffect != null)
-        {
-            _crtEffect.PowerOff();
-        }
-
         // Deactivate panel after a delay
         StartCoroutine(DelayedDeactivate());
 
@@ -136,7 +121,7 @@ Click CONTINUE to proceed to your station.";
     /// </summary>
     private IEnumerator PowerOnSequence()
     {
-        // Wait for camera transition and CRT effect
+        // Wait for camera transition
         yield return new WaitForSeconds(_powerOnDuration);
 
         // Fade in the panel

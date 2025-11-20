@@ -30,7 +30,6 @@ The system uses a three-camera sequence:
 3. Rename it to **"RulesMonitorPanel"**
 4. Configure the Panel:
    - Set RectTransform to fill the screen or position as desired
-   - Add a dark background (or use CRT screen aesthetic)
 
 #### 2a. Add Title Text
 
@@ -84,7 +83,6 @@ The system uses a three-camera sequence:
    - **Rules Content Text**: Drag RulesContentText here
    - **Continue Button**: Drag ContinueButton here
    - **Panel Canvas Group**: Drag RulesMonitorPanel (with Canvas Group) here
-   - **CRT Effect**: Drag your CRT Screen Effect component (if you want the same effect)
    - **Rules Text**: Edit the text area to customize your instructions
    - **Typewriter Speed**: Adjust (default 0.03 = 30ms per character)
    - **Power On Duration**: Adjust (default 1.5s for camera transition)
@@ -166,7 +164,6 @@ For better raycast performance:
 2. **Camera should be in Room View** (showing both screens)
 3. **Click on the Rules Screen**
    - Camera should smoothly transition to Rules View
-   - Rules panel should power on with CRT effect
    - Text should type out character by character
    - Continue button should appear after text finishes
 4. **Click Continue button**
@@ -225,7 +222,6 @@ CONTROLS:
 ### Style the UI
 
 Match the rules monitor UI to your game's aesthetic:
-- Use the same CRT effect as the brain monitor
 - Apply similar fonts and colors
 - Add scanlines, static, or glitch effects
 - Use DOTween animations for button interactions

@@ -258,14 +258,13 @@ Set `enableVerboseLogging = true` in AISettings to see detailed logs.
 
 ## Brain Activity Monitor UI
 
-The Brain Activity Monitor is a retro CRT-style computer interface that displays real-time brain wave activity and allows control over citizen obedience parameters.
+The Brain Activity Monitor is a retro computer interface that displays real-time brain wave activity and allows control over citizen obedience parameters.
 
 ### Features
 
 - **Real-time Waveform Display**: 5 animated line graphs showing Delta, Theta, Alpha, Beta, and Gamma brain waves
 - **Obedience Slider**: Single control that adjusts multiple parameters to make citizens more compliant
 - **Advanced Parameter Panel**: Fine-tune individual settings with real-time preview
-- **CRT Effects**: Authentic retro monitor with scanlines, screen curvature, chromatic aberration, and flicker
 - **DOTween Animations**: Smooth transitions, button feedback, alerts, and power on/off sequences
 - **World Space Canvas**: Place the monitor on 3D objects in your scene
 
@@ -276,13 +275,12 @@ The Brain Activity Monitor is a retro CRT-style computer interface that displays
 ```
 BrainMonitorComputer (Empty GameObject)
 ├── Canvas (Canvas - World Space)
-│   ├── CRTScreen (RawImage with CRTScreenEffect)
-│   │   ├── MainPanel (Panel)
-│   │   │   ├── HeaderPanel
-│   │   │   │   ├── CitizenNameText (TextMeshProUGUI)
-│   │   │   │   └── StatusIndicator (Image)
-│   │   │   ├── WaveformPanel
-│   │   │   │   ├── DeltaWaveform (WaveformDisplay)
+│   ├── MainPanel (Panel)
+│   │   ├── HeaderPanel
+│   │   │   ├── CitizenNameText (TextMeshProUGUI)
+│   │   │   └── StatusIndicator (Image)
+│   │   ├── WaveformPanel
+│   │   │   ├── DeltaWaveform (WaveformDisplay)
 │   │   │   │   ├── ThetaWaveform (WaveformDisplay)
 │   │   │   │   ├── AlphaWaveform (WaveformDisplay)
 │   │   │   │   ├── BetaWaveform (WaveformDisplay)
@@ -317,21 +315,6 @@ BrainMonitorComputer (Empty GameObject)
 2. Set **Canvas Scaler** to "Scale With Screen Size" or fixed pixel size (e.g., 1024x768)
 3. Position canvas on 3D computer screen model
 4. Adjust **Scale** to fit screen (e.g., 0.001 for realistic size)
-
-#### 3. Setup CRT Effect
-
-1. Create a **RawImage** that covers the entire canvas
-2. Add **CRTScreenEffect** component
-3. Create a material using the **UI/CRTMonitor** shader:
-   - Assets → Create → Material
-   - Name it "CRTScreen"
-   - Set shader to "UI/CRTMonitor"
-4. Assign material to RawImage
-5. Configure effect parameters:
-   - Scanline Intensity: 0.3
-   - Chromatic Aberration: 0.01
-   - Vignette: 0.3
-   - Screen Curvature: 0.02
 
 #### 4. Setup Waveform Displays
 
@@ -378,7 +361,6 @@ For each brain wave band (Delta, Theta, Alpha, Beta, Gamma):
 
 1. Add **BrainActivityMonitor** script to root GameObject
 2. Assign all component references:
-   - CRT Effect
    - Obedience Controller
    - Parameter Panel
    - All 5 Waveform Displays
@@ -514,22 +496,6 @@ UITweenAnimations.Pulse(transform, strength: 0.1f);
 // Shake for errors
 UITweenAnimations.Shake(transform, strength: 20f);
 ```
-
-#### CRT Effects
-```csharp
-// Power on sequence
-crtEffect.PowerOn(duration: 1.5f);
-
-// Power off
-crtEffect.PowerOff(duration: 0.8f);
-
-// Glitch effect
-crtEffect.TriggerGlitch(duration: 0.1f, intensity: 1f);
-
-// Static (for errors)
-crtEffect.ShowStatic(duration: 0.5f, intensity: 1f);
-```
-
 ### Customization
 
 #### Waveform Colors
@@ -543,13 +509,6 @@ private static readonly Color[] BandColors = new Color[]
     new Color(0.2f, 0.6f, 1f),  // Beta - Blue
     new Color(0.8f, 0.2f, 1f)   // Gamma - Purple
 };
-```
-
-#### CRT Shader Parameters
-Adjust in Material Inspector or at runtime:
-```csharp
-crtEffect.SetScanlineIntensity(0.5f, animate: true);
-crtEffect.SetFlickerIntensity(0.1f, animate: true);
 ```
 
 #### Buffer Size
@@ -567,11 +526,6 @@ History Buffer Size: 120  // 2 seconds at 60 FPS
 - Check DataBufferManager is receiving data
 - Verify WaveformDisplay components are initialized
 - Ensure textures are being created (check for errors in console)
-
-**Problem**: CRT effects not working
-- Verify CRTMonitor shader is compiled without errors
-- Check material is using the correct shader
-- Ensure RawImage has the material assigned
 
 **Problem**: Obedience slider not affecting parameters
 - Verify active profile is set: `obedienceController.SetActiveProfile(profile)`
@@ -594,8 +548,7 @@ History Buffer Size: 120  // 2 seconds at 60 FPS
 1. **Update Rate**: Lower the update rate (20-30 Hz) for better performance
 2. **Buffer Size**: Smaller buffers use less memory and are faster to render
 3. **Texture Size**: Reduce waveform texture size if needed (default: 512x256)
-4. **CRT Effects**: Disable effects on low-end hardware
-5. **Object Pooling**: Pool parameter slider instances for large parameter sets
+4. **Object Pooling**: Pool parameter slider instances for large parameter sets
 
 ### Integration Example
 
@@ -661,13 +614,8 @@ Assets/
       WaveformDisplay.cs     - Animated waveform renderer
       ObedienceController.cs - Obedience slider logic
       ParameterPanel.cs      - Advanced parameter tweaking
-      CRTScreenEffect.cs     - CRT visual effects
       UITweenAnimations.cs   - DOTween animation utilities
       DataBufferManager.cs   - Wave history buffer
-  Shaders/
-    CRTMonitor.shader       - Retro CRT screen shader
-  Materials/
-    CRTScreen.mat           - Material for CRT effect
   Data/
     Profiles/              - Neural profile assets
     DefaultAISettings.asset - Global settings

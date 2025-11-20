@@ -146,7 +146,6 @@ Make sure your BrainActivityMonitor is properly configured:
 1. Find your BrainActivityMonitor GameObject in the scene
 2. Check that it has:
    - **Main Screen Panel**: Assigned
-   - **CRT Effect**: Assigned
    - **Waveform Displays**: List of 5 WaveformDisplay components
    - **Status texts**: Citizen name, state, evaluation score, instability
    - **Power Button**: Assigned
