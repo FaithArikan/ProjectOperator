@@ -17,6 +17,10 @@ namespace NeuralWaveBureau.UI
         private float _scanlineIntensity = 0.3f;
 
         [SerializeField]
+        [Range(100f, 1000f)]
+        private float _scanlineCount = 500f;
+
+        [SerializeField]
         [Range(0f, 1f)]
         private float _flickerIntensity = 0.05f;
 
@@ -31,6 +35,14 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         [Range(0f, 0.05f)]
         private float _screenCurvature = 0.02f;
+
+        [SerializeField]
+        [Range(0.5f, 2f)]
+        private float _brightness = 1.0f;
+
+        [SerializeField]
+        [Range(0.5f, 2f)]
+        private float _contrast = 1.0f;
 
         [Header("Animation")]
         [SerializeField]
@@ -65,6 +77,32 @@ namespace NeuralWaveBureau.UI
         private void Awake()
         {
             _rawImage = GetComponent<RawImage>();
+            InitializeMaterial();
+        }
+
+        private void InitializeMaterial()
+        {
+            if (_rawImage == null) return;
+
+            // Check if we already have the correct material
+            if (_rawImage.material != null && _rawImage.material.shader.name == "UI/CRTMonitor")
+            {
+                _effectMaterial = _rawImage.material;
+            }
+            else
+            {
+                // Create a new material instance
+                Shader shader = Shader.Find("UI/CRTMonitor");
+                if (shader != null)
+                {
+                    _effectMaterial = new Material(shader);
+                    _rawImage.material = _effectMaterial;
+                }
+                else
+                {
+                    Debug.LogError("UI/CRTMonitor shader not found! Please ensure the shader is in the project.");
+                }
+            }
         }
 
         private void Update()
@@ -81,19 +119,13 @@ namespace NeuralWaveBureau.UI
                 }
             }
 
-            // Apply flicker
-            if (_enableFlicker)
-            {
-                ApplyFlicker();
-            }
-
             // Random glitches
             if (_enableRandomGlitches && Random.value < _glitchProbability * Time.deltaTime && !_isGlitching)
             {
                 TriggerGlitch();
             }
 
-            // Update material properties if custom shader is used
+            // Update material properties
             UpdateMaterialProperties();
         }
 
@@ -105,48 +137,25 @@ namespace NeuralWaveBureau.UI
             if (_effectMaterial == null)
                 return;
 
-            // These properties would be used by a custom CRT shader
-            if (_effectMaterial.HasProperty("_ScanlineIntensity"))
+            _effectMaterial.SetFloat("_ScanlineIntensity", _scanlineIntensity);
+            _effectMaterial.SetFloat("_ScanlineCount", _scanlineCount);
+            _effectMaterial.SetFloat("_ScanlineOffset", _scanlineOffset);
+            _effectMaterial.SetFloat("_ChromaticAberration", _chromaticAberration);
+            _effectMaterial.SetFloat("_Vignette", _vignette);
+            _effectMaterial.SetFloat("_Curvature", _screenCurvature);
+            _effectMaterial.SetFloat("_Brightness", _brightness);
+            _effectMaterial.SetFloat("_Contrast", _contrast);
+
+            // Flicker handled by shader, but we control intensity/speed
+            if (_enableFlicker)
             {
-                _effectMaterial.SetFloat("_ScanlineIntensity", _scanlineIntensity);
+                _effectMaterial.SetFloat("_FlickerIntensity", _flickerIntensity);
+                _effectMaterial.SetFloat("_FlickerSpeed", _flickerSpeed);
             }
-
-            if (_effectMaterial.HasProperty("_ScanlineOffset"))
+            else
             {
-                _effectMaterial.SetFloat("_ScanlineOffset", _scanlineOffset);
+                _effectMaterial.SetFloat("_FlickerIntensity", 0f);
             }
-
-            if (_effectMaterial.HasProperty("_ChromaticAberration"))
-            {
-                _effectMaterial.SetFloat("_ChromaticAberration", _chromaticAberration);
-            }
-
-            if (_effectMaterial.HasProperty("_Vignette"))
-            {
-                _effectMaterial.SetFloat("_Vignette", _vignette);
-            }
-
-            if (_effectMaterial.HasProperty("_Curvature"))
-            {
-                _effectMaterial.SetFloat("_Curvature", _screenCurvature);
-            }
-        }
-
-        /// <summary>
-        /// Applies screen flicker effect
-        /// </summary>
-        private void ApplyFlicker()
-        {
-            if (_rawImage == null)
-                return;
-
-            // Subtle brightness variation
-            float flicker = 1f + Mathf.Sin(_time * _flickerSpeed) * _flickerIntensity * 0.5f;
-            flicker += Mathf.PerlinNoise(_time * _flickerSpeed * 2f, 0f) * _flickerIntensity * 0.5f;
-
-            Color currentColor = _rawImage.color;
-            currentColor.a = Mathf.Clamp01(flicker);
-            _rawImage.color = currentColor;
         }
 
         /// <summary>
@@ -188,6 +197,14 @@ namespace NeuralWaveBureau.UI
                 {
                     _rawImage.DOColor(originalColor, duration * 0.5f).SetEase(Ease.InQuad);
                 });
+
+            // Momentary chromatic aberration spike
+            float originalChrom = _chromaticAberration;
+            DOTween.To(() => _chromaticAberration, x => _chromaticAberration = x, originalChrom * 5f * intensity, duration * 0.2f)
+                .OnComplete(() =>
+                {
+                    DOTween.To(() => _chromaticAberration, x => _chromaticAberration = x, originalChrom, duration * 0.8f);
+                });
         }
 
         /// <summary>
@@ -198,6 +215,13 @@ namespace NeuralWaveBureau.UI
             // Start with screen off
             _rawImage.color = new Color(1f, 1f, 1f, 0f);
             transform.localScale = new Vector3(1f, 0.05f, 1f);
+
+            // Reset material properties for power on
+            if (_effectMaterial != null)
+            {
+                _brightness = 0f;
+                DOTween.To(() => _brightness, x => _brightness = x, 1f, duration).SetEase(Ease.OutQuad);
+            }
 
             // Animate scale (like old CRT turning on)
             transform.DOScale(Vector3.one, duration * 0.7f).SetEase(Ease.OutBounce);
@@ -221,6 +245,16 @@ namespace NeuralWaveBureau.UI
 
             // Fade out
             _rawImage.DOFade(0f, duration).SetEase(Ease.InQuad);
+
+            // Brightness flare
+            if (_effectMaterial != null)
+            {
+                DOTween.To(() => _brightness, x => _brightness = x, 2f, duration * 0.2f)
+                    .OnComplete(() =>
+                    {
+                        DOTween.To(() => _brightness, x => _brightness = x, 0f, duration * 0.8f);
+                    });
+            }
 
             // Flash before turning off
             DOVirtual.DelayedCall(duration * 0.1f, () =>
@@ -250,6 +284,17 @@ namespace NeuralWaveBureau.UI
             {
                 _rawImage.DOFade(1f, 0.1f);
             });
+
+            // Also scramble scanlines
+            if (_effectMaterial != null)
+            {
+                float originalScanline = _scanlineIntensity;
+                DOTween.To(() => _scanlineIntensity, x => _scanlineIntensity = x, 1f, duration * 0.2f)
+                    .OnComplete(() =>
+                    {
+                        DOTween.To(() => _scanlineIntensity, x => _scanlineIntensity = x, originalScanline, duration * 0.8f);
+                    });
+            }
         }
 
         /// <summary>
@@ -284,7 +329,8 @@ namespace NeuralWaveBureau.UI
 
         private void OnDestroy()
         {
-            if (_effectMaterial != null)
+            // Clean up material if we created it
+            if (_effectMaterial != null && _rawImage != null && _rawImage.material == _effectMaterial)
             {
                 Destroy(_effectMaterial);
             }

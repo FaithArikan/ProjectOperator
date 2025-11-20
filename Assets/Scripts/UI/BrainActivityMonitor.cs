@@ -105,12 +105,6 @@ namespace NeuralWaveBureau.UI
             // Initialize buffer manager
             _bufferManager = new DataBufferManager(NeuralProfile.BandCount, _historyBufferSize);
 
-            // Setup button listeners
-            if (_powerButton != null)
-            {
-                _powerButton.onClick.AddListener(TogglePower);
-            }
-
             // Initialize waveform displays
             InitializeWaveformDisplays();
         }
@@ -464,7 +458,7 @@ namespace NeuralWaveBureau.UI
                 // Move camera back to room view
                 CameraManager.Instance.MoveToRoomView();
             }
-            
+
 
             // Button feedback
             if (_powerButton != null)
@@ -630,25 +624,6 @@ namespace NeuralWaveBureau.UI
 
             // Shake UI
             transform.DOShakePosition(0.5f, 5f, 30);
-        }
-
-        private void OnDestroy()
-        {
-            // Clean up button listeners
-            if (_powerButton != null)
-            {
-                _powerButton.onClick.RemoveListener(TogglePower);
-            }
-
-            // Unsubscribe from citizen events
-            if (_activeCitizen != null)
-            {
-                _activeCitizen.OnStabilized -= OnCitizenStabilized;
-                _activeCitizen.OnCriticalFailure -= OnCitizenCriticalFailure;
-            }
-
-            // Kill any running animations
-            _alertAnimation?.Kill();
         }
     }
 }

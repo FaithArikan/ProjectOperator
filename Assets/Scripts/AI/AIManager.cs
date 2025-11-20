@@ -11,8 +11,7 @@ namespace NeuralWaveBureau.AI
     public class AIManager : MonoBehaviour
     {
         // Singleton instance
-        private static AIManager _instance;
-        public static AIManager Instance => _instance;
+        public static AIManager Instance;
 
         [Header("Settings")]
         [SerializeField]
@@ -37,13 +36,7 @@ namespace NeuralWaveBureau.AI
 
         private void Awake()
         {
-            // Singleton pattern
-            if (_instance != null && _instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            _instance = this;
+            Instance = this;
 
             // Validate settings
             if (_aiSettings == null)

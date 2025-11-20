@@ -4,16 +4,24 @@ using UnityEngine.Animations.Rigging;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using UnityEngine.Events;
 
 public class HandInteractor : MonoBehaviour
 {
     [Header("IK Setup")]
-    public Rig armRig; // Reference to the Rig component
-    public Transform handTarget; // The target object the hand follows
-    
+    public Rig armRig;
+    public TwoBoneIKConstraint constraint;
+
+    private void Awake()
+    {
+        if (armRig == null && constraint != null)
+            armRig = constraint.GetComponentInParent<Rig>();
+    }
+
     [Header("Settings")]
     public float reachSpeed = 5f;
-    
+    public UnityEvent OnReachTarget;
+
     private CancellationTokenSource _reachCts;
 
     private void OnDestroy()
@@ -37,22 +45,19 @@ public class HandInteractor : MonoBehaviour
 
     async UniTaskVoid ReachAndPress(Transform targetPoint, CancellationToken token)
     {
-        // 1. Move the IK target to the exact position of the button
-        handTarget.position = targetPoint.position;
-        handTarget.rotation = targetPoint.rotation; // Optional: match rotation
+        // Ensure the main Rig is active so the constraint can work
+        if (armRig != null) armRig.weight = 1f;
 
         // 2. Smoothly increase IK weight (Reach out)
         float timer = 0f;
         while (timer < 1f)
         {
             timer += Time.deltaTime * reachSpeed;
-            armRig.weight = Mathf.Lerp(0f, 1f, timer);
+            constraint.weight = Mathf.Lerp(0f, 1f, timer);
             await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: token);
         }
 
-        // 3. The moment of the "Press"
-        // Add your logic here! (e.g., play sound, turn on screen)
-        Debug.Log("Button Pressed!");
+        OnReachTarget.Invoke();
 
         // Optional: Wait a tiny bit to simulate holding the button
         await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: token);
@@ -62,7 +67,7 @@ public class HandInteractor : MonoBehaviour
         while (timer < 1f)
         {
             timer += Time.deltaTime * reachSpeed;
-            armRig.weight = Mathf.Lerp(1f, 0f, timer);
+            constraint.weight = Mathf.Lerp(1f, 0f, timer);
             await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: token);
         }
     }

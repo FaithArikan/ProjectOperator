@@ -48,15 +48,7 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton pattern
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         Instance = this;
-        DontDestroyOnLoad(gameObject);
 
         // Load saved settings
         LoadSettings();

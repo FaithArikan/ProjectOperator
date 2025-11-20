@@ -1,16 +1,12 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class InteractionPoint : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private HandInteractor _handInteractor;
 
-    // Update is called once per frame
-    void Update()
+    public void OnInteract()
     {
-        
+        _handInteractor.TryInteract(transform);
     }
 }

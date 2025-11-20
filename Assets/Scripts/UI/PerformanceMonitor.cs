@@ -47,11 +47,11 @@ public class PerformanceMonitor : MonoBehaviour
     private void Start()
     {
         // Check if we should show the monitor
-        #if UNITY_EDITOR
-            isVisible = showInEditor;
-        #else
+#if UNITY_EDITOR
+        isVisible = showInEditor;
+#else
             isVisible = showInBuild;
-        #endif
+#endif
 
         // Initialize metrics
         UpdateMetrics();

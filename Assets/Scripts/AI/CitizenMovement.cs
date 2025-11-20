@@ -35,9 +35,6 @@ namespace NeuralWaveBureau.AI
         [SerializeField]
         private string _walkAnimationParameter = "isWalking";
 
-        [SerializeField]
-        private string _speedAnimationParameter = "walkSpeed";
-
         // Components
         private NavMeshAgent _navAgent;
         private CitizenController _citizenController;
@@ -83,6 +80,11 @@ namespace NeuralWaveBureau.AI
             if (_animator == null)
             {
                 _animator = GetComponent<Animator>();
+            }
+
+            if (_animator != null && _animator.runtimeAnimatorController == null)
+            {
+                Debug.LogWarning($"[CitizenMovement] Animator found on {gameObject.name} but no AnimatorController is assigned. Animations will not play.");
             }
         }
 
@@ -169,13 +171,6 @@ namespace NeuralWaveBureau.AI
                     ArriveAtDestination();
                 }
             }
-
-            // Update animation speed based on actual velocity
-            if (_animator != null)
-            {
-                float speed = _navAgent.velocity.magnitude / _walkSpeed;
-                _animator.SetFloat(_speedAnimationParameter, speed);
-            }
         }
 
         /// <summary>
@@ -207,12 +202,6 @@ namespace NeuralWaveBureau.AI
                     targetRotation,
                     _rotationSpeed * Time.deltaTime
                 );
-            }
-
-            // Update animation
-            if (_animator != null)
-            {
-                _animator.SetFloat(_speedAnimationParameter, 1f);
             }
         }
 
@@ -257,15 +246,10 @@ namespace NeuralWaveBureau.AI
         /// </summary>
         private void UpdateWalkAnimation(bool isWalking)
         {
-            if (_animator == null)
+            if (_animator == null || _animator.runtimeAnimatorController == null)
                 return;
-
+            Debug.Log($"[CitizenMovement] {_citizenController.CitizenId} is walking: {isWalking}");
             _animator.SetBool(_walkAnimationParameter, isWalking);
-
-            if (!isWalking)
-            {
-                _animator.SetFloat(_speedAnimationParameter, 0f);
-            }
         }
 
         /// <summary>
