@@ -7072,6 +7072,8 @@ GameObject:
   - component: {fileID: 4082874153170042200}
   - component: {fileID: 4082874153170042203}
   - component: {fileID: 4082874153170042202}
+  - component: {fileID: 4082874153170042204}
+  - component: {fileID: 4082874153170042205}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -10684,6 +10686,7 @@ GameObject:
   - component: {fileID: 2025304883}
   - component: {fileID: 2025304882}
   - component: {fileID: 2025304881}
+  - component: {fileID: 2025304884}
   m_Layer: 0
   m_Name: Power
   m_TagString: Untagged
@@ -10793,6 +10796,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2025304879}
   m_CullTransparentMesh: 1
+--- !u!114 &2025304884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025304879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56671f869ecfe1a4f81f7c4e84cbbeec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionPoint
 --- !u!1 &2026350260
 GameObject:
   m_ObjectHideFlags: 0
@@ -11465,6 +11480,33 @@ MonoBehaviour:
   - {fileID: 1288946007}
   - {fileID: 1288864781}
   - {fileID: 1288943717}
+--- !u!114 &4082874153170042204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289051149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e846f7ca4caeb6442873f054e826a1ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandInteractor
+  armRig: {fileID: 685227128}
+  handTarget: {fileID: 2025304880}
+  reachSpeed: 5
+--- !u!114 &4082874153170042205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1289051149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ec036b912b1dd48afba903ed4f59ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
