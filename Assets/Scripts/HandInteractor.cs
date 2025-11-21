@@ -5,6 +5,9 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using UnityEngine.Events;
+using Unity.VisualScripting;
+using NeuralWaveBureau.UI;
+using NeuralWaveBureau.AI;
 
 public class HandInteractor : MonoBehaviour
 {
@@ -19,10 +22,35 @@ public class HandInteractor : MonoBehaviour
     }
 
     [Header("Settings")]
-    public float reachSpeed = 5f;
-    public UnityEvent OnReachTarget;
+    public float reachSpeed = 2f;
+    public Action<InteractionType, float> OnReachTarget;
 
     private CancellationTokenSource _reachCts;
+
+
+    private void OnEnable()
+    {
+        OnReachTarget += OnReachTargetListener;
+    }
+
+    private void OnDisable()
+    {
+        OnReachTarget -= OnReachTargetListener;
+    }
+
+    private void OnReachTargetListener(InteractionType interactionType, float reachSpeed)
+    {
+        this.reachSpeed = reachSpeed;
+        switch (interactionType)
+        {
+            case InteractionType.Power:
+                BrainActivityMonitor.Instance.TogglePower();
+                break;
+            case InteractionType.Done:
+                CitizenSpawner.Instance.FinishCurrentCitizen();
+                break;
+        }
+    }
 
     private void OnDestroy()
     {
@@ -31,7 +59,7 @@ public class HandInteractor : MonoBehaviour
     }
 
     // Call this function when the player presses the button
-    public void TryInteract(Transform objectToTouch)
+    public void TryInteract(Transform objectToTouch, InteractionType interactionType, float reachSpeed)
     {
         if (_reachCts != null)
         {
@@ -40,10 +68,10 @@ public class HandInteractor : MonoBehaviour
         }
         _reachCts = new CancellationTokenSource();
 
-        ReachAndPress(objectToTouch, _reachCts.Token).Forget();
+        ReachAndPress(objectToTouch, _reachCts.Token, interactionType, reachSpeed).Forget();
     }
 
-    async UniTaskVoid ReachAndPress(Transform targetPoint, CancellationToken token)
+    async UniTaskVoid ReachAndPress(Transform targetPoint, CancellationToken token, InteractionType interactionType, float reachSpeed)
     {
         // Ensure the main Rig is active so the constraint can work
         if (armRig != null) armRig.weight = 1f;
@@ -57,7 +85,7 @@ public class HandInteractor : MonoBehaviour
             await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: token);
         }
 
-        OnReachTarget.Invoke();
+        OnReachTarget.Invoke(interactionType, reachSpeed);
 
         // Optional: Wait a tiny bit to simulate holding the button
         await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: token);

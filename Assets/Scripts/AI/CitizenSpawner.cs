@@ -10,6 +10,8 @@ namespace NeuralWaveBureau.AI
     /// </summary>
     public class CitizenSpawner : MonoBehaviour
     {
+        public static CitizenSpawner Instance { get; private set; }
+
         [Header("Prefab Settings")]
         [SerializeField]
         [Tooltip("List of citizen prefabs to spawn (must have CitizenController and CitizenMovement)")]
@@ -38,13 +40,23 @@ namespace NeuralWaveBureau.AI
         [Tooltip("Monitoring station where citizens should go")]
         private MonitoringStation _targetStation;
 
+        [SerializeField]
+        [Tooltip("Where citizens go when they are done")]
+        private Transform _exitPoint;
+
         // State
         private List<GameObject> _spawnedCitizens = new List<GameObject>();
         private float _spawnTimer = 0f;
         private int _totalSpawned = 0;
+        private bool _isCurrentCitizenDone = true; // Default to true so we can spawn the first one
 
         public int TotalSpawned => _totalSpawned;
         public int ActiveCitizens => _spawnedCitizens.Count;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         private void Start()
         {
@@ -82,11 +94,18 @@ namespace NeuralWaveBureau.AI
                 return null;
             }
 
-            // Destroy previous citizen if enabled
-            if (_spawnedCitizens.Count > 0)
+            // Check if we have an active citizen that is not done
+            if (_spawnedCitizens.Count > 0 && !_isCurrentCitizenDone)
             {
-                DestroyOldestCitizen();
+                Debug.LogWarning("[CitizenSpawner] Cannot spawn new citizen - current citizen is not done yet!");
+                return null;
             }
+
+            // Destroy previous citizen if it exists and we are enforcing single citizen (optional, but good for cleanup)
+            // For now, we'll assume FinishCurrentCitizen handles the cleanup of the previous one, 
+            // or we let them coexist if the previous one is walking away.
+            // If you want strictly ONE citizen at a time, uncomment the line below:
+            // if (_spawnedCitizens.Count > 0) DestroyOldestCitizen();
 
             // Spawn the citizen
             Vector3 spawnPos = _spawnPoint != null ? _spawnPoint.position : transform.position;
@@ -139,6 +158,7 @@ namespace NeuralWaveBureau.AI
             // Track spawned citizen
             _spawnedCitizens.Add(citizenObj);
             _totalSpawned++;
+            _isCurrentCitizenDone = false;
 
             string prefabName = prefabToSpawn.name;
             Debug.Log($"[CitizenSpawner] Spawned citizen #{_totalSpawned} ({prefabName}) with profile: {controller.Profile}");
@@ -236,6 +256,72 @@ namespace NeuralWaveBureau.AI
         public void SpawnCitizenNow()
         {
             SpawnCitizen();
+        }
+
+        /// <summary>
+        /// Marks the current citizen as done and sends them to the exit point.
+        /// </summary>
+        [ContextMenu("Finish Current Citizen")]
+        public void FinishCurrentCitizen()
+        {
+            if (_isCurrentCitizenDone)
+            {
+                Debug.LogWarning("[CitizenSpawner] Current citizen is already done or no citizen active!");
+                return;
+            }
+
+            if (_spawnedCitizens.Count == 0)
+            {
+                _isCurrentCitizenDone = true;
+                return;
+            }
+
+            // Get the current active citizen (last one spawned)
+            GameObject currentCitizen = _spawnedCitizens[_spawnedCitizens.Count - 1];
+
+            if (currentCitizen != null)
+            {
+                CitizenMovement movement = currentCitizen.GetComponent<CitizenMovement>();
+                if (movement != null && _exitPoint != null)
+                {
+                    movement.MoveTo(_exitPoint.position);
+
+                    // Subscribe to OnArrived to destroy them
+                    movement.OnArrived += HandleCitizenExit;
+                    Debug.Log($"[CitizenSpawner] Sending citizen {currentCitizen.name} to exit.");
+                }
+                else
+                {
+                    // If no movement or exit point, just destroy them or mark done
+                    if (_exitPoint == null)
+                    {
+                        Debug.LogWarning("[CitizenSpawner] No exit point assigned. Destroying citizen immediately.");
+                        DestroyOldestCitizen();
+                    }
+                }
+            }
+
+            _isCurrentCitizenDone = true;
+        }
+
+        private void HandleCitizenExit(CitizenMovement movement)
+        {
+            movement.OnArrived -= HandleCitizenExit;
+
+            // Unregister from AIManager
+            CitizenController controller = movement.GetComponent<CitizenController>();
+            if (controller != null && AIManager.Instance != null)
+            {
+                AIManager.Instance.UnregisterCitizen(controller);
+            }
+
+            if (_spawnedCitizens.Contains(movement.gameObject))
+            {
+                _spawnedCitizens.Remove(movement.gameObject);
+            }
+
+            Destroy(movement.gameObject);
+            Debug.Log($"[CitizenSpawner] Citizen {movement.gameObject.name} has left the area and was destroyed.");
         }
 
         private void OnDestroy()

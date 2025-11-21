@@ -15,6 +15,8 @@ namespace NeuralWaveBureau.UI
     /// </summary>
     public class BrainActivityMonitor : MonoBehaviour
     {
+        public static BrainActivityMonitor Instance { get; private set; }
+
         [Header("Core Components")]
         [SerializeField]
         private GameObject _mainScreenPanel; // The main panel that contains everything
@@ -99,6 +101,8 @@ namespace NeuralWaveBureau.UI
 
         private void Awake()
         {
+            Instance = this;
+
             // Initialize buffer manager
             _bufferManager = new DataBufferManager(NeuralProfile.BandCount, _historyBufferSize);
 
