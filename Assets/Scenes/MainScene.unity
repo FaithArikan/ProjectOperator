@@ -3826,7 +3826,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.UI.BrainActivityMonitor
   _mainScreenPanel: {fileID: 2026350260}
-  _crtEffect: {fileID: 0}
   _waveformDisplays:
   - {fileID: 747905227}
   - {fileID: 1089099319}
@@ -3917,7 +3916,6 @@ MonoBehaviour:
   _rulesContentText: {fileID: 742216654}
   _continueButton: {fileID: 1440568012}
   _panelCanvasGroup: {fileID: 1702665448}
-  _crtEffect: {fileID: 0}
   _rulesText: 'OPERATION PROTOCOL
 
 
@@ -4153,7 +4151,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 0
   blendDistance: 0
-  weight: 0
+  weight: 1
   sharedProfile: {fileID: 11400000, guid: 431f948e88793fd44827b76bc6c9bc25, type: 2}
 --- !u!4 &832575519
 Transform:
@@ -11178,7 +11176,7 @@ Animator:
   m_GameObject: {fileID: 1289051149}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7d26d8592a6e5e5448691369dff8ec6b, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
