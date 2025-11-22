@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.Events;
 using NeuralWaveBureau.UI;
 
 namespace NeuralWaveBureau.AI
@@ -42,6 +43,9 @@ namespace NeuralWaveBureau.AI
         // Events
         public event Action<CitizenMovement> OnCitizenArrivedAtStation;
         public event Action<CitizenMovement> OnCitizenLeftStation;
+
+        [Header("Unity Events")]
+        public Action OnCitizenArrivedEvent;
 
         public CitizenMovement CurrentCitizen => _currentCitizen;
         public bool IsOccupied => _currentCitizen != null;
@@ -90,6 +94,7 @@ namespace NeuralWaveBureau.AI
             Debug.Log($"[MonitoringStation] Citizen {citizen.CitizenController.CitizenId} arrived at station");
 
             OnCitizenArrivedAtStation?.Invoke(citizen);
+            OnCitizenArrivedEvent?.Invoke();
 
             // Auto-start monitoring if enabled
             if (_autoStartMonitoring && _brainMonitor != null)

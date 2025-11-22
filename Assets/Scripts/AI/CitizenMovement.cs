@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System;
+using UnityEngine.Events;
 
 namespace NeuralWaveBureau.AI
 {
@@ -48,6 +49,9 @@ namespace NeuralWaveBureau.AI
         // Events
         public event Action<CitizenMovement> OnArrived;
         public event Action<CitizenMovement> OnStartedWalking;
+
+        [Header("Events")]
+        public UnityEvent OnArrivedAtDestination;
 
         public bool IsMoving => _isMoving;
         public bool HasArrived => _hasArrived;
@@ -239,6 +243,8 @@ namespace NeuralWaveBureau.AI
             {
                 _targetStation.OnCitizenArrived(this);
             }
+
+            OnArrivedAtDestination?.Invoke();
         }
 
         /// <summary>
