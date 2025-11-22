@@ -46,6 +46,7 @@ namespace NeuralWaveBureau.AI
 
         [Header("Unity Events")]
         public Action OnCitizenArrivedEvent;
+        public Action OnCitizenLeftEvent;
 
         public CitizenMovement CurrentCitizen => _currentCitizen;
         public bool IsOccupied => _currentCitizen != null;
@@ -152,6 +153,7 @@ namespace NeuralWaveBureau.AI
 
             Debug.Log($"[MonitoringStation] Citizen {citizen.CitizenController.CitizenId} left station");
             OnCitizenLeftStation?.Invoke(citizen);
+            OnCitizenLeftEvent?.Invoke();
         }
 
         /// <summary>

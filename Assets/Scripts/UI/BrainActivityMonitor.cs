@@ -5,6 +5,7 @@ using DG.Tweening;
 using NeuralWaveBureau.Data;
 using NeuralWaveBureau.AI;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 namespace NeuralWaveBureau.UI
 {
@@ -82,6 +83,8 @@ namespace NeuralWaveBureau.UI
         private AIManager _aiManager;
         private CitizenController _activeCitizen;
         private DataBufferManager _bufferManager;
+        [SerializeField]
+        private MonitoringStation _monitoringStation;
 
         // State
         private bool _isPoweredOn = false;
@@ -108,6 +111,16 @@ namespace NeuralWaveBureau.UI
 
             // Initialize waveform displays
             InitializeWaveformDisplays();
+        }
+
+        private void OnEnable()
+        {
+            _monitoringStation.OnCitizenArrivedEvent += StartMonitoring;
+        }
+
+        private void OnDisable()
+        {
+            _monitoringStation.OnCitizenLeftEvent -= StopMonitoring;
         }
 
         private void Start()
@@ -450,6 +463,7 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         public void StartMonitoring()
         {
+            Debug.Log("[BrainActivityMonitor] StartMonitoring() called");
             if (_isMonitoring)
                 return;
 
