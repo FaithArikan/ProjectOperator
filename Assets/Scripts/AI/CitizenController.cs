@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using NeuralWaveBureau.Data;
 
 namespace NeuralWaveBureau.AI
@@ -31,8 +33,8 @@ namespace NeuralWaveBureau.AI
         private EmotionStateMachine _stateMachine;
         private AISettings _settings;
 
-        // Evaluation coroutine
-        private Coroutine _evaluationCoroutine;
+        // Evaluation task cancellation
+        private CancellationTokenSource _evaluationCts;
 
         // Current wave sample being evaluated
         private WaveSample _currentSample;
@@ -53,7 +55,7 @@ namespace NeuralWaveBureau.AI
         public event CitizenEventDelegate OnStabilized;
         public event CitizenEventDelegate OnCriticalFailure;
         public event CitizenEventDelegate OnRecovered;
-        
+
         /// <summary>
         /// Initializes the citizen with settings and profile
         /// </summary>
@@ -101,12 +103,12 @@ namespace NeuralWaveBureau.AI
             _isActive = true;
             _stateMachine.StartStimulation();
 
-            // Start evaluation coroutine
-            if (_evaluationCoroutine != null)
-            {
-                StopCoroutine(_evaluationCoroutine);
-            }
-            _evaluationCoroutine = StartCoroutine(EvaluationLoop());
+            // Start evaluation task
+            _evaluationCts?.Cancel();
+            _evaluationCts?.Dispose();
+            _evaluationCts = new CancellationTokenSource();
+
+            EvaluationLoop(_evaluationCts.Token).Forget();
 
             if (_settings.enableVerboseLogging)
             {
@@ -122,10 +124,11 @@ namespace NeuralWaveBureau.AI
             _isActive = false;
             _stateMachine?.StopStimulation();
 
-            if (_evaluationCoroutine != null)
+            if (_evaluationCts != null)
             {
-                StopCoroutine(_evaluationCoroutine);
-                _evaluationCoroutine = null;
+                _evaluationCts.Cancel();
+                _evaluationCts.Dispose();
+                _evaluationCts = null;
             }
 
             if (_settings.enableVerboseLogging)
@@ -145,23 +148,30 @@ namespace NeuralWaveBureau.AI
         /// <summary>
         /// Evaluation loop running at fixed sample rate
         /// </summary>
-        private IEnumerator EvaluationLoop()
+        private async UniTaskVoid EvaluationLoop(CancellationToken token)
         {
             float sampleInterval = _settings.GetSampleInterval();
 
-            while (_isActive)
+            try
             {
-                // Evaluate current sample
-                float score = _evaluator.Evaluate(_currentSample);
+                while (_isActive && !token.IsCancellationRequested)
+                {
+                    // Evaluate current sample
+                    float score = _evaluator.Evaluate(_currentSample);
 
-                // Update state machine
-                _stateMachine.Update(score, sampleInterval);
+                    // Update state machine
+                    _stateMachine.Update(score, sampleInterval);
 
-                // Update animator
-                //UpdateAnimator();
+                    // Update animator
+                    //UpdateAnimator();
 
-                // Wait for next sample
-                yield return new WaitForSeconds(sampleInterval);
+                    // Wait for next sample
+                    await UniTask.Delay(System.TimeSpan.FromSeconds(sampleInterval), cancellationToken: token);
+                }
+            }
+            catch (System.OperationCanceledException)
+            {
+                // Task cancelled
             }
         }
 
@@ -258,6 +268,12 @@ namespace NeuralWaveBureau.AI
 
         private void OnDestroy()
         {
+            if (_evaluationCts != null)
+            {
+                _evaluationCts.Cancel();
+                _evaluationCts.Dispose();
+            }
+
             // Unsubscribe from events
             if (_stateMachine != null)
             {
