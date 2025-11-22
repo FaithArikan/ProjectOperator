@@ -4372,7 +4372,7 @@ MonoBehaviour:
   _stabilizedColor: {r: 0, g: 1, b: 0, a: 1}
   _agitatedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _criticalColor: {r: 1, g: 0, b: 0, a: 1}
-  _monitoringStation: {fileID: 0}
+  _monitoringStation: {fileID: 556941112}
 --- !u!114 &782642114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6054,7 +6054,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 5.3, y: -0.5085}
+  m_AnchoredPosition: {x: 7.45, y: -1.55}
   m_SizeDelta: {x: 2.62, y: 0.8912}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1069948299

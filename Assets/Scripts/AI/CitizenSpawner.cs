@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using NeuralWaveBureau.Data;
+using NeuralWaveBureau.UI;
 
 namespace NeuralWaveBureau.AI
 {
@@ -275,6 +276,8 @@ namespace NeuralWaveBureau.AI
                 _isCurrentCitizenDone = true;
                 return;
             }
+
+            BrainActivityMonitor.Instance.StopMonitoring();
 
             // Get the current active citizen (last one spawned)
             GameObject currentCitizen = _spawnedCitizens[_spawnedCitizens.Count - 1];
