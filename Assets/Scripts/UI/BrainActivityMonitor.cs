@@ -113,16 +113,6 @@ namespace NeuralWaveBureau.UI
             InitializeWaveformDisplays();
         }
 
-        private void OnEnable()
-        {
-            _monitoringStation.OnCitizenArrivedEvent += StartMonitoring;
-        }
-
-        private void OnDisable()
-        {
-            _monitoringStation.OnCitizenLeftEvent -= StopMonitoring;
-        }
-
         private void Start()
         {
             _aiManager = AIManager.Instance;

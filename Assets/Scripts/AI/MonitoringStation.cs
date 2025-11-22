@@ -137,6 +137,9 @@ namespace NeuralWaveBureau.AI
             // Power on the monitor if it's not already on
             _brainMonitor.PowerOn();
 
+            // Explicitly start monitoring to show waves
+            _brainMonitor.StartMonitoring();
+
             Debug.Log($"[MonitoringStation] Started monitoring citizen {_currentCitizen.CitizenController.CitizenId}");
         }
 

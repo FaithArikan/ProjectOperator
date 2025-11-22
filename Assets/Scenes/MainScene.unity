@@ -4372,6 +4372,7 @@ MonoBehaviour:
   _stabilizedColor: {r: 0, g: 1, b: 0, a: 1}
   _agitatedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _criticalColor: {r: 1, g: 0, b: 0, a: 1}
+  _monitoringStation: {fileID: 0}
 --- !u!114 &782642114
 MonoBehaviour:
   m_ObjectHideFlags: 0
