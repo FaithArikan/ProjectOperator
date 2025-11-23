@@ -4,6 +4,9 @@ using DG.Tweening;
 using System.Collections;
 using NeuralWaveBureau.UI;
 using NeuralWaveBureau;
+using Cysharp.Threading.Tasks;
+using System.Threading;
+using System;
 
 /// <summary>
 /// Manages the rules/instructions monitor that displays game controls and objectives
@@ -47,7 +50,7 @@ Click CONTINUE to proceed to your station.";
     [SerializeField] private float _powerOnDuration = 1.5f;
 
     private bool _isPoweredOn = false;
-    private Coroutine _typewriterCoroutine;
+    private CancellationTokenSource _typewriterCts;
 
     private void Awake()
     {
@@ -55,11 +58,6 @@ Click CONTINUE to proceed to your station.";
         if (_rulesScreenPanel != null)
         {
             _rulesScreenPanel.SetActive(false);
-        }
-
-        if (_continueButton != null)
-        {
-            _continueButton.SetActive(false);
         }
 
         // Set initial text
@@ -71,6 +69,15 @@ Click CONTINUE to proceed to your station.";
         if (_titleText != null)
         {
             _titleText.text = "INSTRUCTIONS";
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_typewriterCts != null)
+        {
+            _typewriterCts.Cancel();
+            _typewriterCts.Dispose();
         }
     }
 
@@ -91,7 +98,7 @@ Click CONTINUE to proceed to your station.";
         }
 
         // Start displaying rules with typewriter effect
-        StartCoroutine(PowerOnSequence());
+        PowerOnSequenceAsync().Forget();
     }
 
     /// <summary>
@@ -104,14 +111,15 @@ Click CONTINUE to proceed to your station.";
         Debug.Log("RulesMonitor: Powering off...");
 
         // Stop any ongoing typewriter effect
-        if (_typewriterCoroutine != null)
+        if (_typewriterCts != null)
         {
-            StopCoroutine(_typewriterCoroutine);
-            _typewriterCoroutine = null;
+            _typewriterCts.Cancel();
+            _typewriterCts.Dispose();
+            _typewriterCts = null;
         }
 
         // Deactivate panel after a delay
-        StartCoroutine(DelayedDeactivate());
+        DelayedDeactivateAsync().Forget();
 
         _isPoweredOn = false;
     }
@@ -119,68 +127,65 @@ Click CONTINUE to proceed to your station.";
     /// <summary>
     /// Sequence of events when powering on the monitor.
     /// </summary>
-    private IEnumerator PowerOnSequence()
+    private async UniTaskVoid PowerOnSequenceAsync()
     {
-        // Wait for camera transition
-        yield return new WaitForSeconds(_powerOnDuration);
+        _typewriterCts = new CancellationTokenSource();
+        var token = _typewriterCts.Token;
 
-        // Fade in the panel
-        if (_panelCanvasGroup != null)
+        try
         {
-            _panelCanvasGroup.alpha = 0f;
-            _panelCanvasGroup.DOFade(1f, 0.5f);
+            // Wait for camera transition
+            await UniTask.Delay(TimeSpan.FromSeconds(_powerOnDuration), cancellationToken: token);
+
+            // Fade in the panel
+            if (_panelCanvasGroup != null)
+            {
+                _panelCanvasGroup.alpha = 0f;
+                _panelCanvasGroup.DOFade(1f, 0.5f);
+            }
+
+            // Display title with fade effect
+            if (_titleText != null)
+            {
+                _titleText.alpha = 0f;
+                _titleText.DOFade(1f, 0.5f);
+            }
+
+            await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
+
+            // Display rules content with typewriter effect
+            if (_rulesContentText != null)
+            {
+                await TypewriterEffectAsync(_rulesContentText, _rulesText, token);
+            }
         }
-
-        // Display title with fade effect
-        if (_titleText != null)
+        catch (OperationCanceledException)
         {
-            _titleText.alpha = 0f;
-            _titleText.DOFade(1f, 0.5f);
-        }
-
-        yield return new WaitForSeconds(0.5f);
-
-        // Display rules content with typewriter effect
-        if (_rulesContentText != null)
-        {
-            _typewriterCoroutine = StartCoroutine(TypewriterEffect(_rulesContentText, _rulesText));
+            // Handle cancellation if needed
         }
     }
 
     /// <summary>
     /// Displays text character by character for a retro terminal feel.
     /// </summary>
-    private IEnumerator TypewriterEffect(TextMeshProUGUI textComponent, string fullText)
+    private async UniTask TypewriterEffectAsync(TextMeshProUGUI textComponent, string fullText, CancellationToken token)
     {
         textComponent.text = "";
 
         foreach (char c in fullText)
         {
             textComponent.text += c;
-            yield return new WaitForSeconds(_typewriterSpeed);
+            await UniTask.Delay(TimeSpan.FromSeconds(_typewriterSpeed), cancellationToken: token);
         }
 
         // Show continue button after text is fully displayed
-        yield return new WaitForSeconds(0.5f);
-
-        if (_continueButton != null)
-        {
-            _continueButton.SetActive(true);
-            CanvasGroup buttonCanvasGroup = _continueButton.GetComponent<CanvasGroup>();
-            if (buttonCanvasGroup != null)
-            {
-                buttonCanvasGroup.alpha = 0f;
-                buttonCanvasGroup.DOFade(1f, 0.5f);
-            }
-        }
-
-        _typewriterCoroutine = null;
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
     }
 
     /// <summary>
     /// Deactivates the panel after a short delay (for animations to complete).
     /// </summary>
-    private IEnumerator DelayedDeactivate()
+    private async UniTaskVoid DelayedDeactivateAsync()
     {
         // Fade out
         if (_panelCanvasGroup != null)
@@ -188,7 +193,7 @@ Click CONTINUE to proceed to your station.";
             _panelCanvasGroup.DOFade(0f, 0.5f);
         }
 
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
 
         if (_rulesScreenPanel != null)
         {
