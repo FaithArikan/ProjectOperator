@@ -201,8 +201,8 @@ namespace NeuralWaveBureau.UI
             float normalizedTarget = _targetValue * _amplitudeMultiplier;
             float normalizedTolerance = _toleranceValue * _amplitudeMultiplier;
 
-            int maxY = Mathf.Clamp((int)(_textureHeight - 1 - (normalizedTarget - normalizedTolerance) * _textureHeight), 0, _textureHeight - 1);
-            int minY = Mathf.Clamp((int)(_textureHeight - 1 - (normalizedTarget + normalizedTolerance) * _textureHeight), 0, _textureHeight - 1);
+            int maxY = Mathf.Clamp((int)((normalizedTarget + normalizedTolerance) * (_textureHeight - 1)), 0, _textureHeight - 1);
+            int minY = Mathf.Clamp((int)((normalizedTarget - normalizedTolerance) * (_textureHeight - 1)), 0, _textureHeight - 1);
 
             Color32 toleranceColor32 = _toleranceColor;
 
@@ -223,7 +223,7 @@ namespace NeuralWaveBureau.UI
         {
             // Anchor target line from the top of the texture
             float normalizedTarget = _targetValue * _amplitudeMultiplier;
-            int targetY = Mathf.Clamp((int)(_textureHeight - 1 - normalizedTarget * _textureHeight), 0, _textureHeight - 1);
+            int targetY = Mathf.Clamp((int)(normalizedTarget * (_textureHeight - 1)), 0, _textureHeight - 1);
 
             Color32 targetColor32 = _targetColor;
 
@@ -265,11 +265,11 @@ namespace NeuralWaveBureau.UI
                 int x1 = (int)(i * xStep);
                 // Anchor from top and apply amplitude multiplier for more dramatic ups and downs
                 float normalizedY1 = data[i] * _amplitudeMultiplier;
-                int y1 = Mathf.Clamp((int)(_textureHeight - 1 - normalizedY1 * _textureHeight), 0, _textureHeight - 1);
+                int y1 = Mathf.Clamp((int)(normalizedY1 * (_textureHeight - 1)), 0, _textureHeight - 1);
 
                 int x2 = (int)((i + 1) * xStep);
                 float normalizedY2 = data[i + 1] * _amplitudeMultiplier;
-                int y2 = Mathf.Clamp((int)(_textureHeight - 1 - normalizedY2 * _textureHeight), 0, _textureHeight - 1);
+                int y2 = Mathf.Clamp((int)(normalizedY2 * (_textureHeight - 1)), 0, _textureHeight - 1);
 
                 DrawLine(x1, y1, x2, y2, waveColor32);
             }

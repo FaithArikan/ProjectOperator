@@ -133,6 +133,7 @@ namespace NeuralWaveBureau.UI
                     _currentValue = x;
                     UpdateKnobRotation();
                     UpdateValueText();
+                    OnValueChanged?.Invoke(_currentValue);
                 }, clampedValue, 0.3f).SetEase(Ease.OutCubic);
             }
             else
@@ -140,9 +141,8 @@ namespace NeuralWaveBureau.UI
                 _currentValue = clampedValue;
                 UpdateKnobRotation();
                 UpdateValueText();
+                OnValueChanged?.Invoke(_currentValue);
             }
-
-            OnValueChanged?.Invoke(_currentValue);
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace NeuralWaveBureau.UI
             // Update value
             float newValue = Mathf.Clamp01(_currentValue + valueDelta);
 
-            if (!Mathf.Approximately(newValue, _currentValue))
+            if (Mathf.Abs(newValue - _currentValue) > 0.0001f)
             {
                 _currentValue = newValue;
                 UpdateKnobRotation();

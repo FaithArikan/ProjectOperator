@@ -35,6 +35,11 @@ namespace NeuralWaveBureau.AI
         [Tooltip("How fast values change when holding up/down")]
         private float _adjustmentSpeed = 1.0f;
 
+        [Header("Knob Control")]
+        [SerializeField]
+        [Tooltip("Radio knobs to control each band value (Delta, Theta, Alpha, Beta, Gamma)")]
+        private NeuralWaveBureau.UI.RadioKnobController[] _radioKnobs = new NeuralWaveBureau.UI.RadioKnobController[5];
+
         private AIManager _aiManager;
         private float _lastAdjustmentTime = 0f;
 
@@ -60,6 +65,40 @@ namespace NeuralWaveBureau.AI
             {
                 Debug.LogError("[WaveInputSimulator] AIManager not found!");
             }
+
+            // Subscribe to radio knob value changes for each band
+            for (int i = 0; i < _radioKnobs.Length && i < 5; i++)
+            {
+                if (_radioKnobs[i] != null)
+                {
+                    int bandIndex = i; // Capture for closure
+                    _radioKnobs[i].OnValueChanged += (value) => OnKnobValueChanged(bandIndex, value);
+                    // Initialize knob to current band value
+                    _radioKnobs[i].SetValue(_currentBands[i], false);
+                    Debug.Log($"[WaveInputSimulator] Radio knob {i + 1} connected - controlling Band {i + 1}");
+                }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            // Unsubscribe from radio knobs
+            for (int i = 0; i < _radioKnobs.Length; i++)
+            {
+                if (_radioKnobs[i] != null)
+                {
+                    _radioKnobs[i].OnValueChanged = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Called when a radio knob value changes
+        /// </summary>
+        private void OnKnobValueChanged(int bandIndex, float value)
+        {
+            _currentBands[bandIndex] = value;
+            Debug.Log($"[WaveInputSimulator] Knob adjusted Band {bandIndex + 1} to {value:F2}");
         }
 
         private void Update()
