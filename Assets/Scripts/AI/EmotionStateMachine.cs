@@ -73,10 +73,13 @@ namespace NeuralWaveBureau.AI
         /// </summary>
         private void UpdateInstability(float score, float deltaTime)
         {
+            // Instability rate multiplier for faster buildup
+            const float instabilityMultiplier = 1.5f;
+
             // If score is below overload threshold, build instability
             if (score <= _settings.overloadThreshold)
             {
-                float delta = (_settings.overloadThreshold - score) * _profile.instabilityRate * deltaTime;
+                float delta = (_settings.overloadThreshold - score) * _profile.instabilityRate * deltaTime * instabilityMultiplier;
                 _instability += delta;
             }
             // If score is good and not in critical state, recover instability

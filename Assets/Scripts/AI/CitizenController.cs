@@ -28,6 +28,19 @@ namespace NeuralWaveBureau.AI
         [SerializeField]
         private AudioSource _audioSource;
 
+        [Header("Ragdoll")]
+        [SerializeField]
+        private Rigidbody[] _ragdollBodies;
+
+        [SerializeField]
+        private Collider[] _ragdollColliders;
+
+        [SerializeField]
+        private float _ragdollForce = 500f;
+
+        [SerializeField]
+        private Transform _ragdollForcePoint;
+
         // AI systems
         private WaveEvaluator _evaluator;
         private EmotionStateMachine _stateMachine;
@@ -216,11 +229,119 @@ namespace NeuralWaveBureau.AI
                     OnStabilized?.Invoke(this);
                     break;
                 case CitizenState.CriticalFailure:
+                    ActivateRagdoll();
                     OnCriticalFailure?.Invoke(this);
                     break;
                 case CitizenState.Recovering:
                     OnRecovered?.Invoke(this);
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Test ragdoll activation from context menu
+        /// </summary>
+        [ContextMenu("Test Ragdoll")]
+        public void TestRagdoll()
+        {
+            ActivateRagdoll();
+        }
+
+        /// <summary>
+        /// Test ragdoll deactivation from context menu
+        /// </summary>
+        [ContextMenu("Reset Ragdoll")]
+        public void ResetRagdoll()
+        {
+            DeactivateRagdoll();
+        }
+
+        /// <summary>
+        /// Activates ragdoll physics for citizen death
+        /// </summary>
+        private void ActivateRagdoll()
+        {
+            // Disable animator to allow physics to take over
+            if (_animator != null)
+            {
+                _animator.enabled = false;
+            }
+
+            // Enable all ragdoll rigidbodies
+            if (_ragdollBodies != null)
+            {
+                foreach (var rb in _ragdollBodies)
+                {
+                    if (rb != null)
+                    {
+                        rb.isKinematic = false;
+
+                        // Apply death force
+                        if (_ragdollForcePoint != null)
+                        {
+                            Vector3 forceDirection = (rb.position - _ragdollForcePoint.position).normalized;
+                            rb.AddForce(forceDirection * _ragdollForce, ForceMode.Impulse);
+                        }
+                        else
+                        {
+                            // Default: apply upward and backward force
+                            rb.AddForce(Vector3.up * _ragdollForce * 0.5f + Vector3.back * _ragdollForce * 0.3f, ForceMode.Impulse);
+                        }
+                    }
+                }
+            }
+
+            // Enable all ragdoll colliders
+            if (_ragdollColliders != null)
+            {
+                foreach (var col in _ragdollColliders)
+                {
+                    if (col != null)
+                    {
+                        col.enabled = true;
+                    }
+                }
+            }
+
+            if (_settings.enableVerboseLogging)
+            {
+                Debug.Log($"[CitizenController] {_citizenId}: Ragdoll activated");
+            }
+        }
+
+        /// <summary>
+        /// Deactivates ragdoll and returns to animated state
+        /// </summary>
+        private void DeactivateRagdoll()
+        {
+            // Disable ragdoll rigidbodies
+            if (_ragdollBodies != null)
+            {
+                foreach (var rb in _ragdollBodies)
+                {
+                    if (rb != null)
+                    {
+                        rb.isKinematic = true;
+                    }
+                }
+            }
+
+            // Disable ragdoll colliders
+            if (_ragdollColliders != null)
+            {
+                foreach (var col in _ragdollColliders)
+                {
+                    if (col != null)
+                    {
+                        col.enabled = false;
+                    }
+                }
+            }
+
+            // Re-enable animator
+            if (_animator != null)
+            {
+                _animator.enabled = true;
             }
         }
 
@@ -256,6 +377,7 @@ namespace NeuralWaveBureau.AI
             _evaluator?.Reset();
             _stateMachine?.Reset();
             _currentSample = WaveSample.Zero();
+            DeactivateRagdoll();
         }
 
         /// <summary>
