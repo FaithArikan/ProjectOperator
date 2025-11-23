@@ -63,6 +63,9 @@ public class HandInteractor : MonoBehaviour
             case InteractionType.Done:
                 CitizenSpawner.Instance.FinishCurrentCitizen();
                 break;
+            case InteractionType.Next:
+                Debug.Log("Next citizen");
+                break;
         }
     }
 
