@@ -144,11 +144,11 @@ namespace NeuralWaveBureau.AI
                 Debug.LogWarning("[CitizenSpawner] AIManager not found! Citizen may not be properly initialized.");
             }
 
-            // Register with AIManager
-            if (aiManager != null)
-            {
-                aiManager.RegisterCitizen(controller);
-            }
+            // Register with AIManager - REMOVED (AIManager no longer tracks all citizens)
+            // if (aiManager != null)
+            // {
+            //     aiManager.RegisterCitizen(controller);
+            // }
 
             // Send to monitoring station
             if (_targetStation != null)
@@ -214,12 +214,12 @@ namespace NeuralWaveBureau.AI
 
             if (oldest != null)
             {
-                // Unregister from AIManager
-                CitizenController controller = oldest.GetComponent<CitizenController>();
-                if (controller != null && AIManager.Instance != null)
-                {
-                    AIManager.Instance.UnregisterCitizen(controller);
-                }
+                // Unregister from AIManager - REMOVED
+                // CitizenController controller = oldest.GetComponent<CitizenController>();
+                // if (controller != null && AIManager.Instance != null)
+                // {
+                //     AIManager.Instance.UnregisterCitizen(controller);
+                // }
 
                 Destroy(oldest);
                 Debug.Log("[CitizenSpawner] Destroyed oldest citizen");
@@ -235,12 +235,12 @@ namespace NeuralWaveBureau.AI
             {
                 if (citizen != null)
                 {
-                    // Unregister from AIManager
-                    CitizenController controller = citizen.GetComponent<CitizenController>();
-                    if (controller != null && AIManager.Instance != null)
-                    {
-                        AIManager.Instance.UnregisterCitizen(controller);
-                    }
+                    // Unregister from AIManager - REMOVED
+                    // CitizenController controller = citizen.GetComponent<CitizenController>();
+                    // if (controller != null && AIManager.Instance != null)
+                    // {
+                    //     AIManager.Instance.UnregisterCitizen(controller);
+                    // }
 
                     Destroy(citizen);
                 }
@@ -311,12 +311,12 @@ namespace NeuralWaveBureau.AI
         {
             movement.OnArrived -= HandleCitizenExit;
 
-            // Unregister from AIManager
-            CitizenController controller = movement.GetComponent<CitizenController>();
-            if (controller != null && AIManager.Instance != null)
-            {
-                AIManager.Instance.UnregisterCitizen(controller);
-            }
+            // Unregister from AIManager - REMOVED
+            // CitizenController controller = movement.GetComponent<CitizenController>();
+            // if (controller != null && AIManager.Instance != null)
+            // {
+            //     AIManager.Instance.UnregisterCitizen(controller);
+            // }
 
             if (_spawnedCitizens.Contains(movement.gameObject))
             {

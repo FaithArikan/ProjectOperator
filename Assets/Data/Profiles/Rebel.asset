@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb89cf7eb3eb05a4183acc36591a4081, type: 3}
   m_Name: Rebel
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.Data.NeuralProfile
-  prefab: {fileID: 109846, guid: 2b7716262d769d24fb8643017c8cdc75, type: 3}
+  prefab: {fileID: 178284, guid: fe631d66d91635d4db4b17b1c3da562a, type: 3}
   profileId: rebel
   displayName: Roxie Rage
   _bandTargets:

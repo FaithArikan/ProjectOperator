@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb89cf7eb3eb05a4183acc36591a4081, type: 3}
+  m_Name: PunkGirl
+  m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.Data.NeuralProfile
+  prefab: {fileID: 109846, guid: 2b7716262d769d24fb8643017c8cdc75, type: 3}
+  profileId: punkgirl
+  displayName: Sidney Vicious
+  _bandTargets:
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+  _bandTolerance:
+  - 0.15
+  - 0.15
+  - 0.15
+  - 0.15
+  - 0.15
+  _bandWeights:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  baselineInstability: 0.3
+  instabilityRate: 0.75
+  minStimulationTime: 4
+  recoveryTime: 7
+  reactionClips: []

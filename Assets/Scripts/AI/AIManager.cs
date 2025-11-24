@@ -5,7 +5,7 @@ using NeuralWaveBureau.Data;
 namespace NeuralWaveBureau.AI
 {
     /// <summary>
-    /// Central coordinator for the AI system. Manages all citizens and provides global wave input.
+    /// Central coordinator for the AI system. Manages global wave input and feedback for the active citizen.
     /// Singleton pattern for easy access throughout the game.
     /// </summary>
     public class AIManager : MonoBehaviour
@@ -16,10 +16,6 @@ namespace NeuralWaveBureau.AI
         [Header("Settings")]
         [SerializeField]
         private AISettings _aiSettings;
-
-        [Header("Active Citizens")]
-        [SerializeField]
-        private List<CitizenController> _citizens = new List<CitizenController>();
 
         // Current wave sample being broadcast to all active citizens
         private WaveSample _currentWaveSample;
@@ -52,34 +48,6 @@ namespace NeuralWaveBureau.AI
             _feedbackManager = GetComponent<FeedbackManager>();
         }
 
-        private void Start()
-        {
-            // Auto-discover citizens in scene if none assigned
-            if (_citizens.Count == 0)
-            {
-                _citizens.AddRange(FindObjectsOfType<CitizenController>());
-            }
-
-            // Initialize all citizens
-            foreach (var citizen in _citizens)
-            {
-                if (citizen != null)
-                {
-                    citizen.Initialize(_aiSettings);
-
-                    // Subscribe to citizen events
-                    citizen.OnStabilized += HandleCitizenStabilized;
-                    citizen.OnCriticalFailure += HandleCitizenCriticalFailure;
-                    citizen.OnRecovered += HandleCitizenRecovered;
-                }
-            }
-
-            if (_aiSettings.enableVerboseLogging)
-            {
-                Debug.Log($"[AIManager] Initialized with {_citizens.Count} citizens");
-            }
-        }
-
         /// <summary>
         /// Sets the current wave sample that will be evaluated by active citizens
         /// </summary>
@@ -107,21 +75,6 @@ namespace NeuralWaveBureau.AI
         }
 
         /// <summary>
-        /// Starts stimulation on a specific citizen
-        /// </summary>
-        public bool StartStimulation(string citizenId)
-        {
-            CitizenController citizen = _citizens.Find(c => c.CitizenId == citizenId);
-            if (citizen == null)
-            {
-                Debug.LogWarning($"[AIManager] Citizen not found: {citizenId}");
-                return false;
-            }
-
-            return StartStimulation(citizen);
-        }
-
-        /// <summary>
         /// Starts stimulation on a citizen
         /// </summary>
         public bool StartStimulation(CitizenController citizen)
@@ -129,11 +82,16 @@ namespace NeuralWaveBureau.AI
             // Stop current active citizen
             if (_activeCitizen != null && _activeCitizen != citizen)
             {
-                _activeCitizen.StopStimulation();
+                StopStimulation();
             }
 
             _activeCitizen = citizen;
             _activeCitizen.StartStimulation();
+
+            // Subscribe to citizen events for feedback
+            _activeCitizen.OnStabilized += HandleCitizenStabilized;
+            _activeCitizen.OnCriticalFailure += HandleCitizenCriticalFailure;
+            _activeCitizen.OnRecovered += HandleCitizenRecovered;
 
             if (_aiSettings.enableVerboseLogging)
             {
@@ -150,63 +108,17 @@ namespace NeuralWaveBureau.AI
         {
             if (_activeCitizen != null)
             {
+                // Unsubscribe from events
+                _activeCitizen.OnStabilized -= HandleCitizenStabilized;
+                _activeCitizen.OnCriticalFailure -= HandleCitizenCriticalFailure;
+                _activeCitizen.OnRecovered -= HandleCitizenRecovered;
+
                 _activeCitizen.StopStimulation();
                 _activeCitizen = null;
 
                 if (_aiSettings.enableVerboseLogging)
                 {
                     Debug.Log("[AIManager] Stopped stimulation");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets a citizen by ID
-        /// </summary>
-        public CitizenController GetCitizen(string citizenId)
-        {
-            return _citizens.Find(c => c.CitizenId == citizenId);
-        }
-
-        /// <summary>
-        /// Registers a new citizen (useful for runtime spawning)
-        /// </summary>
-        public void RegisterCitizen(CitizenController citizen)
-        {
-            if (!_citizens.Contains(citizen))
-            {
-                _citizens.Add(citizen);
-                citizen.Initialize(_aiSettings);
-
-                // Subscribe to events
-                citizen.OnStabilized += HandleCitizenStabilized;
-                citizen.OnCriticalFailure += HandleCitizenCriticalFailure;
-                citizen.OnRecovered += HandleCitizenRecovered;
-
-                if (_aiSettings.enableVerboseLogging)
-                {
-                    Debug.Log($"[AIManager] Registered citizen: {citizen.CitizenId}");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Unregisters a citizen
-        /// </summary>
-        public void UnregisterCitizen(CitizenController citizen)
-        {
-            if (_citizens.Contains(citizen))
-            {
-                _citizens.Remove(citizen);
-
-                // Unsubscribe from events
-                citizen.OnStabilized -= HandleCitizenStabilized;
-                citizen.OnCriticalFailure -= HandleCitizenCriticalFailure;
-                citizen.OnRecovered -= HandleCitizenRecovered;
-
-                if (_aiSettings.enableVerboseLogging)
-                {
-                    Debug.Log($"[AIManager] Unregistered citizen: {citizen.CitizenId}");
                 }
             }
         }
@@ -259,20 +171,6 @@ namespace NeuralWaveBureau.AI
             if (_aiSettings.enableVerboseLogging)
             {
                 Debug.Log($"[AIManager] Citizen recovered: {citizen.CitizenId}");
-            }
-        }
-
-        private void OnDestroy()
-        {
-            // Unsubscribe from all citizen events
-            foreach (var citizen in _citizens)
-            {
-                if (citizen != null)
-                {
-                    citizen.OnStabilized -= HandleCitizenStabilized;
-                    citizen.OnCriticalFailure -= HandleCitizenCriticalFailure;
-                    citizen.OnRecovered -= HandleCitizenRecovered;
-                }
             }
         }
     }
