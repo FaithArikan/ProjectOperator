@@ -7,7 +7,6 @@ public class PauseManager : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private GameObject pauseMenuPanel;
-    [SerializeField] private GameObject settingsPanel;
 
     [Header("Audio Controls")]
     [SerializeField] private Slider masterVolumeSlider;
@@ -19,7 +18,6 @@ public class PauseManager : MonoBehaviour
     private void Start()
     {
         if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
-        if (settingsPanel != null) settingsPanel.SetActive(false);
 
         // Initialize audio UI with current values
         InitializeAudioUI();
@@ -52,14 +50,11 @@ public class PauseManager : MonoBehaviour
         {
             Time.timeScale = 0f;
             if (pauseMenuPanel != null) pauseMenuPanel.SetActive(true);
-            // Ensure settings are closed when opening pause menu initially
-            if (settingsPanel != null) settingsPanel.SetActive(false);
         }
         else
         {
             Time.timeScale = 1f;
             if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
-            if (settingsPanel != null) settingsPanel.SetActive(false);
         }
     }
 
@@ -73,14 +68,12 @@ public class PauseManager : MonoBehaviour
 
     public void OpenSettings()
     {
-        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
-        if (settingsPanel != null) settingsPanel.SetActive(true);
+        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(true);
     }
 
     public void CloseSettings()
     {
-        if (settingsPanel != null) settingsPanel.SetActive(false);
-        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(true);
+        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
     }
 
     public void GoToMainMenu()

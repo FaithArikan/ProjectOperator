@@ -15,23 +15,13 @@ namespace NeuralWaveBureau.Data
         [MenuItem("Neural Wave Bureau/Create Sample Profiles")]
         public static void CreateProfiles()
         {
-            // Create Ordinary profile
-            NeuralProfile ordinary = ScriptableObject.CreateInstance<NeuralProfile>();
-            ordinary.profileId = "ordinary";
-            ordinary.displayName = "Ordinary Citizen";
-            ordinary.baselineInstability = 0.1f;
-            ordinary.instabilityRate = 0.5f;
-            ordinary.minStimulationTime = 2f;
-            ordinary.recoveryTime = 5f;
-            AssetDatabase.CreateAsset(ordinary, "Assets/Data/Profiles/Ordinary.asset");
-
             // Create Artist profile
             NeuralProfile artist = ScriptableObject.CreateInstance<NeuralProfile>();
             artist.profileId = "artist";
             artist.displayName = "Artist";
             artist.baselineInstability = 0.15f;
             artist.instabilityRate = 0.6f;
-            artist.minStimulationTime = 2.5f;
+            artist.minStimulationTime = 5f;
             artist.recoveryTime = 6f;
             AssetDatabase.CreateAsset(artist, "Assets/Data/Profiles/Artist.asset");
 
@@ -41,7 +31,7 @@ namespace NeuralWaveBureau.Data
             rebel.displayName = "Rebel";
             rebel.baselineInstability = 0.2f;
             rebel.instabilityRate = 0.7f;
-            rebel.minStimulationTime = 3f;
+            rebel.minStimulationTime = 5f;
             rebel.recoveryTime = 7f;
             AssetDatabase.CreateAsset(rebel, "Assets/Data/Profiles/Rebel.asset");
 
