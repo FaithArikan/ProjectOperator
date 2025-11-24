@@ -213,8 +213,16 @@ namespace NeuralWaveBureau.UI
                 _instabilityRateMultiplierRange.y,
                 normalizedObedience
             );
-            // Note: We can't directly modify the profile instabilityRate as it's a public field
-            // In production, you'd want to make it a property or use a different approach
+
+            // Apply to active citizen's state machine
+            if (_aiManager != null)
+            {
+                var activeCitizen = _aiManager.ActiveCitizen;
+                if (activeCitizen != null)
+                {
+                    activeCitizen.SetObedienceMultiplier(instabilityMultiplier);
+                }
+            }
 
             // Apply success threshold adjustment
             float thresholdAdjust = Mathf.Lerp(

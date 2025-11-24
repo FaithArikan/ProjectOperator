@@ -9,17 +9,17 @@ namespace NeuralWaveBureau.Data
     public class AISettings : ScriptableObject
     {
         [Header("Wave Evaluation")]
-        [Tooltip("Similarity score threshold for successful wave match (0..1)")]
+        [Tooltip("Obedience level threshold for successful stabilization (0..1)")]
         [Range(0f, 1f)]
-        public float successThreshold = 0.75f;
+        public float successThreshold = 0.60f;
 
-        [Tooltip("Score below this triggers instability buildup (0..1)")]
+        [Tooltip("Obedience level below this triggers instability buildup (0..1)")]
         [Range(0f, 1f)]
-        public float overloadThreshold = 0.25f;
+        public float overloadThreshold = 0.40f;
 
         [Tooltip("Instability level that triggers critical failure (0..1)")]
         [Range(0f, 1f)]
-        public float instabilityFailThreshold = 0.8f;
+        public float instabilityFailThreshold = 1.0f;
 
         [Header("Sampling & Smoothing")]
         [Tooltip("How often to sample and evaluate wave data (Hz)")]
@@ -30,9 +30,9 @@ namespace NeuralWaveBureau.Data
         [Range(0.05f, 2f)]
         public float smoothingTau = 0.3f;
 
-        [Tooltip("Recovery rate for instability when wave is correct (per second)")]
+        [Tooltip("Recovery rate for instability when obedience is high (per second)")]
         [Range(0f, 1f)]
-        public float instabilityRecoveryRate = 0.2f;
+        public float instabilityRecoveryRate = 0.15f;
 
         [Header("Debug & Telemetry")]
         [Tooltip("Enable verbose logging for AI systems")]

@@ -16,23 +16,23 @@ MonoBehaviour:
   profileId: roadworker
   displayName: Hank Asphalt
   _bandTargets:
+  - 0.15
   - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
+  - 0.3
+  - 0.25
+  - 0.1
   _bandTolerance:
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
+  - 0.18
+  - 0.18
+  - 0.2
+  - 0.18
+  - 0.12
   _bandWeights:
   - 1
-  - 1
-  - 1
-  - 1
-  - 1
+  - 1.1
+  - 1.3
+  - 1.1
+  - 0.8
   baselineInstability: 0.15
   instabilityRate: 0.4
   minStimulationTime: 5

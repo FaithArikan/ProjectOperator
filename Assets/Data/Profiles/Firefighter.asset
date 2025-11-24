@@ -16,23 +16,23 @@ MonoBehaviour:
   profileId: firefighter
   displayName: Captain Blaze
   _bandTargets:
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
+  - 0.05
+  - 0.15
+  - 0.45
+  - 0.25
+  - 0.1
   _bandTolerance:
+  - 0.08
+  - 0.12
   - 0.15
   - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
+  - 0.1
   _bandWeights:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
+  - 0.9
+  - 1.1
+  - 1.5
+  - 1.2
+  - 0.8
   baselineInstability: 0.05
   instabilityRate: 0.3
   minStimulationTime: 6

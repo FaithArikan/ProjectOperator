@@ -45,6 +45,9 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         private Slider _instabilityBar;
 
+        [SerializeField]
+        private TextMeshProUGUI _gracePeriodText;
+
         [Header("Control Buttons")]
         [SerializeField]
         private Button _powerButton;
@@ -317,6 +320,23 @@ namespace NeuralWaveBureau.UI
                     }
                 }
             }
+
+            // Update grace period display
+            if (_gracePeriodText != null)
+            {
+                float remaining = _activeCitizen.RemainingGracePeriod;
+                if (remaining > 0f)
+                {
+                    _gracePeriodText.text = $"GRACE PERIOD: {remaining:F1}s";
+                    float graceMult = _activeCitizen.GracePeriodMultiplier;
+                    // Color: Green during full grace, yellow during fade
+                    _gracePeriodText.color = Color.Lerp(Color.green, Color.yellow, graceMult);
+                }
+                else
+                {
+                    _gracePeriodText.text = "";
+                }
+            }
         }
 
         /// <summary>
@@ -489,9 +509,18 @@ namespace NeuralWaveBureau.UI
                 ObedienceController.Instance.AnimateIn(1f);
             }
 
-            // Start stimulation on citizen - Evaluation starts!
+            // Initialize wave sample with citizen's target values to prevent instant instability
             if (_aiManager != null)
             {
+                // Set initial wave to match the citizen's target profile
+                float[] initialWave = new float[NeuralProfile.BandCount];
+                for (int i = 0; i < NeuralProfile.BandCount; i++)
+                {
+                    initialWave[i] = _activeCitizen.Profile.BandTargets[i];
+                }
+                _aiManager.SetWaveSample(initialWave);
+
+                // Start stimulation on citizen - Evaluation starts!
                 _aiManager.StartStimulation(_activeCitizen);
             }
 

@@ -16,23 +16,23 @@ MonoBehaviour:
   profileId: grandma
   displayName: Edith Witherbottom
   _bandTargets:
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
+  - 0.25
+  - 0.3
+  - 0.3
+  - 0.1
+  - 0.05
   _bandTolerance:
+  - 0.22
+  - 0.25
+  - 0.22
   - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
+  - 0.12
   _bandWeights:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
+  - 1.2
+  - 1.3
+  - 1.3
+  - 0.9
+  - 0.7
   baselineInstability: 0.1
   instabilityRate: 0.5
   minStimulationTime: 3

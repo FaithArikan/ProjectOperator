@@ -17,22 +17,22 @@ MonoBehaviour:
   displayName: Rusty Shackleford
   _bandTargets:
   - 0.2
+  - 0.25
   - 0.2
   - 0.2
-  - 0.2
-  - 0.2
+  - 0.15
   _bandTolerance:
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
+  - 0.25
+  - 0.28
+  - 0.25
+  - 0.25
+  - 0.22
   _bandWeights:
   - 1
+  - 1.1
   - 1
   - 1
-  - 1
-  - 1
+  - 0.9
   baselineInstability: 0.35
   instabilityRate: 0.6
   minStimulationTime: 4

@@ -16,22 +16,22 @@ MonoBehaviour:
   profileId: jock
   displayName: Brad Sterling
   _bandTargets:
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
-  - 0.2
+  - 0.08
+  - 0.15
+  - 0.27
+  - 0.35
+  - 0.15
   _bandTolerance:
+  - 0.12
   - 0.15
-  - 0.15
-  - 0.15
-  - 0.15
+  - 0.18
+  - 0.2
   - 0.15
   _bandWeights:
+  - 0.8
   - 1
-  - 1
-  - 1
-  - 1
+  - 1.3
+  - 1.4
   - 1
   baselineInstability: 0.2
   instabilityRate: 0.5

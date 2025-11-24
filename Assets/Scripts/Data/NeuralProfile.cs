@@ -32,11 +32,11 @@ namespace NeuralWaveBureau.Data
         private float[] _bandWeights = new float[5] { 1f, 1f, 1f, 1f, 1f };
 
         [Header("Stability Settings")]
-        [Tooltip("Base chance of interference/instability (0..1)")]
+        [Tooltip("DEPRECATED - No longer used. Citizens now start at 0 instability.")]
         [Range(0f, 1f)]
-        public float baselineInstability = 0.1f;
+        public float baselineInstability = 0f;
 
-        [Tooltip("How quickly instability builds when wave is incorrect")]
+        [Tooltip("How quickly instability builds when obedience is low")]
         [Range(0f, 2f)]
         public float instabilityRate = 0.5f;
 

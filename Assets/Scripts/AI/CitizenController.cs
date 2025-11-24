@@ -3,6 +3,7 @@ using System.Collections;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using NeuralWaveBureau.Data;
+using NeuralWaveBureau.UI;
 
 namespace NeuralWaveBureau.AI
 {
@@ -62,6 +63,8 @@ namespace NeuralWaveBureau.AI
         public float EvaluationScore => _evaluator?.SmoothedScore ?? 0f;
         public float Instability => _stateMachine?.Instability ?? 0f;
         public bool IsActive => _isActive;
+        public float RemainingGracePeriod => _stateMachine?.RemainingGracePeriod ?? 0f;
+        public float GracePeriodMultiplier => _stateMachine?.GracePeriodMultiplier ?? 1f;
 
         // Events
         public delegate void CitizenEventDelegate(CitizenController citizen);
@@ -169,11 +172,16 @@ namespace NeuralWaveBureau.AI
             {
                 while (_isActive && !token.IsCancellationRequested)
                 {
-                    // Evaluate current sample
-                    float score = _evaluator.Evaluate(_currentSample);
+                    // Get current obedience level from ObedienceController
+                    float obedienceLevel = ObedienceController.Instance != null
+                        ? ObedienceController.Instance.CurrentObedience
+                        : 50f; // Default to neutral if not available
 
-                    // Update state machine
-                    _stateMachine.Update(score, sampleInterval);
+                    // Evaluate wave matching (kept for potential future use/UI display)
+                    float waveScore = _evaluator.Evaluate(_currentSample);
+
+                    // Update state machine with obedience as the evaluation metric
+                    _stateMachine.Update(waveScore, obedienceLevel, sampleInterval);
 
                     // Update animator
                     //UpdateAnimator();
@@ -386,6 +394,14 @@ namespace NeuralWaveBureau.AI
         public float[] GetBandScores()
         {
             return _evaluator?.GetBandScores(_currentSample) ?? new float[NeuralProfile.BandCount];
+        }
+
+        /// <summary>
+        /// Sets the obedience-based instability rate multiplier
+        /// </summary>
+        public void SetObedienceMultiplier(float multiplier)
+        {
+            _stateMachine?.SetObedienceMultiplier(multiplier);
         }
 
         private void OnDestroy()

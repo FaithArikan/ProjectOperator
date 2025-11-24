@@ -214,6 +214,183 @@ namespace NeuralWaveBureau.Data
 
             Debug.Log("[CreateSampleProfiles] Created sample profiles and settings in Assets/Data/Profiles/");
         }
+
+        [MenuItem("Neural Wave Bureau/Update Profile Band Settings")]
+        public static void UpdateProfileBandSettings()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:NeuralProfile", new[] { "Assets/Data/Profiles" });
+            int updatedCount = 0;
+
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                NeuralProfile profile = AssetDatabase.LoadAssetAtPath<NeuralProfile>(path);
+
+                if (profile != null)
+                {
+                    SetBandParametersBasedOnPersonality(profile);
+                    EditorUtility.SetDirty(profile);
+                    updatedCount++;
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            Debug.Log($"[CreateSampleProfiles] Updated band settings for {updatedCount} profiles based on their personality.");
+        }
+
+        private static void SetBandParametersBasedOnPersonality(NeuralProfile profile)
+        {
+            // Brain wave bands: Delta, Theta, Alpha, Beta, Gamma
+            // Delta: Deep sleep, unconscious (0-4 Hz)
+            // Theta: Meditation, creativity, light sleep (4-8 Hz)
+            // Alpha: Relaxation, calm focus (8-13 Hz)
+            // Beta: Active thinking, concentration, anxiety (13-30 Hz)
+            // Gamma: High-level processing, insight (30+ Hz)
+
+            float[] targets;
+            float[] tolerance;
+            float[] weights;
+
+            switch (profile.profileId.ToLower())
+            {
+                case "artist":
+                    // Creative, introspective, moderate instability
+                    targets = new float[] { 0.1f, 0.35f, 0.3f, 0.15f, 0.1f }; // High Theta/Alpha (creativity)
+                    tolerance = new float[] { 0.15f, 0.2f, 0.2f, 0.15f, 0.1f };
+                    weights = new float[] { 0.8f, 1.5f, 1.3f, 1f, 0.9f }; // Emphasize creative bands
+                    break;
+
+                case "rebel":
+                    // Defiant, high arousal, resistant
+                    targets = new float[] { 0.05f, 0.1f, 0.15f, 0.4f, 0.3f }; // High Beta/Gamma (arousal)
+                    tolerance = new float[] { 0.1f, 0.15f, 0.15f, 0.25f, 0.2f };
+                    weights = new float[] { 0.7f, 0.9f, 1f, 1.4f, 1.3f }; // Emphasize high-frequency bands
+                    break;
+
+                case "biker":
+                    // Tough, aggressive, very high arousal
+                    targets = new float[] { 0.05f, 0.08f, 0.12f, 0.45f, 0.3f }; // Very high Beta/Gamma
+                    tolerance = new float[] { 0.1f, 0.12f, 0.15f, 0.28f, 0.22f };
+                    weights = new float[] { 0.6f, 0.8f, 0.9f, 1.5f, 1.4f }; // Strong emphasis on arousal
+                    break;
+
+                case "fastfoodguy":
+                    // Routine worker, low stress, steady
+                    targets = new float[] { 0.15f, 0.2f, 0.3f, 0.25f, 0.1f }; // Balanced, slight Alpha focus
+                    tolerance = new float[] { 0.18f, 0.18f, 0.2f, 0.18f, 0.12f };
+                    weights = new float[] { 1f, 1f, 1.2f, 1f, 0.8f };
+                    break;
+
+                case "firefighter":
+                    // Calm under pressure, controlled, professional
+                    targets = new float[] { 0.05f, 0.15f, 0.45f, 0.25f, 0.1f }; // High Alpha (calm focus)
+                    tolerance = new float[] { 0.08f, 0.12f, 0.15f, 0.15f, 0.1f };
+                    weights = new float[] { 0.9f, 1.1f, 1.5f, 1.2f, 0.8f }; // Emphasize calm state
+                    break;
+
+                case "gamergirl":
+                    // Energetic, creative, focused
+                    targets = new float[] { 0.08f, 0.25f, 0.25f, 0.27f, 0.15f }; // Balanced creative/active
+                    tolerance = new float[] { 0.12f, 0.2f, 0.18f, 0.2f, 0.15f };
+                    weights = new float[] { 0.8f, 1.3f, 1.2f, 1.3f, 1.1f };
+                    break;
+
+                case "gangster":
+                    // Aggressive, high arousal, dangerous
+                    targets = new float[] { 0.03f, 0.07f, 0.1f, 0.5f, 0.3f }; // Extreme Beta/Gamma
+                    tolerance = new float[] { 0.08f, 0.1f, 0.12f, 0.3f, 0.25f };
+                    weights = new float[] { 0.5f, 0.7f, 0.8f, 1.6f, 1.5f }; // Very strong arousal emphasis
+                    break;
+
+                case "grandma":
+                case "grandpa":
+                    // Elderly, calm, slower processing
+                    targets = new float[] { 0.25f, 0.3f, 0.3f, 0.1f, 0.05f }; // High Delta/Theta/Alpha, low Beta/Gamma
+                    tolerance = new float[] { 0.22f, 0.25f, 0.22f, 0.15f, 0.12f };
+                    weights = new float[] { 1.2f, 1.3f, 1.3f, 0.9f, 0.7f }; // Emphasize low-frequency bands
+                    break;
+
+                case "hobo":
+                    // Unstable, unpredictable, variable states
+                    targets = new float[] { 0.2f, 0.25f, 0.2f, 0.2f, 0.15f }; // Variable
+                    tolerance = new float[] { 0.25f, 0.28f, 0.25f, 0.25f, 0.22f }; // High tolerance (unpredictable)
+                    weights = new float[] { 1f, 1.1f, 1f, 1f, 0.9f };
+                    break;
+
+                case "jock":
+                    // Athletic, focused, energetic
+                    targets = new float[] { 0.08f, 0.15f, 0.27f, 0.35f, 0.15f }; // Active focus (Alpha/Beta)
+                    tolerance = new float[] { 0.12f, 0.15f, 0.18f, 0.2f, 0.15f };
+                    weights = new float[] { 0.8f, 1f, 1.3f, 1.4f, 1f };
+                    break;
+
+                case "paramedic":
+                    // Professional, calm under pressure, focused
+                    targets = new float[] { 0.05f, 0.12f, 0.48f, 0.25f, 0.1f }; // Very high Alpha
+                    tolerance = new float[] { 0.08f, 0.1f, 0.15f, 0.15f, 0.1f };
+                    weights = new float[] { 0.9f, 1f, 1.6f, 1.2f, 0.8f }; // Strong calm focus
+                    break;
+
+                case "punkgirl":
+                case "punkguy":
+                    // Rebellious, high energy, anti-authority
+                    targets = new float[] { 0.06f, 0.12f, 0.17f, 0.4f, 0.25f }; // High Beta/Gamma
+                    tolerance = new float[] { 0.12f, 0.15f, 0.18f, 0.25f, 0.2f };
+                    weights = new float[] { 0.7f, 0.9f, 1f, 1.4f, 1.2f };
+                    break;
+
+                case "roadworker":
+                    // Steady, routine worker, moderate energy
+                    targets = new float[] { 0.15f, 0.2f, 0.3f, 0.25f, 0.1f }; // Balanced, Alpha focus
+                    tolerance = new float[] { 0.18f, 0.18f, 0.2f, 0.18f, 0.12f };
+                    weights = new float[] { 1f, 1.1f, 1.3f, 1.1f, 0.8f };
+                    break;
+
+                case "shopkeeper":
+                    // Calm, patient, customer service
+                    targets = new float[] { 0.12f, 0.18f, 0.4f, 0.22f, 0.08f }; // High Alpha (calm)
+                    tolerance = new float[] { 0.15f, 0.15f, 0.18f, 0.15f, 0.1f };
+                    weights = new float[] { 0.9f, 1.1f, 1.4f, 1f, 0.7f };
+                    break;
+
+                case "summergirl":
+                    // Relaxed, happy, low stress
+                    targets = new float[] { 0.1f, 0.22f, 0.38f, 0.22f, 0.08f }; // High Alpha (relaxed)
+                    tolerance = new float[] { 0.15f, 0.18f, 0.2f, 0.16f, 0.12f };
+                    weights = new float[] { 0.9f, 1.2f, 1.4f, 1f, 0.8f };
+                    break;
+
+                case "tourist":
+                    // Curious, alert, moderately stressed
+                    targets = new float[] { 0.1f, 0.2f, 0.28f, 0.3f, 0.12f }; // Moderate Beta (alertness)
+                    tolerance = new float[] { 0.15f, 0.18f, 0.2f, 0.2f, 0.15f };
+                    weights = new float[] { 0.9f, 1.1f, 1.2f, 1.3f, 1f };
+                    break;
+
+                default:
+                    // Default balanced profile
+                    targets = new float[] { 0.2f, 0.2f, 0.2f, 0.2f, 0.2f };
+                    tolerance = new float[] { 0.15f, 0.15f, 0.15f, 0.15f, 0.15f };
+                    weights = new float[] { 1f, 1f, 1f, 1f, 1f };
+                    break;
+            }
+
+            // Use reflection to set private fields
+            var bandTargetsField = typeof(NeuralProfile).GetField("_bandTargets",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var bandToleranceField = typeof(NeuralProfile).GetField("_bandTolerance",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var bandWeightsField = typeof(NeuralProfile).GetField("_bandWeights",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            bandTargetsField?.SetValue(profile, targets);
+            bandToleranceField?.SetValue(profile, tolerance);
+            bandWeightsField?.SetValue(profile, weights);
+
+            Debug.Log($"[CreateSampleProfiles] Updated {profile.displayName} ({profile.profileId}) with personality-based band settings.");
+        }
 #endif
     }
 }
