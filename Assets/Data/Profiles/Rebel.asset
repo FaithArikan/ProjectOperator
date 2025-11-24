@@ -12,20 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb89cf7eb3eb05a4183acc36591a4081, type: 3}
   m_Name: Rebel
   m_EditorClassIdentifier: Assembly-CSharp::NeuralWaveBureau.Data.NeuralProfile
+  prefab: {fileID: 109846, guid: 2b7716262d769d24fb8643017c8cdc75, type: 3}
   profileId: rebel
-  displayName: Rebel
+  displayName: Roxie Rage
   _bandTargets:
-  - 0.05
-  - 0.15
-  - 0.3
-  - 0.8
-  - 0.9
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
   _bandTolerance:
-  - 0.3
-  - 0.3
-  - 0.3
-  - 0.3
-  - 0.3
+  - 0.15
+  - 0.15
+  - 0.15
+  - 0.15
+  - 0.15
   _bandWeights:
   - 1
   - 1

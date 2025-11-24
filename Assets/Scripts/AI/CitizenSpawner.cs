@@ -16,7 +16,7 @@ namespace NeuralWaveBureau.AI
         [Header("Prefab Settings")]
         [SerializeField]
         [Tooltip("List of citizen prefabs to spawn (must have CitizenController and CitizenMovement)")]
-        private List<GameObject> _citizenPrefabs = new List<GameObject>();
+        private List<NeuralProfile> _citizenPrefabs = new List<NeuralProfile>();
 
         [SerializeField]
         [Tooltip("Random selection mode for prefabs")]
@@ -183,18 +183,18 @@ namespace NeuralWaveBureau.AI
             {
                 case PrefabSelectionMode.Random:
                     int randomIndex = Random.Range(0, _citizenPrefabs.Count);
-                    selectedPrefab = _citizenPrefabs[randomIndex];
+                    selectedPrefab = _citizenPrefabs[randomIndex].prefab;
                     break;
 
                 case PrefabSelectionMode.Sequential:
-                    selectedPrefab = _citizenPrefabs[_currentPrefabIndex];
+                    selectedPrefab = _citizenPrefabs[_currentPrefabIndex].prefab;
                     _currentPrefabIndex = (_currentPrefabIndex + 1) % _citizenPrefabs.Count;
                     break;
 
                 case PrefabSelectionMode.Weighted:
                     // Future feature - for now use random
                     randomIndex = Random.Range(0, _citizenPrefabs.Count);
-                    selectedPrefab = _citizenPrefabs[randomIndex];
+                    selectedPrefab = _citizenPrefabs[randomIndex].prefab;
                     break;
             }
 

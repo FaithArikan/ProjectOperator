@@ -9,6 +9,8 @@ namespace NeuralWaveBureau.Data
     [CreateAssetMenu(fileName = "NeuralProfile", menuName = "Neural Wave Bureau/Neural Profile", order = 1)]
     public class NeuralProfile : ScriptableObject
     {
+        public GameObject prefab;
+
         [Header("Identity")]
         [Tooltip("Unique identifier for this profile")]
         public string profileId = "default";
