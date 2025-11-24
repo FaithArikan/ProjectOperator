@@ -57,9 +57,12 @@ public class SettingsMenu : MonoBehaviour
         }
     }
 
+    [Header("Input Settings")]
+    [SerializeField] private bool enableInput = true;
+
     private void Update()
     {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (enableInput && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             ToggleSettings();
         }
