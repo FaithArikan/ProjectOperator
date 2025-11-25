@@ -72,14 +72,12 @@ namespace NeuralWaveBureau.UI
         private bool _enableDynamicObedience = true;
 
         [SerializeField]
-        [Tooltip("How fast obedience changes per second based on performance")]
-        private float _obedienceChangeRate = 5f;
+        [Tooltip("How fast obedience rises when performing well")]
+        private float _obedienceRiseRate = 12f;
 
         [SerializeField]
-        private float _obedienceIncreaseThreshold = 0.55f; // Above this score, obedience increases
-
-        [SerializeField]
-        private float _obedienceDecreaseThreshold = 0.35f; // Below this score, obedience decreases
+        [Tooltip("How fast obedience falls when performing poorly")]
+        private float _obedienceFallRate = 2f;
 
         private void Awake()
         {
@@ -159,22 +157,18 @@ namespace NeuralWaveBureau.UI
             if (!_enableDynamicObedience)
                 return;
 
-            float targetChange = 0f;
+            // Target obedience is directly proportional to score (0-100)
+            // Added 10% boost to make it feel more rewarding
+            float targetObedience = Mathf.Clamp(evaluationScore * 110f, 0f, 100f);
 
-            if (evaluationScore >= _obedienceIncreaseThreshold)
-            {
-                // Increase obedience
-                targetChange = _obedienceChangeRate * deltaTime;
-            }
-            else if (evaluationScore <= _obedienceDecreaseThreshold)
-            {
-                // Decrease obedience
-                targetChange = -_obedienceChangeRate * deltaTime;
-            }
+            // Determine rate based on whether we need to rise or fall
+            // We fall slowly (forgiving) and rise quickly (rewarding)
+            float rate = (targetObedience > _currentObedience) ? _obedienceRiseRate : _obedienceFallRate;
 
-            if (Mathf.Abs(targetChange) > 0.001f)
+            // Move towards target
+            if (Mathf.Abs(targetObedience - _currentObedience) > 0.01f)
             {
-                float newValue = Mathf.Clamp(_currentObedience + targetChange, 0f, 100f);
+                float newValue = Mathf.MoveTowards(_currentObedience, targetObedience, rate * deltaTime);
                 SetObedience(newValue, false); // Don't animate every frame, just set value
             }
         }
@@ -240,7 +234,8 @@ namespace NeuralWaveBureau.UI
             // Calculate normalized obedience (0..1)
             float normalizedObedience = _currentObedience / 100f;
 
-            // Apply tolerance multiplier
+            /* 
+            // Tolerance multiplier removed to decouple evaluation from obedience
             float toleranceMultiplier = Mathf.Lerp(
                 _toleranceMultiplierRange.x,
                 _toleranceMultiplierRange.y,
@@ -251,6 +246,7 @@ namespace NeuralWaveBureau.UI
             {
                 _activeProfile.BandTolerance[i] = _originalTolerances[i] * toleranceMultiplier;
             }
+            */
 
             // Apply instability rate multiplier
             float instabilityMultiplier = Mathf.Lerp(
@@ -269,13 +265,15 @@ namespace NeuralWaveBureau.UI
                 }
             }
 
-            // Apply success threshold adjustment
+            /*
+            // Success threshold adjustment removed to decouple evaluation from obedience
             float thresholdAdjust = Mathf.Lerp(
                 _successThresholdAdjustRange.x,
                 _successThresholdAdjustRange.y,
                 normalizedObedience
             );
             _aiSettings.successThreshold = Mathf.Clamp01(_originalSuccessThreshold + thresholdAdjust);
+            */
         }
 
         /// <summary>
