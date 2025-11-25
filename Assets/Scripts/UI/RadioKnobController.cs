@@ -56,9 +56,6 @@ namespace NeuralWaveBureau.UI
         private AudioSource _audioSource;
 
         [SerializeField]
-        private AudioClip _clickSound;
-
-        [SerializeField]
         private AudioClip _tickSound; // Sound for each "tick" while rotating
 
         [SerializeField]
@@ -169,9 +166,6 @@ namespace NeuralWaveBureau.UI
             {
                 Activate();
             }
-
-            // Play click sound
-            PlaySound(_clickSound);
 
             // Visual press feedback
             if (_knobGraphic != null)

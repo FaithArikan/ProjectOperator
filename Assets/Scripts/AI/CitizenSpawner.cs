@@ -96,10 +96,32 @@ namespace NeuralWaveBureau.AI
             }
 
             // Check if we have an active citizen that is not done
-            if (_spawnedCitizens.Count > 0 && !_isCurrentCitizenDone)
+            if (_spawnedCitizens.Count > 0)
             {
-                Debug.LogWarning("[CitizenSpawner] Cannot spawn new citizen - current citizen is not done yet!");
-                return null;
+                if (!_isCurrentCitizenDone)
+                {
+                    // Check if obedience is high enough to allow early finish
+                    if (ObedienceController.Instance != null && ObedienceController.Instance.CurrentObedience > 90f)
+                    {
+                        Debug.Log("[CitizenSpawner] Obedience > 90%, finishing current citizen.");
+                        // Proceed to send to exit below
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[CitizenSpawner] Cannot spawn new citizen - current citizen is not done yet!");
+                        return null;
+                    }
+                }
+
+                // If we are here, we are spawning a new citizen, so the old one must leave.
+                // Ensure the previous citizen is sent to the exit.
+                if (BrainActivityMonitor.Instance != null)
+                    BrainActivityMonitor.Instance.StopMonitoring();
+
+                GameObject previousCitizen = _spawnedCitizens[_spawnedCitizens.Count - 1];
+                SendCitizenToExit(previousCitizen);
+
+                _isCurrentCitizenDone = true;
             }
 
             // Destroy previous citizen if it exists and we are enforcing single citizen (optional, but good for cleanup)
@@ -262,7 +284,6 @@ namespace NeuralWaveBureau.AI
         /// <summary>
         /// Marks the current citizen as done and sends them to the exit point.
         /// </summary>
-        [ContextMenu("Finish Current Citizen")]
         public void FinishCurrentCitizen()
         {
             if (_isCurrentCitizenDone)
@@ -281,17 +302,26 @@ namespace NeuralWaveBureau.AI
 
             // Get the current active citizen (last one spawned)
             GameObject currentCitizen = _spawnedCitizens[_spawnedCitizens.Count - 1];
+            SendCitizenToExit(currentCitizen);
 
-            if (currentCitizen != null)
+            _isCurrentCitizenDone = true;
+        }
+
+        private void SendCitizenToExit(GameObject citizen)
+        {
+            if (citizen != null)
             {
-                CitizenMovement movement = currentCitizen.GetComponent<CitizenMovement>();
+                CitizenMovement movement = citizen.GetComponent<CitizenMovement>();
                 if (movement != null && _exitPoint != null)
                 {
                     movement.MoveTo(_exitPoint.position);
 
                     // Subscribe to OnArrived to destroy them
+                    // Remove first to avoid double subscription
+                    movement.OnArrived -= HandleCitizenExit;
                     movement.OnArrived += HandleCitizenExit;
-                    Debug.Log($"[CitizenSpawner] Sending citizen {currentCitizen.name} to exit.");
+
+                    Debug.Log($"[CitizenSpawner] Sending citizen {citizen.name} to exit.");
                 }
                 else
                 {
@@ -303,8 +333,6 @@ namespace NeuralWaveBureau.AI
                     }
                 }
             }
-
-            _isCurrentCitizenDone = true;
         }
 
         private void HandleCitizenExit(CitizenMovement movement)
