@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.InputSystem;
 
 namespace NeuralWaveBureau
 {
@@ -41,8 +42,39 @@ namespace NeuralWaveBureau
         [Tooltip("Duration for camera blend transitions")]
         private float _blendDuration = 1.5f;
 
+        [Header("Room View Look Around")]
+        [SerializeField]
+        [Tooltip("Enable look around in room view")]
+        private bool _enableLookAround = true;
+
+        [SerializeField]
+        [Tooltip("Mouse sensitivity for looking around")]
+        private float _lookSensitivity = 2f;
+
+        [SerializeField]
+        [Tooltip("Maximum horizontal rotation in degrees (left/right)")]
+        private float _maxHorizontalAngle = 45f;
+
+        [SerializeField]
+        [Tooltip("Maximum vertical rotation in degrees (up/down)")]
+        private float _maxVerticalAngle = 30f;
+
+        [SerializeField]
+        [Tooltip("Smooth camera rotation")]
+        private float _rotationSmoothTime = 0.1f;
+
+        [Header("Input Actions")]
+
+        [SerializeField]
+        [Tooltip("Input action for mouse delta (should be a Vector2 action)")]
+        private InputActionReference _mouseDeltaAction;
+
         // State
         private CameraView _currentView = CameraView.Room;
+        private Vector2 _currentRotation = Vector2.zero;
+        private Vector2 _targetRotation = Vector2.zero;
+        private Vector2 _rotationVelocity = Vector2.zero;
+        private Quaternion _initialRoomRotation;
 
         // Singleton pattern
         public static CameraManager Instance;
@@ -52,12 +84,29 @@ namespace NeuralWaveBureau
             Instance = this;
         }
 
+        private void OnEnable()
+        {
+            if (_mouseDeltaAction != null && _mouseDeltaAction.action != null)
+            {
+                _mouseDeltaAction.action.Enable();
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_mouseDeltaAction != null && _mouseDeltaAction.action != null)
+            {
+                _mouseDeltaAction.action.Disable();
+            }
+        }
+
         private void Start()
         {
             // Initialize camera priorities - start in room view
             if (_roomViewCamera != null)
             {
                 _roomViewCamera.Priority.Value = _basePriority + 10;
+                _initialRoomRotation = _roomViewCamera.transform.rotation;
             }
 
             if (_rulesViewCamera != null)
@@ -73,6 +122,43 @@ namespace NeuralWaveBureau
             _currentView = CameraView.Room;
         }
 
+        private void Update()
+        {
+            // Only allow look around in room view
+            if (_currentView == CameraView.Room && _enableLookAround && _roomViewCamera != null)
+            {
+                HandleLookAround();
+            }
+        }
+
+        /// <summary>
+        /// Handles mouse input for looking around in room view.
+        /// </summary>
+        private void HandleLookAround()
+        {
+            // Check if input actions are assigned
+            if (_mouseDeltaAction == null || _mouseDeltaAction.action == null)
+            {
+                return;
+            }
+
+            Vector2 mouseDelta = _mouseDeltaAction.action.ReadValue<Vector2>();
+            float mouseX = mouseDelta.x * _lookSensitivity;
+            float mouseY = mouseDelta.y * _lookSensitivity;
+
+            _targetRotation.x = Mathf.Clamp(_targetRotation.x - mouseY, -_maxVerticalAngle, _maxVerticalAngle);
+            _targetRotation.y = Mathf.Clamp(_targetRotation.y + mouseX, -_maxHorizontalAngle, _maxHorizontalAngle);
+
+            // Smoothly interpolate current rotation to target rotation
+            _currentRotation.x = Mathf.SmoothDamp(_currentRotation.x, _targetRotation.x, ref _rotationVelocity.x, _rotationSmoothTime);
+            _currentRotation.y = Mathf.SmoothDamp(_currentRotation.y, _targetRotation.y, ref _rotationVelocity.y, _rotationSmoothTime);
+
+            // Apply rotation to camera
+            Quaternion yawRotation = Quaternion.Euler(0f, _currentRotation.y, 0f);
+            Quaternion pitchRotation = Quaternion.Euler(_currentRotation.x, 0f, 0f);
+            _roomViewCamera.transform.rotation = _initialRoomRotation * yawRotation * pitchRotation;
+        }
+
         /// <summary>
         /// Moves camera to the rules/instructions monitor view.
         /// </summary>
@@ -82,6 +168,7 @@ namespace NeuralWaveBureau
                 return;
 
             Debug.Log("CameraManager: Moving to Rules View");
+            ResetLookAround();
             _currentView = CameraView.Rules;
             SetActiveCamera(_rulesViewCamera);
         }
@@ -95,6 +182,7 @@ namespace NeuralWaveBureau
                 return;
 
             Debug.Log("CameraManager: Moving to Monitor View");
+            ResetLookAround();
             _currentView = CameraView.Monitor;
             SetActiveCamera(_monitorViewCamera);
         }
@@ -110,6 +198,22 @@ namespace NeuralWaveBureau
             Debug.Log("CameraManager: Moving to Room View");
             _currentView = CameraView.Room;
             SetActiveCamera(_roomViewCamera);
+            ResetLookAround();
+        }
+
+        /// <summary>
+        /// Resets the look around rotation to initial state.
+        /// </summary>
+        private void ResetLookAround()
+        {
+            _currentRotation = Vector2.zero;
+            _targetRotation = Vector2.zero;
+            _rotationVelocity = Vector2.zero;
+
+            if (_roomViewCamera != null)
+            {
+                _roomViewCamera.transform.rotation = _initialRoomRotation;
+            }
         }
 
         /// <summary>
@@ -223,7 +327,7 @@ namespace NeuralWaveBureau
             return camera.Priority.Value > _basePriority;
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         /// <summary>
         /// Forces switch to room view (Editor helper)
         /// </summary>
@@ -265,6 +369,6 @@ namespace NeuralWaveBureau
                 Debug.Log("Switched to Monitor View");
             }
         }
-        #endif
+#endif
     }
 }
