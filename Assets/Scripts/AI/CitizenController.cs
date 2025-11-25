@@ -180,6 +180,13 @@ namespace NeuralWaveBureau.AI
                     // Evaluate wave matching (kept for potential future use/UI display)
                     float waveScore = _evaluator.Evaluate(_currentSample);
 
+                    // Update dynamic obedience based on performance (ONLY if user has started tweaking)
+                    if (ObedienceController.Instance != null && AIManager.Instance != null && AIManager.Instance.HasUserInteracted)
+                    {
+                        ObedienceController.Instance.UpdateDynamicObedience(waveScore, sampleInterval);
+                        obedienceLevel = ObedienceController.Instance.CurrentObedience;
+                    }
+
                     // Update state machine with obedience as the evaluation metric
                     _stateMachine.Update(waveScore, obedienceLevel, sampleInterval);
 
@@ -269,6 +276,16 @@ namespace NeuralWaveBureau.AI
         /// </summary>
         private void ActivateRagdoll()
         {
+            // Check if ragdoll is set up
+            if (_ragdollBodies == null || _ragdollBodies.Length == 0)
+            {
+                if (_settings != null && _settings.enableVerboseLogging)
+                {
+                    Debug.LogWarning($"[CitizenController] {_citizenId}: No ragdoll bodies assigned. Skipping ragdoll activation.");
+                }
+                return;
+            }
+
             // Disable animator to allow physics to take over
             if (_animator != null)
             {
@@ -276,25 +293,24 @@ namespace NeuralWaveBureau.AI
             }
 
             // Enable all ragdoll rigidbodies
-            if (_ragdollBodies != null)
+            int activeRagdollCount = 0;
+            foreach (var rb in _ragdollBodies)
             {
-                foreach (var rb in _ragdollBodies)
+                if (rb != null)
                 {
-                    if (rb != null)
-                    {
-                        rb.isKinematic = false;
+                    rb.isKinematic = false;
+                    activeRagdollCount++;
 
-                        // Apply death force
-                        if (_ragdollForcePoint != null)
-                        {
-                            Vector3 forceDirection = (rb.position - _ragdollForcePoint.position).normalized;
-                            rb.AddForce(forceDirection * _ragdollForce, ForceMode.Impulse);
-                        }
-                        else
-                        {
-                            // Default: apply upward and backward force
-                            rb.AddForce(Vector3.up * _ragdollForce * 0.5f + Vector3.back * _ragdollForce * 0.3f, ForceMode.Impulse);
-                        }
+                    // Apply death force
+                    if (_ragdollForcePoint != null)
+                    {
+                        Vector3 forceDirection = (rb.position - _ragdollForcePoint.position).normalized;
+                        rb.AddForce(forceDirection * _ragdollForce, ForceMode.Impulse);
+                    }
+                    else
+                    {
+                        // Default: apply upward and backward force
+                        rb.AddForce(Vector3.up * _ragdollForce * 0.5f + Vector3.back * _ragdollForce * 0.3f, ForceMode.Impulse);
                     }
                 }
             }
@@ -311,9 +327,9 @@ namespace NeuralWaveBureau.AI
                 }
             }
 
-            if (_settings.enableVerboseLogging)
+            if (_settings != null && _settings.enableVerboseLogging)
             {
-                Debug.Log($"[CitizenController] {_citizenId}: Ragdoll activated");
+                Debug.Log($"[CitizenController] {_citizenId}: Ragdoll activated ({activeRagdollCount} rigidbodies)");
             }
         }
 
@@ -322,15 +338,23 @@ namespace NeuralWaveBureau.AI
         /// </summary>
         private void DeactivateRagdoll()
         {
-            // Disable ragdoll rigidbodies
-            if (_ragdollBodies != null)
+            // Check if ragdoll is set up
+            if (_ragdollBodies == null || _ragdollBodies.Length == 0)
             {
-                foreach (var rb in _ragdollBodies)
+                // Just re-enable animator if no ragdoll
+                if (_animator != null)
                 {
-                    if (rb != null)
-                    {
-                        rb.isKinematic = true;
-                    }
+                    _animator.enabled = true;
+                }
+                return;
+            }
+
+            // Disable ragdoll rigidbodies
+            foreach (var rb in _ragdollBodies)
+            {
+                if (rb != null)
+                {
+                    rb.isKinematic = true;
                 }
             }
 

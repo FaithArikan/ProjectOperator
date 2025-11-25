@@ -79,6 +79,7 @@ namespace NeuralWaveBureau.UI
         public System.Action<float> OnValueChanged;
         public System.Action OnKnobActivated;
         public System.Action OnKnobDeactivated;
+        public System.Action OnUserInteracted;
 
         public float Value
         {
@@ -214,6 +215,7 @@ namespace NeuralWaveBureau.UI
                 UpdateKnobRotation();
                 UpdateValueText();
                 OnValueChanged?.Invoke(_currentValue);
+                OnUserInteracted?.Invoke();
 
                 // Play tick sound at intervals
                 if (Mathf.Abs(_currentValue - _lastTickValue) >= _tickInterval)

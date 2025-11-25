@@ -211,8 +211,6 @@ namespace NeuralWaveBureau.Data
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-
-            Debug.Log("[CreateSampleProfiles] Created sample profiles and settings in Assets/Data/Profiles/");
         }
 
         [MenuItem("Neural Wave Bureau/Update Profile Band Settings")]
@@ -236,8 +234,6 @@ namespace NeuralWaveBureau.Data
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-
-            Debug.Log($"[CreateSampleProfiles] Updated band settings for {updatedCount} profiles based on their personality.");
         }
 
         private static void SetBandParametersBasedOnPersonality(NeuralProfile profile)
@@ -388,8 +384,6 @@ namespace NeuralWaveBureau.Data
             bandTargetsField?.SetValue(profile, targets);
             bandToleranceField?.SetValue(profile, tolerance);
             bandWeightsField?.SetValue(profile, weights);
-
-            Debug.Log($"[CreateSampleProfiles] Updated {profile.displayName} ({profile.profileId}) with personality-based band settings.");
         }
 #endif
     }

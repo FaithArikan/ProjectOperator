@@ -3,7 +3,11 @@
     "allow": [
       "Bash(dir \"Assets\\Scripts\" /B /A:D)",
       "Bash(cat:*)",
-      "Bash(git grep:*)"
+      "Bash(git grep:*)",
+      "Bash(dir:*)",
+      "Bash(NUL)",
+      "Bash(findstr:*)",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []

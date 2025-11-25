@@ -29,6 +29,7 @@ namespace NeuralWaveBureau.AI
         public AISettings Settings => _aiSettings;
         public CitizenController ActiveCitizen => _activeCitizen;
         public WaveSample CurrentWaveSample => _currentWaveSample;
+        public bool HasUserInteracted { get; private set; }
 
         private void Awake()
         {
@@ -86,6 +87,7 @@ namespace NeuralWaveBureau.AI
             }
 
             _activeCitizen = citizen;
+            HasUserInteracted = false;
             _activeCitizen.StartStimulation();
 
             // Subscribe to citizen events for feedback
@@ -172,6 +174,11 @@ namespace NeuralWaveBureau.AI
             {
                 Debug.Log($"[AIManager] Citizen recovered: {citizen.CitizenId}");
             }
+        }
+
+        public void NotifyUserInteraction()
+        {
+            HasUserInteracted = true;
         }
     }
 }

@@ -67,6 +67,20 @@ namespace NeuralWaveBureau.UI
 
         public float CurrentObedience => _currentObedience;
 
+        [Header("Dynamic Obedience")]
+        [SerializeField]
+        private bool _enableDynamicObedience = true;
+
+        [SerializeField]
+        [Tooltip("How fast obedience changes per second based on performance")]
+        private float _obedienceChangeRate = 5f;
+
+        [SerializeField]
+        private float _obedienceIncreaseThreshold = 0.55f; // Above this score, obedience increases
+
+        [SerializeField]
+        private float _obedienceDecreaseThreshold = 0.35f; // Below this score, obedience decreases
+
         private void Awake()
         {
             Instance = this;
@@ -131,6 +145,37 @@ namespace NeuralWaveBureau.UI
             if (StimulationTimeController.Instance != null)
             {
                 StimulationTimeController.Instance.SetActiveProfile(profile);
+            }
+        }
+
+        /// <summary>
+        /// Sets obedience value directly (0-100)
+        /// </summary>
+        /// <summary>
+        /// Updates obedience based on citizen evaluation performance
+        /// </summary>
+        public void UpdateDynamicObedience(float evaluationScore, float deltaTime)
+        {
+            if (!_enableDynamicObedience)
+                return;
+
+            float targetChange = 0f;
+
+            if (evaluationScore >= _obedienceIncreaseThreshold)
+            {
+                // Increase obedience
+                targetChange = _obedienceChangeRate * deltaTime;
+            }
+            else if (evaluationScore <= _obedienceDecreaseThreshold)
+            {
+                // Decrease obedience
+                targetChange = -_obedienceChangeRate * deltaTime;
+            }
+
+            if (Mathf.Abs(targetChange) > 0.001f)
+            {
+                float newValue = Mathf.Clamp(_currentObedience + targetChange, 0f, 100f);
+                SetObedience(newValue, false); // Don't animate every frame, just set value
             }
         }
 

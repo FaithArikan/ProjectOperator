@@ -72,14 +72,23 @@ namespace NeuralWaveBureau.AI
             _stateTime += deltaTime;
             _timeSinceStimulationStart += deltaTime; // Track total stimulation time
 
-            // Convert obedience to score (0-100 -> 0-1)
-            float obedienceScore = obedienceLevel / 100f;
+            // Convert obedience to bonus multiplier (0-100 -> 0.5-1.5)
+            // Low obedience (0%) = 0.5x multiplier (harder)
+            // High obedience (100%) = 1.5x multiplier (easier)
+            float normalizedObedience = obedienceLevel / 100f;
+            float obedienceMultiplier = Mathf.Lerp(0.5f, 1.5f, normalizedObedience);
 
-            // Update instability based on obedience score
-            UpdateInstability(obedienceScore, deltaTime);
+            // Apply obedience bonus to wave score
+            // This means: good wave matching + high obedience = excellent score
+            // Good wave matching + low obedience = okay score
+            // Bad wave matching + high obedience = poor score (still need to match waves)
+            float finalScore = Mathf.Clamp01(evaluationScore * obedienceMultiplier);
 
-            // Process state transitions using obedience score
-            ProcessStateTransitions(obedienceScore);
+            // Update instability based on combined score
+            UpdateInstability(finalScore, deltaTime);
+
+            // Process state transitions using combined score
+            ProcessStateTransitions(finalScore);
         }
 
         /// <summary>

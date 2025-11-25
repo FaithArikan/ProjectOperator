@@ -45,9 +45,6 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         private Slider _instabilityBar;
 
-        [SerializeField]
-        private TextMeshProUGUI _gracePeriodText;
-
         [Header("Control Buttons")]
         [SerializeField]
         private Button _powerButton;
@@ -318,23 +315,6 @@ namespace NeuralWaveBureau.UI
                     {
                         fillImage.color = Color.Lerp(_stabilizedColor, _criticalColor, _activeCitizen.Instability);
                     }
-                }
-            }
-
-            // Update grace period display
-            if (_gracePeriodText != null)
-            {
-                float remaining = _activeCitizen.RemainingGracePeriod;
-                if (remaining > 0f)
-                {
-                    _gracePeriodText.text = $"GRACE PERIOD: {remaining:F1}s";
-                    float graceMult = _activeCitizen.GracePeriodMultiplier;
-                    // Color: Green during full grace, yellow during fade
-                    _gracePeriodText.color = Color.Lerp(Color.green, Color.yellow, graceMult);
-                }
-                else
-                {
-                    _gracePeriodText.text = "";
                 }
             }
         }

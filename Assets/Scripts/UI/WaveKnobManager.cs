@@ -103,6 +103,12 @@ namespace NeuralWaveBureau.UI
                 // Subscribe to activation
                 _waveKnobs[i].OnKnobActivated += () => OnKnobActivated(bandIndex);
 
+                // Subscribe to user interaction
+                _waveKnobs[i].OnUserInteracted += () =>
+                {
+                    if (_aiManager != null) _aiManager.NotifyUserInteraction();
+                };
+
                 // Set label
                 if (i < _bandLabels.Count && _bandLabels[i] != null)
                 {

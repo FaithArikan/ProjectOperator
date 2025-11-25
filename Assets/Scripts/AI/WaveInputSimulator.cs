@@ -61,11 +61,6 @@ namespace NeuralWaveBureau.AI
         {
             _aiManager = AIManager.Instance;
 
-            if (_aiManager == null)
-            {
-                Debug.LogError("[WaveInputSimulator] AIManager not found!");
-            }
-
             // Subscribe to radio knob value changes for each band
             for (int i = 0; i < _radioKnobs.Length && i < 5; i++)
             {
@@ -75,7 +70,6 @@ namespace NeuralWaveBureau.AI
                     _radioKnobs[i].OnValueChanged += (value) => OnKnobValueChanged(bandIndex, value);
                     // Initialize knob to current band value
                     _radioKnobs[i].SetValue(_currentBands[i], false);
-                    Debug.Log($"[WaveInputSimulator] Radio knob {i + 1} connected - controlling Band {i + 1}");
                 }
             }
         }
@@ -98,7 +92,6 @@ namespace NeuralWaveBureau.AI
         private void OnKnobValueChanged(int bandIndex, float value)
         {
             _currentBands[bandIndex] = value;
-            Debug.Log($"[WaveInputSimulator] Knob adjusted Band {bandIndex + 1} to {value:F2}");
         }
 
         private void Update()
