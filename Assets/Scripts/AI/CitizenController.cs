@@ -29,6 +29,9 @@ namespace NeuralWaveBureau.AI
         [SerializeField]
         private AudioSource _audioSource;
 
+        [SerializeField]
+        private CitizenFootstepSystem _footstepSystem;
+
         [Header("Ragdoll")]
         [SerializeField]
         private Rigidbody[] _ragdollBodies;
