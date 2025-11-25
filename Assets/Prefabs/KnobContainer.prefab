@@ -301,7 +301,7 @@ MonoBehaviour:
   _labelText: {fileID: 697238942141872629}
   _selectionOutlineImage: {fileID: 9106551284050154911}
   _audioSource: {fileID: 2419134348399577578}
-  _clickSound: {fileID: 0}
+  _clickSound: {fileID: 8300000, guid: a0d546e08549bdf4aabd8e97c8d2ca37, type: 3}
   _tickSound: {fileID: 0}
   _tickInterval: 0.05
 --- !u!82 &2419134348399577578
@@ -315,7 +315,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -6758165888199765824, guid: c3310e01b50dbf14ca0154c05e99c360, type: 2}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: a0d546e08549bdf4aabd8e97c8d2ca37, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
