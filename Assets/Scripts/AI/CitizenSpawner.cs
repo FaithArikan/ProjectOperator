@@ -130,6 +130,12 @@ namespace NeuralWaveBureau.AI
             // If you want strictly ONE citizen at a time, uncomment the line below:
             // if (_spawnedCitizens.Count > 0) DestroyOldestCitizen();
 
+            // Reset knobs for the new citizen
+            if (WaveKnobManager.Instance != null)
+            {
+                WaveKnobManager.Instance.ResetAllKnobs();
+            }
+
             // Spawn the citizen
             Vector3 spawnPos = _spawnPoint != null ? _spawnPoint.position : transform.position;
             Quaternion spawnRot = _spawnPoint != null ? _spawnPoint.rotation : transform.rotation;
