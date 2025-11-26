@@ -399,11 +399,25 @@ namespace NeuralWaveBureau.UI
                 UITweenAnimations.ButtonPress(_powerButton.transform);
             }
 
-            // Optionally auto-start monitoring when powered on
-            if (_autoStartMonitoring)
+            // Check if there's a citizen at the monitoring station and resume monitoring
+            bool shouldStartMonitoring = false;
+
+            if (_activeCitizen != null)
+            {
+                // If there's an active citizen, start monitoring them
+                shouldStartMonitoring = true;
+                Debug.Log("[BrainActivityMonitor] Monitor powered ON - Resuming monitoring of active citizen");
+            }
+            else if (_autoStartMonitoring)
+            {
+                // Only auto-start if setting is enabled and no citizen yet
+                shouldStartMonitoring = true;
+                Debug.Log("[BrainActivityMonitor] Monitor powered ON - Auto-starting monitoring");
+            }
+
+            if (shouldStartMonitoring)
             {
                 StartMonitoring();
-                Debug.Log("[BrainActivityMonitor] Monitor powered ON - Auto-started monitoring with waveforms");
             }
             else
             {
