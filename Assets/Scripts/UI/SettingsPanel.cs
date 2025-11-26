@@ -8,12 +8,16 @@ namespace NeuralWaveBureau.UI
     /// </summary>
     public class SettingsPanel : MonoBehaviour
     {
+        public static SettingsPanel Instance { get; private set; }
+
         [Header("UI References")]
         [SerializeField] private Toggle _fadeTransitionsToggle;
         [SerializeField] private Button _backButton;
 
         private void Awake()
         {
+            Instance = this;
+
             // Set initial toggle state from ScreenFadeManager
             if (_fadeTransitionsToggle != null && ScreenFadeManager.Instance != null)
             {

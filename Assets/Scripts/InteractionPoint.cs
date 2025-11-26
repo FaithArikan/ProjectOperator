@@ -20,4 +20,5 @@ public enum InteractionType
     Power,
     Done,
     Next,
+    Settings,
 }

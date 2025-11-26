@@ -80,6 +80,12 @@ public class HandInteractor : MonoBehaviour
             case InteractionType.Next:
                 Debug.Log("Next citizen");
                 break;
+            case InteractionType.Settings:
+                if (SettingsPanel.Instance != null)
+                {
+                    SettingsPanel.Instance.gameObject.SetActive(true);
+                }
+                break;
         }
     }
 
