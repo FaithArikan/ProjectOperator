@@ -41,6 +41,10 @@ namespace NeuralWaveBureau.AI
         private string _idleStateName = "Idle";
 
         [SerializeField]
+        [Tooltip("Name of the walking animation state")]
+        private string _walkStateName = "Walking";
+
+        [SerializeField]
         [Tooltip("Minimum velocity to consider as 'walking' for animation (helps prevent animation glitches)")]
         private float _walkAnimationVelocityThreshold = 0.1f;
 
@@ -332,10 +336,17 @@ namespace NeuralWaveBureau.AI
             // Always update the boolean parameter first
             _animator.SetBool(_walkAnimationParameter, isWalking);
 
-            // If stopping and we want immediate transition, force it
-            if (!isWalking && _forceImmediateTransition)
+            // Force immediate transition if enabled
+            if (_forceImmediateTransition)
             {
-                ForceIdleState();
+                if (isWalking)
+                {
+                    ForceWalkState();
+                }
+                else
+                {
+                    ForceIdleState();
+                }
             }
         }
 
@@ -356,6 +367,26 @@ namespace NeuralWaveBureau.AI
             {
                 // Instant transition
                 _animator.Play(_idleStateName, 0, 0f);
+            }
+        }
+
+        /// <summary>
+        /// Forces immediate transition to walk state
+        /// </summary>
+        private void ForceWalkState()
+        {
+            if (_animator == null || _animator.runtimeAnimatorController == null)
+                return;
+
+            if (_useCrossFade)
+            {
+                // Use CrossFade for smoother transition
+                _animator.CrossFade(_walkStateName, _crossFadeDuration, 0);
+            }
+            else
+            {
+                // Instant transition
+                _animator.Play(_walkStateName, 0, 0f);
             }
         }
 
@@ -385,14 +416,24 @@ namespace NeuralWaveBureau.AI
             bool shouldWalk = currentSpeed > _walkAnimationVelocityThreshold;
             bool isCurrentlyWalking = _animator.GetBool(_walkAnimationParameter);
 
-            // Always update the boolean parameter first
-            _animator.SetBool(_walkAnimationParameter, shouldWalk);
-
-            // If transitioning from walk to idle and we want immediate transition
-            if (isCurrentlyWalking && !shouldWalk && _forceImmediateTransition)
+            // Only update if the state has changed
+            if (isCurrentlyWalking != shouldWalk)
             {
-                // Force immediate transition to idle state (bypasses exit time)
-                ForceIdleState();
+                // Always update the boolean parameter first
+                _animator.SetBool(_walkAnimationParameter, shouldWalk);
+
+                // Force immediate transition if enabled
+                if (_forceImmediateTransition)
+                {
+                    if (shouldWalk)
+                    {
+                        ForceWalkState();
+                    }
+                    else
+                    {
+                        ForceIdleState();
+                    }
+                }
             }
         }
 
