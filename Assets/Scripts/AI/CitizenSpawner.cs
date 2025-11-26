@@ -46,13 +46,14 @@ namespace NeuralWaveBureau.AI
         private Transform _exitPoint;
 
         // State
-        private List<GameObject> _spawnedCitizens = new List<GameObject>();
+        public List<GameObject> _spawnedCitizens = new List<GameObject>();
         private float _spawnTimer = 0f;
         private int _totalSpawned = 0;
         private bool _isCurrentCitizenDone = true; // Default to true so we can spawn the first one
 
         public int TotalSpawned => _totalSpawned;
         public int ActiveCitizens => _spawnedCitizens.Count;
+
 
         private void Awake()
         {

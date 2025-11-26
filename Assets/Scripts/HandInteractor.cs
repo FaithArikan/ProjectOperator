@@ -58,7 +58,21 @@ public class HandInteractor : MonoBehaviour
         switch (interactionType)
         {
             case InteractionType.Power:
-                BrainActivityMonitor.Instance.TogglePower();
+                // First time pressing power: show main menu
+                // After game started: toggle monitor power
+                if (GameManager.Instance != null && !GameManager.Instance.HasGameStarted)
+                {
+                    // Show main menu on first power button press
+                    if (MainMenuPanel.Instance != null)
+                    {
+                        MainMenuPanel.Instance.ShowMenu();
+                    }
+                }
+                else
+                {
+                    // Game has started - toggle monitor power normally
+                    BrainActivityMonitor.Instance.TogglePower();
+                }
                 break;
             case InteractionType.Done:
                 CitizenSpawner.Instance.FinishCurrentCitizen();

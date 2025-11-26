@@ -20,7 +20,7 @@ namespace NeuralWaveBureau.UI
 
         [Header("Core Components")]
         [SerializeField]
-        private GameObject _mainScreenPanel; // The main panel that contains everything
+        private Canvas mainComputerCanvas;
 
         [Header("Waveform Displays")]
         [SerializeField]
@@ -121,9 +121,9 @@ namespace NeuralWaveBureau.UI
             _isPoweredOn = false;
 
             // Deactivate the main screen panel - it's like the computer is off
-            if (_mainScreenPanel != null)
+            if (mainComputerCanvas != null)
             {
-                _mainScreenPanel.SetActive(false);
+                mainComputerCanvas.gameObject.SetActive(false);
                 Debug.Log("[BrainActivityMonitor] Main screen panel deactivated - Computer OFF");
             }
 
@@ -369,9 +369,9 @@ namespace NeuralWaveBureau.UI
             _isPoweredOn = true;
 
             // Activate the main screen panel - Computer powers on!
-            if (_mainScreenPanel != null)
+            if (mainComputerCanvas != null)
             {
-                _mainScreenPanel.SetActive(true);
+                mainComputerCanvas.gameObject.SetActive(true);
                 Debug.Log("[BrainActivityMonitor] Main screen panel activated - Computer ON");
             }
 
@@ -438,15 +438,11 @@ namespace NeuralWaveBureau.UI
 
             _isPoweredOn = false;
 
-            // Deactivate the main screen panel after a short delay - Computer shuts down!
-            DOVirtual.DelayedCall(0.8f, () =>
+            if (mainComputerCanvas != null)
             {
-                if (_mainScreenPanel != null)
-                {
-                    _mainScreenPanel.SetActive(false);
-                    Debug.Log("[BrainActivityMonitor] Main screen panel deactivated - Computer OFF");
-                }
-            });
+                mainComputerCanvas.gameObject.SetActive(false);
+                Debug.Log("[BrainActivityMonitor] Main screen panel deactivated - Computer OFF");
+            }
 
             if (CameraManager.Instance.CurrentView == CameraView.Monitor)
             {

@@ -334,6 +334,29 @@ namespace NeuralWaveBureau.AI
             {
                 Debug.Log($"[CitizenController] {_citizenId}: Ragdoll activated ({activeRagdollCount} rigidbodies)");
             }
+
+            // Trigger game over panel after a short delay
+            TriggerGameOver().Forget();
+        }
+
+        /// <summary>
+        /// Triggers the game over screen after a delay
+        /// </summary>
+        private async UniTaskVoid TriggerGameOver()
+        {
+            // Wait a bit to let the player see the ragdoll effect
+            await UniTask.Delay(System.TimeSpan.FromSeconds(2f));
+
+            // Trigger game over via GameManager
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.TriggerGameOver();
+                Debug.Log($"[CitizenController] {_citizenId}: Game Over triggered!");
+            }
+            else
+            {
+                Debug.LogWarning("[CitizenController] GameManager instance not found in scene!");
+            }
         }
 
         /// <summary>
