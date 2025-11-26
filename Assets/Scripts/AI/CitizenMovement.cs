@@ -36,6 +36,26 @@ namespace NeuralWaveBureau.AI
         [SerializeField]
         private string _walkAnimationParameter = "isWalking";
 
+        [SerializeField]
+        [Tooltip("Name of the idle animation state")]
+        private string _idleStateName = "Idle";
+
+        [SerializeField]
+        [Tooltip("Minimum velocity to consider as 'walking' for animation (helps prevent animation glitches)")]
+        private float _walkAnimationVelocityThreshold = 0.1f;
+
+        [SerializeField]
+        [Tooltip("Force immediate animation transition (skips exit time)")]
+        private bool _forceImmediateTransition = true;
+
+        [SerializeField]
+        [Tooltip("Use CrossFade for smoother transition (if false, uses instant Play)")]
+        private bool _useCrossFade = false;
+
+        [SerializeField]
+        [Tooltip("CrossFade transition duration in seconds")]
+        private float _crossFadeDuration = 0.1f;
+
         // Components
         private NavMeshAgent _navAgent;
         private CitizenController _citizenController;
@@ -90,6 +110,34 @@ namespace NeuralWaveBureau.AI
             {
                 Debug.LogWarning($"[CitizenMovement] Animator found on {gameObject.name} but no AnimatorController is assigned. Animations will not play.");
             }
+
+            // Validate idle state name exists
+            ValidateAnimatorState();
+        }
+
+        /// <summary>
+        /// Validates that the idle state exists in the animator
+        /// </summary>
+        private void ValidateAnimatorState()
+        {
+            if (_animator == null || _animator.runtimeAnimatorController == null)
+                return;
+
+            // Try to check if the state exists (this is a basic check)
+            bool stateExists = false;
+            foreach (UnityEngine.AnimatorControllerParameter param in _animator.parameters)
+            {
+                if (param.name == _walkAnimationParameter)
+                {
+                    stateExists = true;
+                    break;
+                }
+            }
+
+            if (!stateExists)
+            {
+                Debug.LogWarning($"[CitizenMovement] Animation parameter '{_walkAnimationParameter}' not found in animator on {gameObject.name}. Make sure your Animator Controller has this parameter.");
+            }
         }
 
         /// <summary>
@@ -139,6 +187,7 @@ namespace NeuralWaveBureau.AI
             if (_useNavMesh && _navAgent != null)
             {
                 _navAgent.isStopped = true;
+                _navAgent.ResetPath(); // Clear the path to ensure velocity drops to zero
             }
 
             UpdateWalkAnimation(false);
@@ -147,7 +196,11 @@ namespace NeuralWaveBureau.AI
         private void Update()
         {
             if (!_isMoving)
+            {
+                // Even when not moving, check if we need to update animation (important for NavMesh)
+                UpdateWalkAnimationBasedOnVelocity();
                 return;
+            }
 
             if (_useNavMesh)
             {
@@ -157,6 +210,9 @@ namespace NeuralWaveBureau.AI
             {
                 UpdateSimpleMovement();
             }
+
+            // Continuously update animation based on actual velocity
+            UpdateWalkAnimationBasedOnVelocity();
         }
 
         /// <summary>
@@ -167,12 +223,21 @@ namespace NeuralWaveBureau.AI
             if (_navAgent == null)
                 return;
 
-            // Check if arrived
-            if (!_navAgent.pathPending && _navAgent.remainingDistance <= _navAgent.stoppingDistance)
+            // Check if arrived - using a more strict velocity check
+            if (!_navAgent.pathPending)
             {
-                if (!_navAgent.hasPath || _navAgent.velocity.sqrMagnitude == 0f)
+                // Check if we're within stopping distance AND velocity is very low
+                float distanceToTarget = _navAgent.remainingDistance;
+                float velocityMagnitude = _navAgent.velocity.magnitude;
+
+                // Agent has arrived if: close to destination AND nearly stopped
+                if (distanceToTarget <= _navAgent.stoppingDistance &&
+                    velocityMagnitude <= _walkAnimationVelocityThreshold)
                 {
-                    ArriveAtDestination();
+                    if (!_navAgent.hasPath || distanceToTarget == 0f)
+                    {
+                        ArriveAtDestination();
+                    }
                 }
             }
         }
@@ -220,6 +285,13 @@ namespace NeuralWaveBureau.AI
             _isMoving = false;
             _hasArrived = true;
 
+            // Stop NavMeshAgent if using NavMesh
+            if (_useNavMesh && _navAgent != null)
+            {
+                _navAgent.isStopped = true;
+                _navAgent.ResetPath();
+            }
+
             // Snap to exact position
             transform.position = _destination;
 
@@ -254,8 +326,74 @@ namespace NeuralWaveBureau.AI
         {
             if (_animator == null || _animator.runtimeAnimatorController == null)
                 return;
+
             Debug.Log($"[CitizenMovement] {_citizenController.CitizenId} is walking: {isWalking}");
+
+            // Always update the boolean parameter first
             _animator.SetBool(_walkAnimationParameter, isWalking);
+
+            // If stopping and we want immediate transition, force it
+            if (!isWalking && _forceImmediateTransition)
+            {
+                ForceIdleState();
+            }
+        }
+
+        /// <summary>
+        /// Forces immediate transition to idle state
+        /// </summary>
+        private void ForceIdleState()
+        {
+            if (_animator == null || _animator.runtimeAnimatorController == null)
+                return;
+
+            if (_useCrossFade)
+            {
+                // Use CrossFade for smoother transition
+                _animator.CrossFade(_idleStateName, _crossFadeDuration, 0);
+            }
+            else
+            {
+                // Instant transition
+                _animator.Play(_idleStateName, 0, 0f);
+            }
+        }
+
+        /// <summary>
+        /// Updates walk animation based on actual velocity
+        /// </summary>
+        private void UpdateWalkAnimationBasedOnVelocity()
+        {
+            if (_animator == null || _animator.runtimeAnimatorController == null)
+                return;
+
+            float currentSpeed = 0f;
+
+            if (_useNavMesh && _navAgent != null)
+            {
+                // Use NavMeshAgent's velocity
+                currentSpeed = _navAgent.velocity.magnitude;
+            }
+            else
+            {
+                // For simple movement, calculate velocity from position change
+                // This is less accurate but works for non-NavMesh movement
+                currentSpeed = _isMoving ? _walkSpeed : 0f;
+            }
+
+            // Only play walk animation if actually moving above threshold
+            bool shouldWalk = currentSpeed > _walkAnimationVelocityThreshold;
+            bool isCurrentlyWalking = _animator.GetBool(_walkAnimationParameter);
+
+            // Always update the boolean parameter first
+            _animator.SetBool(_walkAnimationParameter, shouldWalk);
+
+            // If transitioning from walk to idle and we want immediate transition
+            if (isCurrentlyWalking && !shouldWalk && _forceImmediateTransition)
+            {
+                // Force immediate transition to idle state (bypasses exit time)
+                ForceIdleState();
+            }
         }
 
         /// <summary>
