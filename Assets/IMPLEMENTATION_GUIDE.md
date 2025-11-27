@@ -612,7 +612,7 @@ Assets/
     UI/
       BrainActivityMonitor.cs - Main UI controller
       WaveformDisplay.cs     - Animated waveform renderer
-      ObedienceController.cs - Obedience slider logic
+   ObedienceController.cs - Obedience slider logic
       ParameterPanel.cs      - Advanced parameter tweaking
       UITweenAnimations.cs   - DOTween animation utilities
       DataBufferManager.cs   - Wave history buffer

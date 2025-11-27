@@ -221,7 +221,7 @@ namespace NeuralWaveBureau.AI
             _animator.SetFloat("composure", composure);
 
             // Trigger critical animation if in critical failure
-            if (_stateMachine.CurrentState == CitizenState.CriticalFailure)
+            if (_stateMachine.CurrentState == CitizenState.Critical_Failure)
             {
                 _animator.SetTrigger("critical");
             }
@@ -246,7 +246,7 @@ namespace NeuralWaveBureau.AI
                 case CitizenState.Stabilized:
                     OnStabilized?.Invoke(this);
                     break;
-                case CitizenState.CriticalFailure:
+                case CitizenState.Critical_Failure:
                     ActivateRagdoll();
                     OnCriticalFailure?.Invoke(this);
                     break;

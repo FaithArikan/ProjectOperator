@@ -89,7 +89,7 @@ namespace NeuralWaveBureau.UI
                 _hasWon = true;
                 Debug.Log("=== 🎉 YOU WIN! CITIZEN STABILIZED! 🎉 ===");
             }
-            else if (state == CitizenState.CriticalFailure && !_hasLost)
+            else if (state == CitizenState.Critical_Failure && !_hasLost)
             {
                 _hasLost = true;
                 Debug.Log("=== 💥 GAME OVER! CRITICAL FAILURE! 💥 ===");
@@ -192,7 +192,7 @@ namespace NeuralWaveBureau.UI
                 case CitizenState.Idle:
                     return "Press F1 or Start Monitoring to begin";
 
-                case CitizenState.BeingStimulated:
+                case CitizenState.Stimulated:
                     if (score >= threshold)
                         return "✓ Good! Maintain this score to win!";
                     else if (score >= 0.5f)
@@ -208,7 +208,7 @@ namespace NeuralWaveBureau.UI
                 case CitizenState.Agitated:
                     return $"⚠⚠ AGITATED! Improve score NOW! ({instability:F2}/0.8 instability)";
 
-                case CitizenState.CriticalFailure:
+                case CitizenState.Critical_Failure:
                     return "💥 CRITICAL FAILURE! Try again?";
 
                 case CitizenState.Recovering:
@@ -228,13 +228,13 @@ namespace NeuralWaveBureau.UI
             {
                 case CitizenState.Idle:
                     return Color.gray;
-                case CitizenState.BeingStimulated:
+                case CitizenState.Stimulated:
                     return score >= _aiManager.Settings.successThreshold ? Color.green : (score >= 0.5f ? Color.yellow : Color.red);
                 case CitizenState.Stabilized:
                     return Color.green;
                 case CitizenState.Agitated:
                     return Color.red;
-                case CitizenState.CriticalFailure:
+                case CitizenState.Critical_Failure:
                     return Color.red;
                 case CitizenState.Recovering:
                     return Color.cyan;
@@ -248,10 +248,10 @@ namespace NeuralWaveBureau.UI
             switch (state)
             {
                 case CitizenState.Idle: return Color.gray;
-                case CitizenState.BeingStimulated: return Color.cyan;
+                case CitizenState.Stimulated: return Color.cyan;
                 case CitizenState.Stabilized: return Color.green;
                 case CitizenState.Agitated: return Color.yellow;
-                case CitizenState.CriticalFailure: return Color.red;
+                case CitizenState.Critical_Failure: return Color.red;
                 case CitizenState.Recovering: return new Color(0.5f, 1f, 1f);
                 default: return Color.white;
             }

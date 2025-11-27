@@ -21,4 +21,6 @@ public enum InteractionType
     Done,
     Next,
     Settings,
+    Play,
+    Quit,
 }

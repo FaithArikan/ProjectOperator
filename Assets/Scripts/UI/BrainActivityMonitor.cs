@@ -328,13 +328,13 @@ namespace NeuralWaveBureau.UI
             {
                 case CitizenState.Idle:
                     return _idleColor;
-                case CitizenState.BeingStimulated:
+                case CitizenState.Stimulated:
                     return _stimulatedColor;
                 case CitizenState.Stabilized:
                     return _stabilizedColor;
                 case CitizenState.Agitated:
                     return _agitatedColor;
-                case CitizenState.CriticalFailure:
+                case CitizenState.Critical_Failure:
                     return _criticalColor;
                 case CitizenState.Recovering:
                     return Color.Lerp(_agitatedColor, _stabilizedColor, 0.5f);

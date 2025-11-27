@@ -76,20 +76,6 @@ public class PauseManager : MonoBehaviour
         if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
     }
 
-    public void GoToMainMenu()
-    {
-        Time.timeScale = 1f; // Ensure time is running
-        if (SceneController.Instance != null)
-        {
-            SceneController.Instance.TransitionToMenuSceneAsync().Forget();
-        }
-        else
-        {
-            // Fallback if SceneController is missing
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
-        }
-    }
-
     public void QuitGame()
     {
         Application.Quit();

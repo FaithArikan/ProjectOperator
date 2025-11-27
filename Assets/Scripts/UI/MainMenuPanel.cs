@@ -39,22 +39,6 @@ namespace NeuralWaveBureau.UI
             {
                 _settingsPanel.SetActive(false);
             }
-
-            // Add button listeners
-            if (_playButton != null)
-            {
-                _playButton.onClick.AddListener(OnPlayClicked);
-            }
-
-            if (_settingsButton != null)
-            {
-                _settingsButton.onClick.AddListener(OnSettingsClicked);
-            }
-
-            if (_quitButton != null)
-            {
-                _quitButton.onClick.AddListener(OnQuitClicked);
-            }
         }
 
         private void OnDestroy()
@@ -62,22 +46,6 @@ namespace NeuralWaveBureau.UI
             if (_instance == this)
             {
                 _instance = null;
-            }
-
-            // Clean up button listeners
-            if (_playButton != null)
-            {
-                _playButton.onClick.RemoveListener(OnPlayClicked);
-            }
-
-            if (_settingsButton != null)
-            {
-                _settingsButton.onClick.RemoveListener(OnSettingsClicked);
-            }
-
-            if (_quitButton != null)
-            {
-                _quitButton.onClick.RemoveListener(OnQuitClicked);
             }
 
             DOTween.Kill(this);
@@ -161,7 +129,7 @@ namespace NeuralWaveBureau.UI
         /// <summary>
         /// Called when Play button is clicked
         /// </summary>
-        private void OnPlayClicked()
+        public void OnPlayClicked()
         {
             Debug.Log("[MainMenuPanel] Play button clicked.");
 
@@ -185,7 +153,7 @@ namespace NeuralWaveBureau.UI
         /// <summary>
         /// Called when Settings button is clicked
         /// </summary>
-        private void OnSettingsClicked()
+        public void OnSettingsClicked()
         {
             Debug.Log("[MainMenuPanel] Settings button clicked.");
 
@@ -198,7 +166,7 @@ namespace NeuralWaveBureau.UI
         /// <summary>
         /// Called when Quit button is clicked
         /// </summary>
-        private void OnQuitClicked()
+        public void OnQuitClicked()
         {
             Debug.Log("[MainMenuPanel] Quit button clicked.");
 

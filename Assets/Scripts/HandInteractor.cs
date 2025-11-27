@@ -78,13 +78,16 @@ public class HandInteractor : MonoBehaviour
                 CitizenSpawner.Instance.FinishCurrentCitizen();
                 break;
             case InteractionType.Next:
-                Debug.Log("Next citizen");
+                CitizenSpawner.Instance.SpawnCitizenNow();
                 break;
             case InteractionType.Settings:
-                if (SettingsPanel.Instance != null)
-                {
-                    SettingsPanel.Instance.gameObject.SetActive(true);
-                }
+                MainMenuPanel.Instance.OnSettingsClicked();
+                break;
+            case InteractionType.Play:
+                MainMenuPanel.Instance.OnPlayClicked();
+                break;
+            case InteractionType.Quit:
+                MainMenuPanel.Instance.OnQuitClicked();
                 break;
         }
     }

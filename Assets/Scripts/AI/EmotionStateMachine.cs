@@ -9,10 +9,10 @@ namespace NeuralWaveBureau.AI
     public enum CitizenState
     {
         Idle,              // Default state, waiting for stimulation
-        BeingStimulated,   // Wave input is active
+        Stimulated,   // Wave input is active
         Stabilized,        // Successfully matched to target wave
         Agitated,          // Incorrect wave causing distress
-        CriticalFailure,   // Instability exceeded threshold
+        Critical_Failure,   // Instability exceeded threshold
         Recovering         // Returning to normal after agitation
     }
 
@@ -115,7 +115,7 @@ namespace NeuralWaveBureau.AI
                 _instability += delta;
             }
             // Recovering instability (with hysteresis)
-            else if (score >= _settings.successThreshold + HYSTERESIS_BUFFER && _currentState != CitizenState.CriticalFailure)
+            else if (score >= _settings.successThreshold + HYSTERESIS_BUFFER && _currentState != CitizenState.Critical_Failure)
             {
                 // Recovery is NOT affected by grace period - players can always recover
                 _instability -= _settings.instabilityRecoveryRate * deltaTime;
@@ -162,11 +162,11 @@ namespace NeuralWaveBureau.AI
                     // Start stimulation when wave input begins (handled externally via StartStimulation)
                     break;
 
-                case CitizenState.BeingStimulated:
+                case CitizenState.Stimulated:
                     // Check for critical failure
                     if (_instability >= _settings.instabilityFailThreshold)
                     {
-                        TransitionTo(CitizenState.CriticalFailure);
+                        TransitionTo(CitizenState.Critical_Failure);
                     }
                     // Check for stabilization (good score for minimum time)
                     else if (score >= _settings.successThreshold && _stateTime >= _profile.minStimulationTime)
@@ -190,7 +190,7 @@ namespace NeuralWaveBureau.AI
                     // Only transition back if score is really bad (below 0.3)
                     if (score < 0.3f)
                     {
-                        TransitionTo(CitizenState.BeingStimulated);
+                        TransitionTo(CitizenState.Stimulated);
                     }
                     break;
 
@@ -198,7 +198,7 @@ namespace NeuralWaveBureau.AI
                     // Check for critical failure
                     if (_instability >= _settings.instabilityFailThreshold)
                     {
-                        TransitionTo(CitizenState.CriticalFailure);
+                        TransitionTo(CitizenState.Critical_Failure);
                     }
                     // Check for recovery (score improves)
                     else if (score >= _settings.successThreshold)
@@ -207,7 +207,7 @@ namespace NeuralWaveBureau.AI
                     }
                     break;
 
-                case CitizenState.CriticalFailure:
+                case CitizenState.Critical_Failure:
                     // Stay in critical failure (game logic may reset manually)
                     break;
 
@@ -235,7 +235,7 @@ namespace NeuralWaveBureau.AI
         {
             if (_currentState == CitizenState.Idle)
             {
-                TransitionTo(CitizenState.BeingStimulated);
+                TransitionTo(CitizenState.Stimulated);
                 _timeSinceStimulationStart = 0f; // Reset grace period timer
             }
         }
@@ -245,7 +245,7 @@ namespace NeuralWaveBureau.AI
         /// </summary>
         public void StopStimulation()
         {
-            if (_currentState == CitizenState.BeingStimulated || _currentState == CitizenState.Agitated)
+            if (_currentState == CitizenState.Stimulated || _currentState == CitizenState.Agitated)
             {
                 TransitionTo(CitizenState.Idle);
             }
@@ -292,13 +292,13 @@ namespace NeuralWaveBureau.AI
             {
                 case CitizenState.Idle:
                     return 0f;
-                case CitizenState.BeingStimulated:
+                case CitizenState.Stimulated:
                     return _instability * 0.5f;
                 case CitizenState.Stabilized:
                     return 0f;
                 case CitizenState.Agitated:
                     return Mathf.Clamp01(_instability);
-                case CitizenState.CriticalFailure:
+                case CitizenState.Critical_Failure:
                     return 1f;
                 case CitizenState.Recovering:
                     return Mathf.Lerp(0.5f, 0f, _stateTime / _profile.recoveryTime);

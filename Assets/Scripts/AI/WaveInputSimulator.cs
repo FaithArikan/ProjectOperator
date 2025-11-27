@@ -38,7 +38,7 @@ namespace NeuralWaveBureau.AI
         [Header("Knob Control")]
         [SerializeField]
         [Tooltip("Radio knobs to control each band value (Delta, Theta, Alpha, Beta, Gamma)")]
-        private NeuralWaveBureau.UI.RadioKnobController[] _radioKnobs = new NeuralWaveBureau.UI.RadioKnobController[5];
+        private RadioKnobController[] _radioKnobs = new RadioKnobController[5];
 
         private AIManager _aiManager;
         private float _lastAdjustmentTime = 0f;
