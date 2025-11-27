@@ -91,22 +91,6 @@ namespace NeuralWaveBureau.UI
                 _obedienceSlider.value = _currentObedience;
                 _obedienceSlider.onValueChanged.AddListener(OnSliderValueChanged);
             }
-
-            // Setup default color gradient if not set
-            if (_obedienceColorGradient == null || _obedienceColorGradient.colorKeys.Length == 0)
-            {
-                _obedienceColorGradient = new Gradient();
-                GradientColorKey[] colorKeys = new GradientColorKey[3];
-                colorKeys[0] = new GradientColorKey(Color.red, 0f);
-                colorKeys[1] = new GradientColorKey(Color.yellow, 0.5f);
-                colorKeys[2] = new GradientColorKey(Color.green, 1f);
-
-                GradientAlphaKey[] alphaKeys = new GradientAlphaKey[2];
-                alphaKeys[0] = new GradientAlphaKey(1f, 0f);
-                alphaKeys[1] = new GradientAlphaKey(1f, 1f);
-
-                _obedienceColorGradient.SetKeys(colorKeys, alphaKeys);
-            }
         }
 
         private void Start()
@@ -281,8 +265,6 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void UpdateVisuals()
         {
-            float normalizedValue = _currentObedience / 100f;
-
             // Update percentage text
             if (_percentageText != null)
             {
@@ -294,13 +276,6 @@ namespace NeuralWaveBureau.UI
             {
                 string label = GetObedienceLabel(_currentObedience);
                 _obedienceLabel.text = $"Obedience: {label}";
-            }
-
-            // Update slider fill color
-            if (_sliderFillImage != null)
-            {
-                Color targetColor = _obedienceColorGradient.Evaluate(normalizedValue);
-                _sliderFillImage.DOColor(targetColor, 0.3f);
             }
         }
 

@@ -19,6 +19,9 @@ namespace NeuralWaveBureau.AI
         private float _noiseLevel = 0.1f;
 
         [Header("Keyboard Control")]
+        [SerializeField]
+        private bool _enableKeyboardControl = false;
+
         [Tooltip("Key to increase selected band value")]
         [SerializeField]
         private Key _increaseKey = Key.UpArrow;
@@ -116,6 +119,9 @@ namespace NeuralWaveBureau.AI
 
         private void HandleInput()
         {
+            if (!_enableKeyboardControl)
+                return;
+
             var keyboard = Keyboard.current;
             if (keyboard == null)
                 return;

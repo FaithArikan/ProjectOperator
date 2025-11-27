@@ -40,9 +40,6 @@ namespace NeuralWaveBureau.UI
         private TextMeshProUGUI _instabilityText;
 
         [SerializeField]
-        private Image _statusIndicator;
-
-        [SerializeField]
         private Slider _instabilityBar;
 
         [Header("Control Buttons")]
@@ -173,7 +170,6 @@ namespace NeuralWaveBureau.UI
                 {
                     _waveformDisplays[i].Initialize(_bufferManager, i);
                     _waveformDisplays[i].BandIndex = i;
-                    _waveformDisplays[i].WaveColor = BandColors[i];
                 }
             }
         }
@@ -261,15 +257,6 @@ namespace NeuralWaveBureau.UI
             if (_stateText != null)
             {
                 _stateText.text = $"STATE: {_activeCitizen.CurrentState}";
-
-                // Color code state
-                Color stateColor = GetStateColor(_activeCitizen.CurrentState);
-                _stateText.color = stateColor;
-
-                if (_statusIndicator != null)
-                {
-                    _statusIndicator.color = stateColor;
-                }
             }
 
             // Update evaluation score
@@ -277,23 +264,6 @@ namespace NeuralWaveBureau.UI
             {
                 float score = _activeCitizen.EvaluationScore;
                 _evaluationScoreText.text = $"EVAL: {score:F3}";
-
-                // Color code based on threshold
-                if (_aiManager != null && _aiManager.Settings != null)
-                {
-                    if (score >= _aiManager.Settings.successThreshold)
-                    {
-                        _evaluationScoreText.color = _stabilizedColor;
-                    }
-                    else if (score <= _aiManager.Settings.overloadThreshold)
-                    {
-                        _evaluationScoreText.color = _criticalColor;
-                    }
-                    else
-                    {
-                        _evaluationScoreText.color = Color.white;
-                    }
-                }
             }
 
             // Update instability
@@ -301,45 +271,12 @@ namespace NeuralWaveBureau.UI
             {
                 float instability = _activeCitizen.Instability;
                 _instabilityText.text = $"INSTABILITY: {instability:F2}";
-                _instabilityText.color = Color.Lerp(_stabilizedColor, _criticalColor, instability);
             }
 
             // Update instability bar
             if (_instabilityBar != null)
             {
                 _instabilityBar.value = _activeCitizen.Instability;
-                if (_instabilityBar.fillRect != null)
-                {
-                    Image fillImage = _instabilityBar.fillRect.GetComponent<Image>();
-                    if (fillImage != null)
-                    {
-                        fillImage.color = Color.Lerp(_stabilizedColor, _criticalColor, _activeCitizen.Instability);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets color for citizen state
-        /// </summary>
-        private Color GetStateColor(CitizenState state)
-        {
-            switch (state)
-            {
-                case CitizenState.Idle:
-                    return _idleColor;
-                case CitizenState.Stimulated:
-                    return _stimulatedColor;
-                case CitizenState.Stabilized:
-                    return _stabilizedColor;
-                case CitizenState.Agitated:
-                    return _agitatedColor;
-                case CitizenState.Critical_Failure:
-                    return _criticalColor;
-                case CitizenState.Recovering:
-                    return Color.Lerp(_agitatedColor, _stabilizedColor, 0.5f);
-                default:
-                    return Color.white;
             }
         }
 
@@ -589,16 +526,6 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void OnCitizenCriticalFailure(CitizenController citizen)
         {
-            // Start continuous alert animation
-            if (_statusIndicator != null)
-            {
-                _alertAnimation = UITweenAnimations.CriticalAlert(
-                    _statusIndicator.transform,
-                    _criticalColor,
-                    _statusIndicator
-                );
-            }
-
             // Shake UI
             transform.DOShakePosition(0.5f, 5f, 30);
         }

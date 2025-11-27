@@ -82,9 +82,6 @@ namespace NeuralWaveBureau.UI
             }
         }
 
-        /// <summary>
-        /// Sets up all knobs with colors and event handlers
-        /// </summary>
         private void SetupKnobs()
         {
             for (int i = 0; i < _waveKnobs.Count && i < NeuralProfile.BandCount; i++)
