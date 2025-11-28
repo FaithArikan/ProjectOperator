@@ -20,7 +20,7 @@ public class RulesMonitor : MonoBehaviour
 
     [Header("Rules Content")]
     [TextArea(10, 20)]
-    [SerializeField] private string _rulesText = @"OPERATION PROTOCOL
+    private string _rulesText = @"OPERATION PROTOCOL
 
 OBJECTIVE:
 Monitor and control citizen brain activity to maintain social order.

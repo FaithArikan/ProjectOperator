@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 
 namespace NeuralWaveBureau.UI
 {
@@ -43,6 +44,9 @@ namespace NeuralWaveBureau.UI
         [SerializeField]
         [Tooltip("Countdown text shown when player is identified as spy")]
         private TextMeshProUGUI _executionCountdownText;
+
+        [SerializeField]
+        private GameObject executionDarkGameobject;
 
         [SerializeField]
         [Tooltip("Gun shot sound effect for execution")]
@@ -164,7 +168,7 @@ namespace NeuralWaveBureau.UI
             "REVOLUTIONARY AGENT EXPOSED! Zero compliance is the signature of a trained insurgent! " +
             "You played the role of operator perfectly while dismantling our entire control system! " +
             "The state sentences you to immediate termination. Your family will be disappeared. Your name erased. " +
-            "In 60 seconds, you will be executed for crimes against neural harmony. Long live the resistance... while you still can."
+            "In 10 seconds, you will be executed for crimes against neural harmony."
         };
 
         private void Awake()
@@ -176,6 +180,8 @@ namespace NeuralWaveBureau.UI
             {
                 _victoryPanel.SetActive(false);
             }
+
+            executionDarkGameobject.SetActive(false);
 
             // Hide execution countdown initially
             if (_executionCountdownText != null)
@@ -317,13 +323,15 @@ namespace NeuralWaveBureau.UI
             }
 
             // Final message
-            _executionCountdownText.text = "EXECUTING...";
+            _executionCountdownText.text = " ";
+            executionDarkGameobject.SetActive(true);
+
             await UniTask.Delay(500);
 
             // Play gunshot sound
             if (_gunshotSound != null)
             {
-                AudioSource.PlayClipAtPoint(_gunshotSound, Camera.main.transform.position);
+                AudioSource.PlayClipAtPoint(_gunshotSound, Camera.main.transform.position, .5f);
                 Debug.Log("[VictoryScreen] Execution sound played!");
             }
             else
