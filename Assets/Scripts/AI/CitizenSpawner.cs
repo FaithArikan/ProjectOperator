@@ -16,7 +16,9 @@ namespace NeuralWaveBureau.AI
         [Header("Prefab Settings")]
         [SerializeField]
         [Tooltip("List of citizen prefabs to spawn (must have CitizenController and CitizenMovement)")]
-        private List<NeuralProfile> _citizenPrefabs = new List<NeuralProfile>();
+        private List<NeuralProfile> _citizenPrefabs = new();
+
+        public int TotalCitizens => _citizenPrefabs.Count;
 
         [SerializeField]
         [Tooltip("Random selection mode for prefabs")]
@@ -51,8 +53,27 @@ namespace NeuralWaveBureau.AI
         private int _totalSpawned = 0;
         private bool _isCurrentCitizenDone = true; // Default to true so we can spawn the first one
 
+        // Track obedience of citizens who have exited
+        private List<float> _exitedCitizenObedience = new List<float>();
+
         public int TotalSpawned => _totalSpawned;
         public int ActiveCitizens => _spawnedCitizens.Count;
+
+        /// <summary>
+        /// Gets the average obedience of all exited citizens
+        /// </summary>
+        public float GetAverageExitedObedience()
+        {
+            if (_exitedCitizenObedience.Count == 0)
+                return 100f;
+
+            float sum = 0f;
+            foreach (float obedience in _exitedCitizenObedience)
+            {
+                sum += obedience;
+            }
+            return sum / _exitedCitizenObedience.Count;
+        }
 
 
         private void Awake()
@@ -353,9 +374,23 @@ namespace NeuralWaveBureau.AI
             //     AIManager.Instance.UnregisterCitizen(controller);
             // }
 
+            // Save the citizen's obedience score when they exit
+            if (ObedienceController.Instance != null)
+            {
+                float exitObedience = ObedienceController.Instance.CurrentObedience;
+                _exitedCitizenObedience.Add(exitObedience);
+                Debug.Log($"[CitizenSpawner] Citizen {movement.gameObject.name} exited with obedience: {exitObedience:F1}%");
+            }
+
             if (_spawnedCitizens.Contains(movement.gameObject))
             {
                 _spawnedCitizens.Remove(movement.gameObject);
+            }
+
+            // Notify VictoryController that a citizen has been successfully processed
+            if (VictoryController.Instance != null)
+            {
+                VictoryController.Instance.OnCitizenProcessed();
             }
 
             Destroy(movement.gameObject);

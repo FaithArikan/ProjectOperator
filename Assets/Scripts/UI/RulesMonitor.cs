@@ -1,11 +1,8 @@
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
-using System.Collections;
 using NeuralWaveBureau.UI;
-using NeuralWaveBureau;
 using Cysharp.Threading.Tasks;
-using System.Threading;
 using System;
 
 /// <summary>
@@ -46,11 +43,10 @@ REMEMBER: Order through observation.
 Click CONTINUE to proceed to your station.";
 
     [Header("Animation Settings")]
-    [SerializeField] private float _typewriterSpeed = 0.03f;
+    [SerializeField] private TypewriterEffect _typewriterEffect;
     [SerializeField] private float _powerOnDuration = 1.5f;
 
     private bool _isPoweredOn = false;
-    private CancellationTokenSource _typewriterCts;
 
     private void Awake()
     {
@@ -72,14 +68,6 @@ Click CONTINUE to proceed to your station.";
         }
     }
 
-    private void OnDestroy()
-    {
-        if (_typewriterCts != null)
-        {
-            _typewriterCts.Cancel();
-            _typewriterCts.Dispose();
-        }
-    }
 
     /// <summary>
     /// Powers on the rules monitor and displays the instructions.
@@ -111,11 +99,9 @@ Click CONTINUE to proceed to your station.";
         Debug.Log("RulesMonitor: Powering off...");
 
         // Stop any ongoing typewriter effect
-        if (_typewriterCts != null)
+        if (_typewriterEffect != null)
         {
-            _typewriterCts.Cancel();
-            _typewriterCts.Dispose();
-            _typewriterCts = null;
+            _typewriterEffect.StopTypewriter();
         }
 
         // Deactivate panel after a delay
@@ -129,13 +115,10 @@ Click CONTINUE to proceed to your station.";
     /// </summary>
     private async UniTaskVoid PowerOnSequenceAsync()
     {
-        _typewriterCts = new CancellationTokenSource();
-        var token = _typewriterCts.Token;
-
         try
         {
             // Wait for camera transition
-            await UniTask.Delay(TimeSpan.FromSeconds(_powerOnDuration), cancellationToken: token);
+            await UniTask.Delay(TimeSpan.FromSeconds(_powerOnDuration));
 
             // Fade in the panel
             if (_panelCanvasGroup != null)
@@ -151,35 +134,18 @@ Click CONTINUE to proceed to your station.";
                 _titleText.DOFade(1f, 0.5f);
             }
 
-            await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
 
             // Display rules content with typewriter effect
-            if (_rulesContentText != null)
+            if (_typewriterEffect != null)
             {
-                await TypewriterEffectAsync(_rulesContentText, _rulesText, token);
+                await _typewriterEffect.PlayTypewriter(_rulesText);
             }
         }
         catch (OperationCanceledException)
         {
             // Handle cancellation if needed
         }
-    }
-
-    /// <summary>
-    /// Displays text character by character for a retro terminal feel.
-    /// </summary>
-    private async UniTask TypewriterEffectAsync(TextMeshProUGUI textComponent, string fullText, CancellationToken token)
-    {
-        textComponent.text = "";
-
-        foreach (char c in fullText)
-        {
-            textComponent.text += c;
-            await UniTask.Delay(TimeSpan.FromSeconds(_typewriterSpeed), cancellationToken: token);
-        }
-
-        // Show continue button after text is fully displayed
-        await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
     }
 
     /// <summary>

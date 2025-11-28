@@ -1,6 +1,7 @@
 using UnityEngine;
 using NeuralWaveBureau.UI;
 using NeuralWaveBureau.AI;
+using UnityEngine.Experimental.GlobalIllumination;
 
 /// <summary>
 /// Central game manager that coordinates game states, menu flow, and game over logic
@@ -18,6 +19,8 @@ public class GameManager : MonoBehaviour
     // Track if the game has ever been started this session
     private bool _hasGameStarted = false;
     public bool HasGameStarted => _hasGameStarted;
+
+    public Light directionalLight;
 
     private void Awake()
     {
