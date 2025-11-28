@@ -156,7 +156,7 @@ namespace NeuralWaveBureau.UI
             }
 
             // Update status display
-            UpdateStatusDisplay();
+        UpdateStatusDisplay();
         }
 
         /// <summary>

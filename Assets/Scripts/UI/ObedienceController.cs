@@ -30,20 +30,25 @@ namespace NeuralWaveBureau.UI
         [Header("Obedience Settings")]
         [SerializeField]
         [Range(0f, 100f)]
-        private float _currentObedience = 50f;
+        private float _currentObedience = 0f;
+
+        [SerializeField]
+        [Tooltip("Starting obedience when a new citizen arrives")]
+        [Range(0f, 100f)]
+        private float _startingObedience = 50f;
 
         [Header("Parameter Ranges")]
         [Tooltip("How much to multiply base tolerance (1.0 = no change, 2.0 = double)")]
         [SerializeField]
-        private Vector2 _toleranceMultiplierRange = new Vector2(0.5f, 2.5f);
+        private Vector2 _toleranceMultiplierRange = new(0.5f, 2.5f);
 
         [Tooltip("How much to multiply instability rate (1.0 = no change, 0.5 = half speed)")]
         [SerializeField]
-        private Vector2 _instabilityRateMultiplierRange = new Vector2(2f, 0.3f);
+        private Vector2 _instabilityRateMultiplierRange = new(2f, 0.3f);
 
         [Tooltip("How much to adjust success threshold (-0.2 to +0.2)")]
         [SerializeField]
-        private Vector2 _successThresholdAdjustRange = new Vector2(0.1f, -0.2f);
+        private Vector2 _successThresholdAdjustRange = new(0.1f, -0.2f);
 
         [Header("Visual Feedback")]
         [SerializeField]
@@ -128,6 +133,23 @@ namespace NeuralWaveBureau.UI
             {
                 StimulationTimeController.Instance.SetActiveProfile(profile);
             }
+
+            // Update obedience value and slider when citizen arrives at station
+            if (profile != null)
+            {
+                // Set obedience to starting value for new citizen
+                _currentObedience = _startingObedience;
+
+                // Set slider to current obedience value instantly
+                if (_obedienceSlider != null)
+                {
+                    _obedienceSlider.value = _currentObedience;
+                }
+
+                // Update visuals and apply parameters
+                UpdateVisuals();
+                ApplyObedienceToParameters();
+            }
         }
 
         /// <summary>
@@ -139,6 +161,10 @@ namespace NeuralWaveBureau.UI
         public void UpdateDynamicObedience(float evaluationScore, float deltaTime)
         {
             if (!_enableDynamicObedience)
+                return;
+
+            // Don't update if no active citizen
+            if (_activeProfile == null)
                 return;
 
             // Target obedience is directly proportional to score (0-100)
@@ -195,6 +221,10 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void OnSliderValueChanged(float value)
         {
+            // Don't process slider changes if no active citizen
+            if (_activeProfile == null)
+                return;
+
             _currentObedience = value;
             ApplyObedienceToParameters();
             UpdateVisuals();
@@ -265,6 +295,10 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void UpdateVisuals()
         {
+            // Don't update visuals if no active citizen
+            if (_activeProfile == null)
+                return;
+
             // Update percentage text
             if (_percentageText != null)
             {
