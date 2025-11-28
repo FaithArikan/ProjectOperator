@@ -526,8 +526,11 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void OnCitizenCriticalFailure(CitizenController citizen)
         {
-            // Shake UI
-            transform.DOShakePosition(0.5f, 5f, 30);
+            // Shake camera
+            if (ScreenShakeManager.Instance != null)
+            {
+                ScreenShakeManager.Instance.Shake(ShakeType.GlitchJitter);
+            }
         }
     }
 }
