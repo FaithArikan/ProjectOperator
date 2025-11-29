@@ -32,11 +32,6 @@ namespace NeuralWaveBureau.UI
         [Range(0f, 100f)]
         private float _currentObedience = 0f;
 
-        [SerializeField]
-        [Tooltip("Starting obedience when a new citizen arrives")]
-        [Range(0f, 100f)]
-        private float _startingObedience = 50f;
-
         [Header("Parameter Ranges")]
         [Tooltip("How much to multiply base tolerance (1.0 = no change, 2.0 = double)")]
         [SerializeField]
@@ -137,8 +132,8 @@ namespace NeuralWaveBureau.UI
             // Update obedience value and slider when citizen arrives at station
             if (profile != null)
             {
-                // Set obedience to starting value for new citizen
-                _currentObedience = _startingObedience;
+                // Set obedience to starting value for new citizen (using profile-specific value)
+                _currentObedience = profile.startingObedience;
 
                 // Set slider to current obedience value instantly
                 if (_obedienceSlider != null)

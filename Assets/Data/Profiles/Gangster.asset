@@ -37,4 +37,5 @@ MonoBehaviour:
   instabilityRate: 0.9
   minStimulationTime: 4
   recoveryTime: 9
+  startingObedience: 20
   reactionClips: []

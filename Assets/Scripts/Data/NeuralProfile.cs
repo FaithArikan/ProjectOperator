@@ -49,6 +49,11 @@ namespace NeuralWaveBureau.Data
         [Range(0f, 20f)]
         public float recoveryTime = 5f;
 
+        [Header("Obedience")]
+        [Tooltip("Starting obedience level when this citizen arrives at the station (0-100)")]
+        [Range(0f, 100f)]
+        public float startingObedience = 50f;
+
         [Header("Audio")]
         [Tooltip("Optional audio clips played during citizen reactions")]
         public AudioClip[] reactionClips;

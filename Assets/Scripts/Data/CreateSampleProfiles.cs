@@ -23,6 +23,7 @@ namespace NeuralWaveBureau.Data
             artist.instabilityRate = 0.6f;
             artist.minStimulationTime = 5f;
             artist.recoveryTime = 6f;
+            artist.startingObedience = 40f;
             AssetDatabase.CreateAsset(artist, "Assets/Data/Profiles/Artist.asset");
 
             // Create Rebel profile
@@ -33,6 +34,7 @@ namespace NeuralWaveBureau.Data
             rebel.instabilityRate = 0.7f;
             rebel.minStimulationTime = 5f;
             rebel.recoveryTime = 7f;
+            rebel.startingObedience = 30f;
             AssetDatabase.CreateAsset(rebel, "Assets/Data/Profiles/Rebel.asset");
 
             // Create Biker
@@ -43,6 +45,7 @@ namespace NeuralWaveBureau.Data
             biker.instabilityRate = 0.8f;
             biker.minStimulationTime = 4f;
             biker.recoveryTime = 8f;
+            biker.startingObedience = 25f;
             AssetDatabase.CreateAsset(biker, "Assets/Data/Profiles/Biker.asset");
 
             // Create Fast Food Guy
@@ -53,6 +56,7 @@ namespace NeuralWaveBureau.Data
             fastfoodguy.instabilityRate = 0.4f;
             fastfoodguy.minStimulationTime = 3f;
             fastfoodguy.recoveryTime = 4f;
+            fastfoodguy.startingObedience = 55f;
             AssetDatabase.CreateAsset(fastfoodguy, "Assets/Data/Profiles/FastFoodGuy.asset");
 
             // Create Firefighter
@@ -63,6 +67,7 @@ namespace NeuralWaveBureau.Data
             firefighter.instabilityRate = 0.3f;
             firefighter.minStimulationTime = 6f;
             firefighter.recoveryTime = 5f;
+            firefighter.startingObedience = 75f;
             AssetDatabase.CreateAsset(firefighter, "Assets/Data/Profiles/Firefighter.asset");
 
             // Create Gamer Girl
@@ -73,6 +78,7 @@ namespace NeuralWaveBureau.Data
             gamergirl.instabilityRate = 0.6f;
             gamergirl.minStimulationTime = 5f;
             gamergirl.recoveryTime = 6f;
+            gamergirl.startingObedience = 45f;
             AssetDatabase.CreateAsset(gamergirl, "Assets/Data/Profiles/GamerGirl.asset");
 
             // Create Gangster
@@ -83,6 +89,7 @@ namespace NeuralWaveBureau.Data
             gangster.instabilityRate = 0.9f;
             gangster.minStimulationTime = 4f;
             gangster.recoveryTime = 9f;
+            gangster.startingObedience = 20f;
             AssetDatabase.CreateAsset(gangster, "Assets/Data/Profiles/Gangster.asset");
 
             // Create Grandma
@@ -93,6 +100,7 @@ namespace NeuralWaveBureau.Data
             grandma.instabilityRate = 0.5f;
             grandma.minStimulationTime = 3f;
             grandma.recoveryTime = 10f;
+            grandma.startingObedience = 65f;
             AssetDatabase.CreateAsset(grandma, "Assets/Data/Profiles/Grandma.asset");
 
             // Create Grandpa
@@ -103,6 +111,7 @@ namespace NeuralWaveBureau.Data
             grandpa.instabilityRate = 0.5f;
             grandpa.minStimulationTime = 3f;
             grandpa.recoveryTime = 10f;
+            grandpa.startingObedience = 65f;
             AssetDatabase.CreateAsset(grandpa, "Assets/Data/Profiles/Grandpa.asset");
 
             // Create Hobo
@@ -113,6 +122,7 @@ namespace NeuralWaveBureau.Data
             hobo.instabilityRate = 0.6f;
             hobo.minStimulationTime = 4f;
             hobo.recoveryTime = 7f;
+            hobo.startingObedience = 35f;
             AssetDatabase.CreateAsset(hobo, "Assets/Data/Profiles/Hobo.asset");
 
             // Create Jock
@@ -123,6 +133,7 @@ namespace NeuralWaveBureau.Data
             jock.instabilityRate = 0.5f;
             jock.minStimulationTime = 5f;
             jock.recoveryTime = 5f;
+            jock.startingObedience = 50f;
             AssetDatabase.CreateAsset(jock, "Assets/Data/Profiles/Jock.asset");
 
             // Create Paramedic
@@ -133,6 +144,7 @@ namespace NeuralWaveBureau.Data
             paramedic.instabilityRate = 0.3f;
             paramedic.minStimulationTime = 6f;
             paramedic.recoveryTime = 4f;
+            paramedic.startingObedience = 75f;
             AssetDatabase.CreateAsset(paramedic, "Assets/Data/Profiles/Paramedic.asset");
 
             // Create Punk Girl
@@ -143,6 +155,7 @@ namespace NeuralWaveBureau.Data
             punkgirl.instabilityRate = 0.75f;
             punkgirl.minStimulationTime = 4f;
             punkgirl.recoveryTime = 7f;
+            punkgirl.startingObedience = 30f;
             AssetDatabase.CreateAsset(punkgirl, "Assets/Data/Profiles/PunkGirl.asset");
 
             // Create Punk Guy
@@ -153,6 +166,7 @@ namespace NeuralWaveBureau.Data
             punkguy.instabilityRate = 0.75f;
             punkguy.minStimulationTime = 4f;
             punkguy.recoveryTime = 7f;
+            punkguy.startingObedience = 30f;
             AssetDatabase.CreateAsset(punkguy, "Assets/Data/Profiles/PunkGuy.asset");
 
             // Create Road Worker
@@ -163,6 +177,7 @@ namespace NeuralWaveBureau.Data
             roadworker.instabilityRate = 0.4f;
             roadworker.minStimulationTime = 5f;
             roadworker.recoveryTime = 5f;
+            roadworker.startingObedience = 60f;
             AssetDatabase.CreateAsset(roadworker, "Assets/Data/Profiles/RoadWorker.asset");
 
             // Create Shopkeeper
@@ -173,6 +188,7 @@ namespace NeuralWaveBureau.Data
             shopkeeper.instabilityRate = 0.3f;
             shopkeeper.minStimulationTime = 4f;
             shopkeeper.recoveryTime = 5f;
+            shopkeeper.startingObedience = 70f;
             AssetDatabase.CreateAsset(shopkeeper, "Assets/Data/Profiles/Shopkeeper.asset");
 
             // Create Summer Girl
@@ -183,6 +199,7 @@ namespace NeuralWaveBureau.Data
             summergirl.instabilityRate = 0.4f;
             summergirl.minStimulationTime = 4f;
             summergirl.recoveryTime = 5f;
+            summergirl.startingObedience = 55f;
             AssetDatabase.CreateAsset(summergirl, "Assets/Data/Profiles/SummerGirl.asset");
 
             // Create Tourist
@@ -193,6 +210,7 @@ namespace NeuralWaveBureau.Data
             tourist.instabilityRate = 0.5f;
             tourist.minStimulationTime = 3f;
             tourist.recoveryTime = 6f;
+            tourist.startingObedience = 50f;
             AssetDatabase.CreateAsset(tourist, "Assets/Data/Profiles/Tourist.asset");
 
             // Create default AI Settings
