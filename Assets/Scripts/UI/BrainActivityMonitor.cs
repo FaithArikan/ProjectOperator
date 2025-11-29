@@ -88,6 +88,8 @@ namespace NeuralWaveBureau.UI
         private bool _isMonitoring = false;
         private float _updateTimer = 0f;
         private Tween _alertAnimation;
+        private float _criticalShakeTimer = 0f;
+        private const float CRITICAL_SHAKE_INTERVAL = 0.5f;
 
         // Band colors (Delta, Theta, Alpha, Beta, Gamma)
         private static readonly Color[] BandColors = new Color[]
@@ -156,7 +158,26 @@ namespace NeuralWaveBureau.UI
             }
 
             // Update status display
-        UpdateStatusDisplay();
+            UpdateStatusDisplay();
+
+            // Continuous screen shake during critical failure
+            if (_activeCitizen != null && _activeCitizen.CurrentState == CitizenState.Critical_Failure)
+            {
+                _criticalShakeTimer += Time.deltaTime;
+                if (_criticalShakeTimer >= CRITICAL_SHAKE_INTERVAL)
+                {
+                    _criticalShakeTimer = 0f;
+                    if (ScreenShakeManager.Instance != null)
+                    {
+                        ScreenShakeManager.Instance.Shake(ShakeType.GlitchJitter);
+                    }
+                }
+            }
+            else
+            {
+                // Reset timer when not in critical failure
+                _criticalShakeTimer = 0f;
+            }
         }
 
         /// <summary>
@@ -511,13 +532,10 @@ namespace NeuralWaveBureau.UI
         /// </summary>
         private void OnCitizenStabilized(CitizenController citizen)
         {
-            // Pulse waveforms
-            foreach (var waveform in _waveformDisplays)
+            // Trigger screen shake for success feedback
+            if (ScreenShakeManager.Instance != null)
             {
-                if (waveform != null)
-                {
-                    waveform.Pulse(1.1f, 0.4f);
-                }
+                ScreenShakeManager.Instance.Shake(ShakeType.FlickerShake);
             }
         }
 

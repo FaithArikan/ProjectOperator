@@ -37,8 +37,8 @@ namespace NeuralWaveBureau.AI
 
         // Grace period tracking
         private float _timeSinceStimulationStart;
-        private const float GRACE_PERIOD_DURATION = 30f; // 30 seconds of safe time
-        private const float GRACE_PERIOD_FADE_DURATION = 15f; // 15 seconds fade-out
+        private const float GRACE_PERIOD_DURATION = 10f; // 30 seconds of safe time
+        private const float GRACE_PERIOD_FADE_DURATION = 5f; // 15 seconds fade-out
 
         // Obedience-based instability multiplier
         private float _obedienceInstabilityMultiplier = 1f; // Default = no change

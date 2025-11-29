@@ -31,9 +31,6 @@ namespace NeuralWaveBureau.AI
             Weighted     // Use weights (future feature)
         }
 
-        // Sequential spawn tracking
-        private int _currentPrefabIndex = 0;
-
         [Header("Spawn Settings")]
         [SerializeField]
         [Tooltip("Where citizens spawn")]
@@ -49,9 +46,9 @@ namespace NeuralWaveBureau.AI
 
         // State
         public List<GameObject> _spawnedCitizens = new List<GameObject>();
-        private float _spawnTimer = 0f;
         private int _totalSpawned = 0;
         private bool _isCurrentCitizenDone = true; // Default to true so we can spawn the first one
+        private List<NeuralProfile> _availableCitizensToSpawn = new List<NeuralProfile>(); // List of citizens that can still be spawned
 
         // Track obedience of citizens who have exited
         private List<float> _exitedCitizenObedience = new List<float>();
@@ -91,6 +88,9 @@ namespace NeuralWaveBureau.AI
                 return;
             }
 
+            // Initialize the available citizens list with all prefabs
+            _availableCitizensToSpawn = new List<NeuralProfile>(_citizenPrefabs);
+
             if (_spawnPoint == null)
             {
                 Debug.LogWarning("[CitizenSpawner] No spawn point assigned, using spawner position");
@@ -108,6 +108,13 @@ namespace NeuralWaveBureau.AI
         /// </summary>
         public GameObject SpawnCitizen()
         {
+            // Check if there are any citizens left to spawn
+            if (_availableCitizensToSpawn.Count == 0)
+            {
+                Debug.LogWarning("[CitizenSpawner] No more citizens available to spawn. All have been spawned.");
+                return null;
+            }
+
             // Get a prefab to spawn
             GameObject prefabToSpawn = GetNextPrefab();
 
@@ -218,35 +225,40 @@ namespace NeuralWaveBureau.AI
         }
 
         /// <summary>
-        /// Gets the next prefab to spawn based on selection mode
+        /// Gets the next prefab to spawn based on selection mode and removes it from the available list
         /// </summary>
         private GameObject GetNextPrefab()
         {
-            if (_citizenPrefabs == null || _citizenPrefabs.Count == 0)
+            if (_availableCitizensToSpawn == null || _availableCitizensToSpawn.Count == 0)
             {
                 return null;
             }
 
             GameObject selectedPrefab = null;
+            int selectedIndex = 0;
 
             switch (_prefabSelectionMode)
             {
                 case PrefabSelectionMode.Random:
-                    int randomIndex = Random.Range(0, _citizenPrefabs.Count);
-                    selectedPrefab = _citizenPrefabs[randomIndex].prefab;
+                    selectedIndex = Random.Range(0, _availableCitizensToSpawn.Count);
+                    selectedPrefab = _availableCitizensToSpawn[selectedIndex].prefab;
                     break;
 
                 case PrefabSelectionMode.Sequential:
-                    selectedPrefab = _citizenPrefabs[_currentPrefabIndex].prefab;
-                    _currentPrefabIndex = (_currentPrefabIndex + 1) % _citizenPrefabs.Count;
+                    // Always take the first one in sequential mode
+                    selectedIndex = 0;
+                    selectedPrefab = _availableCitizensToSpawn[selectedIndex].prefab;
                     break;
 
                 case PrefabSelectionMode.Weighted:
                     // Future feature - for now use random
-                    randomIndex = Random.Range(0, _citizenPrefabs.Count);
-                    selectedPrefab = _citizenPrefabs[randomIndex].prefab;
+                    selectedIndex = Random.Range(0, _availableCitizensToSpawn.Count);
+                    selectedPrefab = _availableCitizensToSpawn[selectedIndex].prefab;
                     break;
             }
+
+            // Remove the selected prefab from the available list
+            _availableCitizensToSpawn.RemoveAt(selectedIndex);
 
             return selectedPrefab;
         }
