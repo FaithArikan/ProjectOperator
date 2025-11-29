@@ -48,6 +48,9 @@ namespace NeuralWaveBureau
     [System.Serializable]
     public class ShakeConfig
     {
+        [Tooltip("Name of this shake configuration")]
+        public string name = "Unnamed Shake";
+
         [Tooltip("Duration of the shake in seconds")]
         public float duration;
 
@@ -72,9 +75,10 @@ namespace NeuralWaveBureau
         [Tooltip("Rotation intensity if enabled")]
         public float rotationIntensity = 0f;
 
-        public ShakeConfig(float duration, float amplitude, float frequency, Vector3 direction,
+        public ShakeConfig(string name, float duration, float amplitude, float frequency, Vector3 direction,
             float attackTime = 0f, float decayTime = 0.3f, bool useRotation = false, float rotationIntensity = 0f)
         {
+            this.name = name;
             this.duration = duration;
             this.amplitude = amplitude;
             this.frequency = frequency;
@@ -140,6 +144,11 @@ namespace NeuralWaveBureau
         {
             Instance = this;
             InitializeImpulseSource();
+        }
+
+        private void Start()
+        {
+            // Wait for CameraManager to initialize before adding listeners
             EnsureCameraListeners();
         }
 
@@ -160,10 +169,16 @@ namespace NeuralWaveBureau
             if (_impulseSource == null)
             {
                 _impulseSource = gameObject.AddComponent<CinemachineImpulseSource>();
+                Debug.Log("[ScreenShakeManager] Added CinemachineImpulseSource component");
             }
 
             // Configure impulse source defaults
             _impulseSource.DefaultVelocity = Vector3.one;
+
+            if (_verboseLogging)
+            {
+                Debug.Log("[ScreenShakeManager] Impulse source initialized successfully");
+            }
         }
 
         /// <summary>
@@ -221,6 +236,7 @@ namespace NeuralWaveBureau
 
             // LeftRight - Small horizontal shake
             _shakeConfigs[0] = new ShakeConfig(
+                name: "Left-Right Shake",
                 duration: 0.3f,
                 amplitude: 0.5f,
                 frequency: 25f,
@@ -230,6 +246,7 @@ namespace NeuralWaveBureau
 
             // UpDown - Vertical punch
             _shakeConfigs[1] = new ShakeConfig(
+                name: "Up-Down Shake",
                 duration: 0.25f,
                 amplitude: 0.6f,
                 frequency: 30f,
@@ -239,6 +256,7 @@ namespace NeuralWaveBureau
 
             // Diagonal - Combined horizontal + vertical
             _shakeConfigs[2] = new ShakeConfig(
+                name: "Diagonal Shake",
                 duration: 0.35f,
                 amplitude: 0.5f,
                 frequency: 20f,
@@ -248,6 +266,7 @@ namespace NeuralWaveBureau
 
             // ExplosionImpact - Strong burst with rotation
             _shakeConfigs[3] = new ShakeConfig(
+                name: "Explosion Impact",
                 duration: 0.8f,
                 amplitude: 1.5f,
                 frequency: 15f,
@@ -259,6 +278,7 @@ namespace NeuralWaveBureau
 
             // GlitchJitter - Fast micro-jitter
             _shakeConfigs[4] = new ShakeConfig(
+                name: "Glitch Jitter",
                 duration: 0.15f,
                 amplitude: 0.3f,
                 frequency: 60f,
@@ -268,6 +288,7 @@ namespace NeuralWaveBureau
 
             // HeavyStomp - Slow powerful shake
             _shakeConfigs[5] = new ShakeConfig(
+                name: "Heavy Stomp",
                 duration: 0.6f,
                 amplitude: 1.2f,
                 frequency: 8f,
@@ -280,6 +301,7 @@ namespace NeuralWaveBureau
 
             // Rumble - Low-frequency vibration
             _shakeConfigs[6] = new ShakeConfig(
+                name: "Rumble",
                 duration: 1.0f,
                 amplitude: 0.4f,
                 frequency: 5f,
@@ -290,6 +312,7 @@ namespace NeuralWaveBureau
 
             // FlickerShake - Quick tremor
             _shakeConfigs[7] = new ShakeConfig(
+                name: "Flicker Shake",
                 duration: 0.12f,
                 amplitude: 0.4f,
                 frequency: 50f,
@@ -299,6 +322,7 @@ namespace NeuralWaveBureau
 
             // Aftershock - Custom sequence (config for base shake)
             _shakeConfigs[8] = new ShakeConfig(
+                name: "Aftershock",
                 duration: 1.2f,
                 amplitude: 1.0f,
                 frequency: 20f,
@@ -310,6 +334,7 @@ namespace NeuralWaveBureau
 
             // DreadPulse - Custom sequence (config for base shake)
             _shakeConfigs[9] = new ShakeConfig(
+                name: "Dread Pulse",
                 duration: 2.0f,
                 amplitude: 0.6f,
                 frequency: 3f,
@@ -439,12 +464,23 @@ namespace NeuralWaveBureau
         /// </summary>
         private void GenerateImpulse(float amplitude, Vector3 direction)
         {
-            if (_impulseSource == null) return;
+            if (_impulseSource == null)
+            {
+                Debug.LogError("[ScreenShakeManager] Impulse source is null! Cannot generate shake.");
+                return;
+            }
 
+            // Apply both the intensity scale and the global multiplier
             float finalAmplitude = amplitude * _globalIntensityMultiplier;
             Vector3 velocity = direction.normalized * finalAmplitude;
 
+            // Generate the impulse using Cinemachine 3.x API
             _impulseSource.GenerateImpulseWithVelocity(velocity);
+
+            if (_verboseLogging)
+            {
+                Debug.Log($"[ScreenShakeManager] Generated impulse: velocity={velocity}, amplitude={finalAmplitude} (global: {_globalIntensityMultiplier})");
+            }
         }
 
         /// <summary>
